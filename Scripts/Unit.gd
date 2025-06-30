@@ -17,13 +17,21 @@ func setTitle(t : String):
 
 func setRoster(arr : Array[Entity]):
 	for i in range(rosterCap):
-		roster[i] = arr[i]
+		roster.append(arr[i])
+		arr[i].setFaction(faction)
 
-func setRosterCap(rC : int):
-	rosterCap = rC
+func addToRoster(val: Entity) -> bool:
+	if roster.size() >= rosterCap:
+		return false
+	else:
+		roster.append(val)
+		return true
 
-func setFaction(fac : Faction):
-	faction = fac
+func setRosterCap(val : int):
+	rosterCap = val
+
+func setFaction(val : Faction):
+	faction = val
 
 func getTitle() -> String:
 	return title

@@ -1,12 +1,11 @@
 extends Unit
 class_name Squad
 
+var type : String
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _init(t : String, r : Array[Entity], rC : int, f : Faction, ty : String):
+	title = t
+	rosterCap = rC
+	setRoster(r)
+	faction = f
+	type = ty
