@@ -44,3 +44,10 @@ func getRosterCap() -> int:
 
 func getFaction() -> Faction:
 	return faction
+
+func _to_string() -> String:
+	var str: String = getTitle() + " - " + str(getFaction().getTitle())
+	
+	for item in roster:
+		str += "\n" + str(item)
+	return str

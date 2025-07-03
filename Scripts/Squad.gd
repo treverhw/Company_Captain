@@ -3,9 +3,16 @@ class_name Squad
 
 var type : String
 
-func _init(t : String, r : Array[Entity], rC : int, f : Faction, ty : String):
-	title = t
-	rosterCap = rC
-	setRoster(r)
-	faction = f
-	type = ty
+func _init(Title : String, Roster : Array[Entity], RosterCap : int, Fac : Faction, Type : String):
+	title = Title
+	rosterCap = RosterCap
+	setRoster(Roster)
+	faction = Fac
+	type = Type
+
+func _to_string() -> String:
+	var retstr: String = getTitle() + " - " + str(type)
+	
+	for item in roster:
+		retstr += "\n" + str(item)
+	return retstr

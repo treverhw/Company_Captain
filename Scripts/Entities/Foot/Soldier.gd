@@ -28,7 +28,7 @@ func _init(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, bw: int = 0,
 	wounds = maxWounds
 	battlescars = arr[3]
 	maxBattlescars = arr[3]
-	setTitle(Names)
+	generateTitle(Names)
 	bonusWounds = bw
 	bonusSpeed = bs
 	bonusToughness = bt

@@ -65,3 +65,6 @@ func getBattlescars() -> int:
 	return battlescars
 func getMaxBattlescars() -> int:
 	return maxBattlescars
+
+func _to_string() -> String:
+	return getTitle()

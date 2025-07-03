@@ -13,6 +13,11 @@ func _init(t : String, T : String):
 	title = t
 	team = T
 
+func createUnit(arr: Array[Entity], RosterCap: int, Type: String) -> Unit:
+	var newSquad: Squad = Squad.new(str(roster.size()+1), arr, RosterCap, self, Type)
+	roster.append(newSquad)
+	return newSquad
+
 func setTitle(t : String):
 	title = t
 	
@@ -36,3 +41,10 @@ func getEntities() -> Array[Entity]:
 		for ent in unit.getRoster():
 			arr.append(ent)
 	return arr
+
+func _to_string() -> String:
+	var str: String = getTitle()
+	
+	for item in roster:
+		str += "\n" + str(item)
+	return str
