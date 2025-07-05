@@ -1,23 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://cr6q11xptk7k1"]
+[gd_scene load_steps=3 format=3 uid="uid://cmsm54cloybk0"]
 
-[ext_resource type="Script" path="res://Scripts/Main.gd" id="1_qkt80"]
-[ext_resource type="PackedScene" uid="uid://3y8j8sjlpbqn" path="res://Scenes/MainMenu.tscn" id="2_pjauw"]
-[ext_resource type="PackedScene" uid="uid://10mgibtq28ok" path="res://Scenes/unitMenu.tscn" id="2_rh1sl"]
-[ext_resource type="Texture2D" uid="uid://53123a0ts7hh" path="res://Assets/locational/SpaceBackground.png" id="3_pd4iy"]
+[ext_resource type="Script" path="res://Scripts/Main.gd" id="1_c0oe7"]
+[ext_resource type="Texture2D" uid="uid://53123a0ts7hh" path="res://Assets/locational/SpaceBackground.png" id="2_0pm7d"]
 
-[node name="SectorMap" type="Control"]
+[node name="Main" type="Control"]
 layout_mode = 3
-anchors_preset = 0
-script = ExtResource("1_qkt80")
-
-[node name="UnitMenu" parent="." instance=ExtResource("2_rh1sl")]
-layout_mode = 1
-
-[node name="MainMenu" parent="." instance=ExtResource("2_pjauw")]
-layout_mode = 2
-anchors_preset = 0
-
-[node name="Camera2D" type="Camera2D" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c0oe7")
 
 [node name="GridContainer" type="GridContainer" parent="."]
 z_index = -25
@@ -42,23 +35,23 @@ columns = 2
 [node name="TextureRect" type="TextureRect" parent="GridContainer"]
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("3_pd4iy")
+texture = ExtResource("2_0pm7d")
 stretch_mode = 3
 
 [node name="TextureRect2" type="TextureRect" parent="GridContainer"]
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("3_pd4iy")
+texture = ExtResource("2_0pm7d")
 stretch_mode = 3
 
 [node name="TextureRect3" type="TextureRect" parent="GridContainer"]
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("3_pd4iy")
+texture = ExtResource("2_0pm7d")
 stretch_mode = 3
 
 [node name="TextureRect4" type="TextureRect" parent="GridContainer"]
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("3_pd4iy")
+texture = ExtResource("2_0pm7d")
 stretch_mode = 3

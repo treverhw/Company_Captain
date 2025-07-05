@@ -1,8 +1,6 @@
 extends Entity
 class_name Soldier
 
-static var Names = ["Steve", "Gary", "Carl", "Bob", "Ethan", "Trever", "Maria", "Zoey", "Angel", "John", "Chief", "Loken"]
-
 #Informational
 var squad : Squad
 
@@ -28,11 +26,13 @@ func _init(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, bw: int = 0,
 	wounds = maxWounds
 	battlescars = arr[3]
 	maxBattlescars = arr[3]
-	generateTitle(Names)
 	bonusWounds = bw
 	bonusSpeed = bs
 	bonusToughness = bt
 	bonusSave = bS
+	
+	var names = Names.new().marinenames
+	generateTitle(names)
 
 
 ## Setters

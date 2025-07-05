@@ -13,8 +13,8 @@ func _init(t : String, T : String):
 	title = t
 	team = T
 
-func createUnit(arr: Array[Entity], RosterCap: int, Type: String) -> Unit:
-	var newSquad: Squad = Squad.new(str(roster.size()+1), arr, RosterCap, self, Type)
+func createUnit(arr: Array[Entity], RosterCap: int) -> Unit:
+	var newSquad: Squad = Squad.new(str(roster.size()+1), arr, RosterCap, self)
 	roster.append(newSquad)
 	return newSquad
 

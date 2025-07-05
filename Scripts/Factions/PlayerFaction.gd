@@ -8,10 +8,11 @@ func _init(t: String) -> void:
 func start():
 	var squad1: Array[Entity] = []
 	var squad2: Array[Entity] = []
-	var newSquad1: Squad = Squad.new(str(roster.size()+1), [spawnScout(), spawnScout(), spawnScout(), spawnScout(), spawnScout()], 5, self, "Intercession")
+	var newSquad1: Squad = Squad.new(str(roster.size()+1), [spawnScout(), spawnScout(), spawnScout(), spawnScout(), spawnScout()], 5, self)
 	roster.append(newSquad1)
-	var newSquad2: Squad = Squad.new(str(roster.size()+1), [spawnScout(), spawnScout(), spawnScout(), spawnScout(), spawnScout()], 5, self, "Scout")
+	var newSquad2: Squad = Squad.new(str(roster.size()+1), [spawnScout(), spawnScout(), spawnScout(), spawnScout(), spawnScout()], 5, self)
 	roster.append(newSquad2)
+	print(self)
 
 func customAstartes(val1 : String, val2 : String, val3 : String) -> Entity:
 	var arm : Armour = Armour.new(armour.AstartesArmour[val1])

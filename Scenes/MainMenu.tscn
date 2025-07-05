@@ -1,15 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://3y8j8sjlpbqn"]
+[gd_scene load_steps=6 format=3 uid="uid://3y8j8sjlpbqn"]
 
 [ext_resource type="Script" path="res://Scripts/Menus/MainMenu.gd" id="1_54v3o"]
 [ext_resource type="Texture2D" uid="uid://sc8t1716wyf5" path="res://Assets/ui/Button01_Large.png" id="2_n1tg4"]
 [ext_resource type="Texture2D" uid="uid://dsp8qkdl605t6" path="res://Assets/ui/Button01_Large_Pressed.png" id="3_0x3vt"]
 [ext_resource type="Texture2D" uid="uid://bhe8ehnf3ik4b" path="res://Assets/ui/Button01_Large_Hover.png" id="4_xnuny"]
+[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="5_2vexn"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_54v3o")
@@ -27,19 +30,19 @@ offset_right = 256.0
 offset_bottom = 148.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 1
+theme_override_constants/separation = 3
 alignment = 1
 
 [node name="Label" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
-text = "TITLE"
+text = "WARHAMMER 40K"
 horizontal_alignment = 1
 
 [node name="Label2" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "SUBTITLE"
+text = "COMPANY CAPTAIN"
 horizontal_alignment = 1
 
 [node name="Play" type="TextureButton" parent="VBoxContainer"]
@@ -49,6 +52,22 @@ texture_pressed = ExtResource("3_0x3vt")
 texture_hover = ExtResource("4_xnuny")
 stretch_mode = 3
 
+[node name="Label" type="Label" parent="VBoxContainer/Play"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "Play"
+
 [node name="Options" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
 texture_normal = ExtResource("2_n1tg4")
@@ -56,12 +75,50 @@ texture_pressed = ExtResource("3_0x3vt")
 texture_hover = ExtResource("4_xnuny")
 stretch_mode = 3
 
+[node name="Label" type="Label" parent="VBoxContainer/Options"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "Options"
+
 [node name="Exit" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
 texture_normal = ExtResource("2_n1tg4")
 texture_pressed = ExtResource("3_0x3vt")
 texture_hover = ExtResource("4_xnuny")
 stretch_mode = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/Exit"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "GTFO"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(3.00006, 7.00003)
+scale = Vector2(1.01296, 0.605556)
+texture = ExtResource("5_2vexn")
 
 [connection signal="pressed" from="VBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Options" to="." method="_on_options_pressed"]
