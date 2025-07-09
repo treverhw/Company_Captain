@@ -16,7 +16,7 @@ var bonusToughness : int = 0
 var bonusSave : int = 0
 
 #Constructor that is sent an information array to build a basic stat profile.
-func _init(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, bw: int = 0, bs: int = 0, bt: int = 0, bS: int = 0):
+func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, bw: int = 0, bs: int = 0, bt: int = 0, bS: int = 0):
 	ballisticSkill = arr[0]
 	weaponSkill = arr[1]
 	armour = arm

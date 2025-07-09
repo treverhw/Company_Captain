@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://10mgibtq28ok"]
 
-[ext_resource type="Script" path="res://Scripts/Menus/unitMenu.gd" id="1_7e7er"]
-[ext_resource type="PackedScene" uid="uid://cbtaewt20l2b" path="res://Scenes/Soldier.tscn" id="1_8g24o"]
-[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="3_x37om"]
+[ext_resource type="Script" path="res://Scripts/Menus/unitMenu.gd" id="1_k8hua"]
+[ext_resource type="PackedScene" uid="uid://cbtaewt20l2b" path="res://Scenes/Entities/Soldier.tscn" id="2_pd2pl"]
+[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="3_lku6l"]
 
 [node name="UnitMenu" type="CenterContainer"]
 anchors_preset = 8
@@ -19,7 +19,7 @@ grow_vertical = 2
 scale = Vector2(0.2, 0.2)
 size_flags_horizontal = 6
 size_flags_vertical = 6
-script = ExtResource("1_7e7er")
+script = ExtResource("1_k8hua")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -36,28 +36,23 @@ layout_mode = 2
 size_flags_horizontal = 0
 alignment = 1
 
-[node name="Soldier" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_8g24o")]
-layout_mode = 2
+[node name="Soldier" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_pd2pl")]
 
-[node name="Soldier2" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_8g24o")]
-layout_mode = 2
+[node name="Soldier2" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_pd2pl")]
 
-[node name="Soldier3" parent="VBoxContainer/HBoxContainer" instance=ExtResource("1_8g24o")]
-layout_mode = 2
+[node name="Soldier3" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_pd2pl")]
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 alignment = 1
 
-[node name="Soldier4" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_8g24o")]
-layout_mode = 2
+[node name="Soldier4" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("2_pd2pl")]
 
-[node name="Soldier5" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("1_8g24o")]
-layout_mode = 2
+[node name="Soldier5" parent="VBoxContainer/HBoxContainer2" instance=ExtResource("2_pd2pl")]
 
 [node name="TextureRect" type="Sprite2D" parent="."]
 z_index = -1
 position = Vector2(865, 920)
 scale = Vector2(3.37963, 3.37037)
-texture = ExtResource("3_x37om")
+texture = ExtResource("3_lku6l")

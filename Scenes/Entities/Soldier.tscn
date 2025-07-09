@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cbtaewt20l2b"]
+
+[ext_resource type="Script" path="res://Scripts/Entities/Foot/Soldier.gd" id="1_wln23"]
+
+[node name="Soldier" type="Node"]
+script = ExtResource("1_wln23")

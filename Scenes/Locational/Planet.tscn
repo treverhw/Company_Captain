@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dhpueejtv00ie"]
 
-[ext_resource type="Script" path="res://Scripts/locational/planet.gd" id="1_qnlhi"]
-[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="2_yhxop"]
+[ext_resource type="Script" path="res://Scripts/locational/planet.gd" id="1_kmmuo"]
+[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="2_261pm"]
 
 [node name="Planet" type="Control"]
 z_index = -1
@@ -13,7 +13,7 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_qnlhi")
+script = ExtResource("1_kmmuo")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 z_index = -1
@@ -29,4 +29,12 @@ offset_right = 500.0
 offset_bottom = 320.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_yhxop")
+texture = ExtResource("2_261pm")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 449.0
+offset_top = 280.0
+offset_right = 494.0
+offset_bottom = 311.0
+text = "Turn"

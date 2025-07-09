@@ -1,13 +1,13 @@
 [gd_scene load_steps=3 format=3 uid="uid://bt3s83bbasgcr"]
 
-[ext_resource type="Script" path="res://Scripts/locational/settlement.gd" id="1_utev6"]
-[ext_resource type="Texture2D" uid="uid://bwfu51ggjl0i4" path="res://Assets/locational/sm.png" id="2_7oqmm"]
+[ext_resource type="Script" path="res://Scripts/locational/settlement.gd" id="1_y8rnc"]
+[ext_resource type="Texture2D" uid="uid://bxm1r1mcs1ykb" path="res://Assets/locational/unowned.png" id="2_22kux"]
 
 [node name="Settlement" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 scale = Vector2(0.3, 0.3)
-script = ExtResource("1_utev6")
+script = ExtResource("1_y8rnc")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 z_index = 1
@@ -23,7 +23,7 @@ offset_right = 64.0
 offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_7oqmm")
+texture = ExtResource("2_22kux")
 
 [node name="Label" type="Label" parent="."]
 z_index = 1

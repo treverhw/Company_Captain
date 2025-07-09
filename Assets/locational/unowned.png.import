@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4o43hg3oijps"
-path="res://.godot/imported/combatline.png-c54338e67fb27181f2a21baf2495f11b.ctex"
+uid="uid://bxm1r1mcs1ykb"
+path="res://.godot/imported/unowned.png-291d6f802356af19bc7a63b74a886fa6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/combatline.png"
-dest_files=["res://.godot/imported/combatline.png-c54338e67fb27181f2a21baf2495f11b.ctex"]
+source_file="res://Assets/locational/unowned.png"
+dest_files=["res://.godot/imported/unowned.png-291d6f802356af19bc7a63b74a886fa6.ctex"]
 
 [params]
 

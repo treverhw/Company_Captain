@@ -1,7 +1,7 @@
 extends Node
 
 func _on_play_pressed() -> void:
-	get_parent().add_child(load("res://Scenes/Planet.tscn").instantiate())
+	get_parent().add_child(load("res://Scenes/Locational/Planet.tscn").instantiate())
 	get_parent().remove_child(self)
 	queue_free()
 

@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://ck167ags4oqva"]
+
+[ext_resource type="Script" path="res://Scripts/Squad.gd" id="1_ujs8a"]
+[ext_resource type="Texture2D" uid="uid://4o43hg3oijps" path="res://Assets/combat/combatline.png" id="2_rbo6d"]
+
+[node name="Squad" type="TextureRect"]
+texture = ExtResource("2_rbo6d")
+script = ExtResource("1_ujs8a")

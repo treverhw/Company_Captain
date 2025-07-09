@@ -1,9 +1,9 @@
 extends Faction
-class_name PlayerFaction
+class_name Chaos
 
-func define(t: String) -> void:
-	title = t
-	team = "Imperium"
+func _init():
+	title = "Death Guard"
+	team = "Chaos"
 
 func start():
 	spawnScoutSquad()
@@ -27,7 +27,7 @@ func spawnScout() -> Entity:
 
 func spawnScoutSquad() -> Squad:
 	var newSquad : Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
-	newSquad.define(str(roster.size()), 5, self)
+	newSquad.define("Squad: " + str(roster.size()), 5, self)
 	newSquad.roster = [spawnScout(), spawnScout(), spawnScout(), spawnScout(), spawnScout()]
 	roster.append(newSquad)
 	return newSquad

@@ -2,20 +2,33 @@ extends Control
 const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
 const armour = preload("res://Scripts/Equipment/ArmourArrays.gd")
 const soldiers = preload("res://Scripts/Entities/Foot/SoldierArrays.gd")
-var playerFaction = PlayerFaction.new("Salamanders")
+var playerFaction = load("res://Scenes/PlayerFaction.tscn").instantiate()
+var guard = load("res://Scenes/Guard.tscn").instantiate()
+var chaos = load("res://Scenes/Chaos.tscn").instantiate()
 var squad : Squad
 var temp
 
 func _ready() -> void:
-	temp = load("res://Scenes/MainMenu.tscn").instantiate()
+	temp = load("res://Scenes/Menus/MainMenu.tscn").instantiate()
 	temp.get_node("VBoxContainer/Play").pressed.connect(play)
 	add_child(temp)
+	add_child(playerFaction)
+	add_child(guard)
+	add_child(chaos)
 
 func play():
-	playerFaction.start()
-	temp = get_child(1)
-	print(temp)
-	temp.settlements[1].roster.append(playerFaction.roster[0])
-	temp.settlements[2].roster.append(playerFaction.roster[1])
-	print("\nLocation 1 Roster: \n" + str(temp.settlements[1].roster[0]))
-	print("Location 2 Roster: \n" + str(temp.settlements[2].roster[0]))
+	guard.start()
+	chaos.start()
+	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
+	add_child(combat)
+	combat.populate(guard.roster, chaos.roster, true)
+	#temp = get_child(4)
+	#print(temp)
+	#temp.settlements[1].roster.append(guard.roster[0])
+	#temp.settlements[1].roster.append(guard.roster[1])
+	#temp.settlements[4].roster.append(chaos.roster[0])
+	#temp.settlements[4].roster.append(chaos.roster[1])
+	#temp.settlements[1].team = "Imperium"
+	#temp.settlements[4].team = "Chaos"
+	#print("\nLocation 1 Roster: \n" + str(temp.settlements[1].roster))
+	#print("Location 2 Roster: \n" + str(temp.settlements[4].roster))

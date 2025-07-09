@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c0kq1olt8xlqk"
-path="res://.godot/imported/dg.png-b60aca586663210028d31170721c96b2.ctex"
+uid="uid://ck6jvpminwjsc"
+path="res://.godot/imported/Spacer.png-8dfa4d0ad9e0e9ef550cc56eb5b4b018.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/locational/dg.png"
-dest_files=["res://.godot/imported/dg.png-b60aca586663210028d31170721c96b2.ctex"]
+source_file="res://Assets/locational/Spacer.png"
+dest_files=["res://.godot/imported/Spacer.png-8dfa4d0ad9e0e9ef550cc56eb5b4b018.ctex"]
 
 [params]
 

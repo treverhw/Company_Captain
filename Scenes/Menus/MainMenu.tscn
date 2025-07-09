@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://3y8j8sjlpbqn"]
 
-[ext_resource type="Script" path="res://Scripts/Menus/MainMenu.gd" id="1_54v3o"]
-[ext_resource type="Texture2D" uid="uid://sc8t1716wyf5" path="res://Assets/ui/Button01_Large.png" id="2_n1tg4"]
-[ext_resource type="Texture2D" uid="uid://dsp8qkdl605t6" path="res://Assets/ui/Button01_Large_Pressed.png" id="3_0x3vt"]
-[ext_resource type="Texture2D" uid="uid://bhe8ehnf3ik4b" path="res://Assets/ui/Button01_Large_Hover.png" id="4_xnuny"]
-[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="5_2vexn"]
+[ext_resource type="Script" path="res://Scripts/Menus/MainMenu.gd" id="1_yu8w7"]
+[ext_resource type="Texture2D" uid="uid://sc8t1716wyf5" path="res://Assets/ui/Button01_Large.png" id="2_t42ig"]
+[ext_resource type="Texture2D" uid="uid://dsp8qkdl605t6" path="res://Assets/ui/Button01_Large_Pressed.png" id="3_imcei"]
+[ext_resource type="Texture2D" uid="uid://bhe8ehnf3ik4b" path="res://Assets/ui/Button01_Large_Hover.png" id="4_ny8kp"]
+[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="5_qkmkt"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -15,7 +15,7 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_54v3o")
+script = ExtResource("1_yu8w7")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -47,9 +47,9 @@ horizontal_alignment = 1
 
 [node name="Play" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("2_n1tg4")
-texture_pressed = ExtResource("3_0x3vt")
-texture_hover = ExtResource("4_xnuny")
+texture_normal = ExtResource("2_t42ig")
+texture_pressed = ExtResource("3_imcei")
+texture_hover = ExtResource("4_ny8kp")
 stretch_mode = 3
 
 [node name="Label" type="Label" parent="VBoxContainer/Play"]
@@ -70,9 +70,9 @@ text = "Play"
 
 [node name="Options" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("2_n1tg4")
-texture_pressed = ExtResource("3_0x3vt")
-texture_hover = ExtResource("4_xnuny")
+texture_normal = ExtResource("2_t42ig")
+texture_pressed = ExtResource("3_imcei")
+texture_hover = ExtResource("4_ny8kp")
 stretch_mode = 3
 
 [node name="Label" type="Label" parent="VBoxContainer/Options"]
@@ -93,9 +93,9 @@ text = "Options"
 
 [node name="Exit" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
-texture_normal = ExtResource("2_n1tg4")
-texture_pressed = ExtResource("3_0x3vt")
-texture_hover = ExtResource("4_xnuny")
+texture_normal = ExtResource("2_t42ig")
+texture_pressed = ExtResource("3_imcei")
+texture_hover = ExtResource("4_ny8kp")
 stretch_mode = 3
 
 [node name="Label" type="Label" parent="VBoxContainer/Exit"]
@@ -118,7 +118,7 @@ text = "GTFO"
 z_index = -1
 position = Vector2(3.00006, 7.00003)
 scale = Vector2(1.01296, 0.605556)
-texture = ExtResource("5_2vexn")
+texture = ExtResource("5_qkmkt")
 
 [connection signal="pressed" from="VBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Options" to="." method="_on_options_pressed"]

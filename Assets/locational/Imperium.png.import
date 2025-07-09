@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://r200nccdqxfw"
-path="res://.godot/imported/enemycombatline.png-97f1aa8e2a15adcb2a24b7390629fe3f.ctex"
+uid="uid://c0kq1olt8xlqk"
+path="res://.godot/imported/Imperium.png-87dd004cf867673332b8ac179e244be4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/enemycombatline.png"
-dest_files=["res://.godot/imported/enemycombatline.png-97f1aa8e2a15adcb2a24b7390629fe3f.ctex"]
+source_file="res://Assets/locational/Imperium.png"
+dest_files=["res://.godot/imported/Imperium.png-87dd004cf867673332b8ac179e244be4.ctex"]
 
 [params]
 

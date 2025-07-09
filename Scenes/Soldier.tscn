@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cbtaewt20l2b"]
-
-[ext_resource type="Texture2D" uid="uid://cfskpdqdypnt" path="res://Assets/spashemarine.png" id="1_1gnlk"]
-
-[node name="Soldier" type="TextureRect"]
-texture = ExtResource("1_1gnlk")

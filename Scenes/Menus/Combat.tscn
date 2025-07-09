@@ -1,0 +1,207 @@
+[gd_scene load_steps=5 format=3 uid="uid://b3o7qfbn8pdab"]
+
+[ext_resource type="Script" path="res://Scripts/Menus/Combat.gd" id="1_ypynm"]
+[ext_resource type="PackedScene" uid="uid://ck167ags4oqva" path="res://Scenes/Entities/Squad.tscn" id="2_iocc7"]
+[ext_resource type="Texture2D" uid="uid://ck6jvpminwjsc" path="res://Assets/locational/Spacer.png" id="2_u2ck5"]
+[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="3_fqo47"]
+
+[node name="Combat" type="Control"]
+z_index = 6
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ypynm")
+
+[node name="ColumnContainer" type="HBoxContainer" parent="."]
+z_index = 1
+layout_mode = 2
+offset_left = 121.0
+offset_top = 41.0
+offset_right = 1030.0
+offset_bottom = 613.0
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="1" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/1"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="Squad" parent="ColumnContainer/1" instance=ExtResource("2_iocc7")]
+layout_mode = 2
+
+[node name="2" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/2"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="3" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/3"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="4" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/4"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="5" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/5"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="6" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/6"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="7" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/7"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="8" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/8"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="9" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/9"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="10" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/10"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="11" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/11"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="12" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/12"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="13" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/13"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="14" type="VBoxContainer" parent="ColumnContainer"]
+z_index = 5
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ColumnContainer/14"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+texture = ExtResource("2_u2ck5")
+
+[node name="Squad" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
+layout_mode = 2
+
+[node name="Squad2" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
+layout_mode = 2
+
+[node name="Squad3" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
+layout_mode = 2
+
+[node name="Squad4" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
+layout_mode = 2
+
+[node name="Squad5" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
+layout_mode = 2
+
+[node name="Squad6" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
+layout_mode = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = -5
+position = Vector2(576, 325)
+scale = Vector2(1.8037, 1.14444)
+texture = ExtResource("3_fqo47")

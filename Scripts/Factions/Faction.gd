@@ -1,4 +1,4 @@
-extends Control
+extends Node
 class_name Faction
 
 const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
@@ -8,15 +8,6 @@ const soldiers = preload("res://Scripts/Entities/Foot/SoldierArrays.gd")
 var title : String
 var team : String
 var roster : Array[Unit] = []
-
-func _init(t : String, T : String):
-	title = t
-	team = T
-
-func createUnit(arr: Array[Entity], RosterCap: int) -> Unit:
-	var newSquad: Squad = Squad.new(str(roster.size()+1), arr, RosterCap, self)
-	roster.append(newSquad)
-	return newSquad
 
 func setTitle(t : String):
 	title = t
