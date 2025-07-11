@@ -21,6 +21,10 @@ func checkWounds() -> bool:
 		return true
 	return false
 
+func seatbelt() -> bool:
+	if wounds <= 0:
+		return false
+	return true
 
 ## Setters
 func setTitle(val : String):

@@ -1,7 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://b3o7qfbn8pdab"]
+[gd_scene load_steps=4 format=3 uid="uid://b3o7qfbn8pdab"]
 
 [ext_resource type="Script" path="res://Scripts/Menus/Combat.gd" id="1_ypynm"]
-[ext_resource type="PackedScene" uid="uid://ck167ags4oqva" path="res://Scenes/Entities/Squad.tscn" id="2_iocc7"]
 [ext_resource type="Texture2D" uid="uid://ck6jvpminwjsc" path="res://Assets/locational/Spacer.png" id="2_u2ck5"]
 [ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="3_fqo47"]
 
@@ -35,9 +34,6 @@ alignment = 1
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 texture = ExtResource("2_u2ck5")
-
-[node name="Squad" parent="ColumnContainer/1" instance=ExtResource("2_iocc7")]
-layout_mode = 2
 
 [node name="2" type="VBoxContainer" parent="ColumnContainer"]
 z_index = 5
@@ -181,24 +177,6 @@ alignment = 1
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 texture = ExtResource("2_u2ck5")
-
-[node name="Squad" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
-layout_mode = 2
-
-[node name="Squad2" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
-layout_mode = 2
-
-[node name="Squad3" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
-layout_mode = 2
-
-[node name="Squad4" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
-layout_mode = 2
-
-[node name="Squad5" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
-layout_mode = 2
-
-[node name="Squad6" parent="ColumnContainer/14" instance=ExtResource("2_iocc7")]
-layout_mode = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = -5

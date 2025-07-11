@@ -31,3 +31,10 @@ func spawnScoutSquad() -> Squad:
 	newSquad.roster = [spawnScout(), spawnScout(), spawnScout(), spawnScout(), spawnScout()]
 	roster.append(newSquad)
 	return newSquad
+
+func spawnHurtSquad() -> Squad:
+	var newSquad : Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
+	newSquad.define("Squad: " + str(roster.size()), 5, self)
+	newSquad.roster = [spawnScout(), spawnScout(), spawnScout()]
+	roster.append(newSquad)
+	return newSquad

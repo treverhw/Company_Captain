@@ -6,6 +6,9 @@ func define(Title : String, RosterCap : int, Fac : Faction):
 	rosterCap = RosterCap
 	faction = Fac
 
+func _process(delta: float) -> void:
+	sizeCheck()
+
 func _to_string() -> String:
 	var retstr: String = getTitle()
 	

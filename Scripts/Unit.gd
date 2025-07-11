@@ -1,4 +1,4 @@
-extends Node
+extends TextureRect
 class_name Unit
 
 var title : String
@@ -10,6 +10,20 @@ func define(t : String, rC : int, f : Faction):
 	title = t
 	rosterCap = rC
 	faction = f
+
+func validate():
+	if size() == 0: return false
+	else: 			return true
+
+func size():
+	var counter: int = 0
+	for model in roster:
+		if model.seatbelt():
+			counter += 1
+	return counter
+
+func sizeCheck():
+	scale.x = size()*.2
 
 func setTitle(t : String):
 	title = t
