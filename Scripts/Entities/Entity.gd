@@ -26,6 +26,12 @@ func seatbelt() -> bool:
 		return false
 	return true
 
+func KILL():
+	queue_free()
+
+func findColumn() -> VBoxContainer:
+	return get_parent().get_parent()
+
 ## Setters
 func setTitle(val : String):
 	title = val
@@ -44,7 +50,6 @@ func setBattlescars(val : int):
 	battlescars = val
 func setMaxBattlescars(val : int):
 	maxBattlescars =val
-
 func setMaxWounds(val : int):
 	maxWounds = val
 

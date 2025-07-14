@@ -34,6 +34,19 @@ func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, bw: int = 0
 	var names = Names.new().marinenames
 	generateTitle(names)
 
+func weapons(distance: int) -> Array:
+	var weapons = [getMain(), getOff()]
+	
+	match distance:
+		65: #Melee
+			for item in weapons:
+				if !item.isMelee() && !item.isPistol():
+					weapons.erase(item)
+		_: #Else
+			for item in weapons:
+				if item.isMelee():
+					weapons.erase(item)
+	return weapons
 
 ## Setters
 func setSquad(val : Squad):

@@ -10,6 +10,7 @@ var d : int
 var twoHands : bool
 var melee : bool
 var description : String
+var pistol : bool
 
 func _init(arr : Array):
 	title = arr[0]
@@ -19,13 +20,15 @@ func _init(arr : Array):
 	d = arr[4]
 	twoHands = arr[5]
 	melee = arr[6]
-	description = arr[7]
+	pistol = arr[7]
+	description = arr[8]
 
 func isTwoHander() -> bool:
 	return twoHands
-
 func isMelee() -> bool:
 	return melee
+func isPistol() -> bool:
+	return pistol
 
 #Getters
 func getTitle() -> String:
