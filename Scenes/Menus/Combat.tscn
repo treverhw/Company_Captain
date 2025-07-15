@@ -183,3 +183,13 @@ z_index = -5
 position = Vector2(576, 325)
 scale = Vector2(1.8037, 1.14444)
 texture = ExtResource("3_fqo47")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 586.0
+offset_top = 52.0
+offset_right = 667.0
+offset_bottom = 83.0
+text = "HP Check"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

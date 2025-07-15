@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bt3s83bbasgcr"]
 
-[ext_resource type="Script" path="res://Scripts/locational/settlement.gd" id="1_y8rnc"]
+[ext_resource type="Script" path="res://Scripts/locational/Settlement.gd" id="1_y8rnc"]
 [ext_resource type="Texture2D" uid="uid://bxm1r1mcs1ykb" path="res://Assets/locational/unowned.png" id="2_22kux"]
 
 [node name="Settlement" type="Control"]

@@ -1,6 +1,6 @@
 ## Title, Attacks, Strength, AP, Damage, Two Handed?, Melee?
 
-static var AstartesWeapons = {
+static var astartesWeapons = {
 	#Ranged
 	"Bolt Rifle" : 				["Bolt Rifle", 2, 4, -1, 1, true, false, false, "Standard weapon south of the rubicon."],
 	"Boltgun" : 				["Boltgun", 2, 4, 0, 1, true, false, false, "Standard weapon north of the rubicon."],
@@ -13,7 +13,7 @@ static var AstartesWeapons = {
 	"Close Combat Weapon" : 	["Close Combat Weapon", 3, 4, 0, 1, false, true, false, "Standard melee weapon."],
 }
 
-static var GuardWeapons = {
+static var guardWeapons = {
 	#Ranged
 	"Lasgun" :					["Lasgun", 2, 3, 0, 1, true, false, false, "'Anyone got a flashlight?'"],
 	"Laspistol" :				["Laspistol", 1, 3, 0, 1, false, true, true, "'No, a smaller one.'"],

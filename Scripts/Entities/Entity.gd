@@ -6,6 +6,7 @@ var rand : RandomNumberGenerator = RandomNumberGenerator.new()
 #Informational
 var title : String
 var faction: Faction
+var unit: Unit
 
 #Stats
 var ballisticSkill : int
@@ -23,14 +24,14 @@ func checkWounds() -> bool:
 
 func seatbelt() -> bool:
 	if wounds <= 0:
-		return false
-	return true
+		return true
+	return false
 
 func KILL():
 	queue_free()
 
 func findColumn() -> VBoxContainer:
-	return get_parent().get_parent()
+	return unit.get_parent()
 
 ## Setters
 func setTitle(val : String):

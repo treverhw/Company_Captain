@@ -12,13 +12,17 @@ func define(t : String, rC : int, f : Faction):
 	faction = f
 
 func validate():
-	if size() == 0: return false
+	if size() <= 0: return false
 	else: 			return true
+
+func assignModels():
+	for model in roster:
+		model.unit = self
 
 func size():
 	var counter: int = 0
 	for model in roster:
-		if model.seatbelt():
+		if !model.seatbelt():
 			counter += 1
 	return counter
 

@@ -63,9 +63,9 @@ func populate(group1: Array[Unit], group2: Array[Unit], Attacking: bool):
 	realFight()
 
 func endCheck() -> bool:
-	if friendlies.size() <= friendlyStart:
+	if friendlies.size() <= 0:
 		return false
-	if enemies.size() <= enemyStart:
+	if enemies.size() <= 0:
 		return false
 	return true
 
@@ -73,7 +73,11 @@ func targetContainer(curr: VBoxContainer, fac: Faction) -> VBoxContainer:
 	var closest: VBoxContainer = null
 	for VBox in get_node("ColumnContainer").get_children():
 		if VBox.get_children().size() > 1:
-			if VBox.get_child(1).faction != fac && (distance(VBox, curr) < distance(closest, curr) || closest == null):
+			if VBox.get_child(1).faction != fac:
+				closest = VBox
+			elif closest == null:
+				pass
+			elif VBox.get_child(1).faction != fac && distance(VBox, curr) < distance(closest, curr):
 				closest = VBox
 	return closest
 
@@ -86,22 +90,40 @@ func realFight():
 		queue.sort_custom(func(a,b): return a.getSpeed() > b.getSpeed())
 		
 		for model in queue:
-			await get_tree().create_timer(1).timeout
+			await get_tree().create_timer(.1).timeout
 			var currColumn = model.findColumn()
-			targetColumn = targetContainer(currColumn, model.faction)
+			#print(currColumn)
+			targetColumn = targetContainer(currColumn, model.unit.faction)
+			#print(targetColumn)
 			weapons = model.weapons(distance(currColumn, targetColumn))
 			
 			for weapon in weapons:
-				for attack in weapon.get_attacks():
-					var targetUnit: Unit = targetColumn.get_child(randi_range(1, targetColumn.get_children().size()))
-					var target: Entity = targetUnit.get_child(randi_range(0, targetUnit.get_children().size()))
+				for attack in weapon.getAttacks():
+					#print("Shot!")
+					var num = randi_range(1, targetColumn.get_children().size()-1)
+					var targetUnit: Unit = targetColumn.get_child(num)
+					#print(targetColumn.get_children())
+					#print(str(num) + " " + str(targetUnit))
+					#print("Shooter: " + str(model.unit.faction.title)  + " " + str(model))
+					var target: Entity = targetUnit.roster[randi_range(0, targetUnit.get_children().size()-1)]
+					#print("Target: " + str(target.unit.faction.title)  + " " + str(target))
+					#print(target)
 					if rolld6() >= model.getBallisticSkill():
+						#print("Hit!")
 						if wound(weapon, target, rolld6()):
-							if rolld6() < target.getSave():
+							#print("Wound!")
+							var save = rolld6()
+							#print(save)
+							#print(target.getSave())
+							if save < target.getSave():
 								target.wounds -= weapon.getDmg()
+								#print(str(target) + " Wounds: " + str(target.wounds))
 								if target.seatbelt():
 									fullRoster.erase(target)
-	
+									if !target.unit.validate():
+										target.unit.get_parent().remove_child(target.unit)
+									
+									
 	for model in (friendlies + enemies):
 		if model.checkWounds():
 			if model.getBattlescars() <= 0:
@@ -109,3 +131,8 @@ func realFight():
 	await get_tree().create_timer(1).timeout
 	for unit in friendlyRoster + enemyRoster:
 		unit.validate()
+
+
+func _on_button_pressed() -> void:
+	for model in fullRoster:
+		print(str(model) + str(model.unit.faction.title) + " Wounds: " + str(model.wounds))

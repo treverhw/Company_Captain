@@ -4,13 +4,14 @@ class_name Planet
 var settlements: Array[Settlement]
 
 func _ready() -> void:
-	var rand = RandomNumberGenerator.new()
+	generateTitle(Names.new().planetNames)
+	print(title)
 	for n in range(0, randi_range(20,20)):
 		var newSettlement = load("res://Scenes/Locational/Settlement.tscn").instantiate()
 		print("Loopin")
 		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250,250))
 		var counter = 0
-		while !validate_distance(newSettlement) and counter != 100:
+		while !validateDistance(newSettlement) and counter != 100:
 			counter +=1
 			newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250,250))
 		if counter != 100:
@@ -19,9 +20,9 @@ func _ready() -> void:
 		else:
 			break
 		
-	create_connections()
+	createConnections()
 
-func create_connections():
+func createConnections():
 	for n in settlements:
 		for m in settlements:
 			var distance: int = n.position.distance_to(m.position)
@@ -38,7 +39,7 @@ func create_connections():
 			settlements.erase(n)
 			n.queue_free()
 
-func sort_dict_by_values(dict: Dictionary) -> Dictionary:
+func sortDictByValues(dict: Dictionary) -> Dictionary:
 			var temp = {}
 			while !dict.is_empty():
 				var smallestKey = ""
@@ -51,7 +52,7 @@ func sort_dict_by_values(dict: Dictionary) -> Dictionary:
 				temp[smallestKey] = smallestNum
 			return temp
 
-func validate_distance(val: Settlement) -> bool:
+func validateDistance(val: Settlement) -> bool:
 	for n in settlements:
 		if val.position.distance_to(n.position) < 120 && n != val:
 			return false

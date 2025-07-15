@@ -31,11 +31,11 @@ func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, bw: int = 0
 	bonusToughness = bt
 	bonusSave = bS
 	
-	var names = Names.new().marinenames
+	var names = Names.new().marineNames
 	generateTitle(names)
 
-func weapons(distance: int) -> Array:
-	var weapons = [getMain(), getOff()]
+func weapons(distance: int) -> Array[Weapon]:
+	var weapons: Array[Weapon] = [getMain(), getOff()]
 	
 	match distance:
 		65: #Melee

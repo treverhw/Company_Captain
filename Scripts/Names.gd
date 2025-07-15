@@ -1,7 +1,7 @@
 extends Node
 class_name Names
 
-var marinenames = [
+var marineNames = [
 	'Ethan',
 	'Maria',
 	'Trever',
@@ -2304,7 +2304,7 @@ var marinenames = [
 	"Mordred",
 	"Ulf"]
 
-var planetnames = [
+var planetNames = [
 	"Accatran",
 	"Acteron",
 	"Addolorata",
@@ -2867,7 +2867,7 @@ var planetnames = [
 	"Zorastra",
 	"Zuerlais"]
 
-var shipnames = [
+var shipNames = [
 	"Magnificent of Glorious",
 	"Mortality Venom",
 	"Hero of Blazer",
