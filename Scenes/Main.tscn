@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cmsm54cloybk0"]
 
-[ext_resource type="Script" path="res://Scripts/Main.gd" id="1_c0oe7"]
+[ext_resource type="Script" uid="uid://di6vyailmkw1k" path="res://Scripts/Main.gd" id="1_c0oe7"]
 [ext_resource type="Texture2D" uid="uid://53123a0ts7hh" path="res://Assets/locational/SpaceBackground.png" id="2_0pm7d"]
 
 [node name="Main" type="Control"]
@@ -55,3 +55,11 @@ layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("2_0pm7d")
 stretch_mode = 3
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Combat"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

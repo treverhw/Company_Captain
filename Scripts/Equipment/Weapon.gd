@@ -13,6 +13,7 @@ var description : String
 var pistol : bool
 
 func _init(arr : Array):
+	name = arr[0]
 	title = arr[0]
 	a = arr[1]
 	s = arr[2]
@@ -33,21 +34,18 @@ func isPistol() -> bool:
 #Getters
 func getTitle() -> String:
 	return title
-
 func getAttacks() -> int:
 	return a
-
 func getBS() -> int:
 	return bs
-
 func getStrength() -> int:
 	return s
-
 func getAP() -> int:
 	return ap
-
 func getDmg() -> int:
 	return d
-
 func getDescription() -> String:
 	return description
+
+func _to_string() -> String:
+	return getTitle()

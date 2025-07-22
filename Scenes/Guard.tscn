@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://oy6pvmtm0asd"]
 
-[ext_resource type="Script" path="res://Scripts/Factions/Guard.gd" id="1_advyl"]
+[ext_resource type="Script" uid="uid://eyqkl5flgnk6" path="res://Scripts/Factions/Guard.gd" id="1_advyl"]
 
 [node name="Guard" type="Node"]
 script = ExtResource("1_advyl")

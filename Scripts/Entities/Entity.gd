@@ -7,6 +7,8 @@ var rand : RandomNumberGenerator = RandomNumberGenerator.new()
 var title : String
 var faction: Faction
 var unit: Unit
+var weapons: Array[Weapon]
+var xp: int
 
 #Stats
 var ballisticSkill : int
@@ -16,20 +18,18 @@ var battlescars : int
 var maxBattlescars : int
 var maxWounds : int
 
-func checkWounds() -> bool:
-	if wounds <= 0:
-		battlescars -= 1
-		return true
-	return false
-
+#Checks for wounds above 0
 func alive() -> bool:
 	if wounds <= 0:
 		return false
 	return true
 
+#Calls upon the faction to remove this model from any unit its in.
 func KILL():
+	print(self.to_string())
 	getFaction().removeEntity(self)
 
+#returns current combat line in combat
 func findColumn() -> VBoxContainer:
 	return unit.get_parent()
 

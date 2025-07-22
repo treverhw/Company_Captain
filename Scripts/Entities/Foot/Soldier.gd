@@ -19,6 +19,8 @@ func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, fac: Factio
 	armour = arm
 	main = wpn1
 	off = wpn2
+	weapons = [main, off]
+	faction = fac
 	maxWounds = arr[2] + armour.getWounds()
 	wounds = maxWounds
 	battlescars = arr[3]
@@ -31,19 +33,32 @@ func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, fac: Factio
 	var names = Names.new().marineNames
 	generateTitle(names)
 
+#creates an array of all weapons, then erases those weapons that aren't currently valid based on distance.
 func getActiveWeapons(distance: int) -> Array[Weapon]:
-	var weapons: Array[Weapon] = [getMain(), getOff()]
+	var ret: Array[Weapon]
+	for item in weapons:
+		ret.append(item)
 	
-	match distance:
-		65: #Melee
-			for item in weapons:
-				if !item.isMelee() && !item.isPistol():
-					weapons.erase(item)
-		_: #Else
-			for item in weapons:
-				if item.isMelee():
-					weapons.erase(item)
-	return weapons
+	if range(0,65).has(distance):
+		for item in ret:
+			if !item.isMelee() and !item.isPistol():
+				ret.erase(item)
+	elif range(66,130).has(distance):
+		for item in ret:
+			if item.isMelee():
+				ret.erase(item)
+	else: 
+		for item in ret:
+			if item.isMelee() or item.isPistol():
+				ret.erase(item)
+	for item in ret:
+		if item.isTwoHander():
+			ret = [item]
+	print(distance)
+	print(weapons)
+	print(ret)
+	return ret
+
 
 ## Setters
 func setUnit(val : Squad):
@@ -94,12 +109,11 @@ func getSave() -> int:
 
 
 ## Misc
-func printInfo():
-	print("Name: " + str(title) + 
-		"\nWounds: " + str(wounds) + 
-		"\nMax Wounds: " + str(maxWounds) + 
-		"\nBattle Scars: " + str(battlescars) + 
-		"\nMax Battle Scars: " + str(maxBattlescars) + 
-		"\nArmour: " + armour.title + 
-		"\nMain: " + main.title + 
-		"\nOff: " + off.title + "\n")
+func _to_string() -> String:
+	var retstr = ("Name: " + str(getTitle()) + 
+		"\nWounds: " + str(getWounds()) + "/" + str(getMaxWounds()) + 
+		"\nBattle Scars: " + str(getBattlescars()) + "/" + str(getMaxBattlescars()) + 
+		"\nArmour: " + getArmour().getTitle() + 
+		"\nMain: " + getMain().getTitle() + 
+		"\nOff: " + getOff().getTitle() + "\n")
+	return retstr

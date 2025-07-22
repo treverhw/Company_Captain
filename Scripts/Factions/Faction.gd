@@ -41,8 +41,8 @@ func getEntities() -> Array[Entity]:
 	return arr
 
 func _to_string() -> String:
-	var str: String = getTitle()
+	var ret: String = getTitle()
 	
 	for item in roster:
-		str += "\n" + str(item)
-	return str
+		ret += "\n" + str(item)
+	return ret

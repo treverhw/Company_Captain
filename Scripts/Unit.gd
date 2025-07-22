@@ -63,8 +63,8 @@ func getLine() -> String:
 	return str(line)
 
 func _to_string() -> String:
-	var str: String = getTitle() + " - " + str(getFaction().getTitle())
+	var ret: String = getTitle() + " - " + str(getFaction().getTitle())
 	
 	for item in roster:
-		str += "\n" + str(item)
-	return str
+		ret += "\n" + str(item)
+	return ret

@@ -23,10 +23,6 @@ func _ready() -> void:
 func play():
 	guard.start()
 	chaos.start()
-	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
-	add_child(combat)
-	combat.global_position = Vector2((1920/2)-(1170/2), (1080/2)-(780/2))
-	combat.populate(guard.roster, chaos.roster, true)
 	#temp = get_child(4)
 	#print(temp)
 	#temp.settlements[1].roster.append(guard.roster[0])
@@ -37,3 +33,14 @@ func play():
 	#temp.settlements[4].team = "Chaos"
 	#print("\nLocation 1 Roster: \n" + str(temp.settlements[1].roster))
 	#print("Location 2 Roster: \n" + str(temp.settlements[4].roster))
+
+
+func _on_button_pressed() -> void:
+	guard.roster.clear()
+	guard.start()
+	chaos.roster.clear()
+	chaos.start()
+	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
+	add_child(combat)
+	combat.global_position = Vector2((1920/2)-(1170/2), (1080/2)-(780/2))
+	combat.populate(guard.roster, chaos.roster, true, true)

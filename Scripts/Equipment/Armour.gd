@@ -9,6 +9,7 @@ var wounds : int
 var description : String
 
 func _init(arr : Array):
+	name = arr[0]
 	title = arr[0]
 	speed = arr[1]
 	toughness = arr[2]
@@ -19,18 +20,16 @@ func _init(arr : Array):
 #Getters
 func getTitle() -> String:
 	return title
-
 func getSpeed() -> int:
 	return speed
-
 func getToughness() -> int:
 	return toughness
-
 func getSave() -> int:
 	return save
-
 func getWounds() -> int:
 	return wounds
-
 func getDescription() -> String:
 	return description
+
+func _to_string() -> String:
+	return getTitle()

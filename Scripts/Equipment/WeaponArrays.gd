@@ -1,7 +1,7 @@
-## Title, Attacks, Strength, AP, Damage, Two Handed?, Melee?
+## Title, Attacks, Strength, AP, Damage, Two Handed?, Melee?, Pistol?
 
 static var astartesWeapons = {
-	#Ranged
+	#Ranged                     Title        att str ap dmg twoH  melee  pistol  desc
 	"Bolt Rifle" : 				["Bolt Rifle", 2, 4, -1, 1, true, false, false, "Standard weapon south of the rubicon."],
 	"Boltgun" : 				["Boltgun", 2, 4, 0, 1, true, false, false, "Standard weapon north of the rubicon."],
 	"Bolt Pistol" : 			["Bolt Pistol", 1, 4, 0, 1, false, true, true, "Wrist Snapper 9000."],
@@ -14,7 +14,7 @@ static var astartesWeapons = {
 }
 
 static var guardWeapons = {
-	#Ranged
+	#Ranged                     Title      att str ap dmg twoH  melee  pistol  desc
 	"Lasgun" :					["Lasgun", 2, 3, 0, 1, true, false, false, "'Anyone got a flashlight?'"],
 	"Laspistol" :				["Laspistol", 1, 3, 0, 1, false, true, true, "'No, a smaller one.'"],
 	#Melee
