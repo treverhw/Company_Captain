@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://camopmcfhyyr3"]
+
+[ext_resource type="Script" path="res://Scripts/CombatLine.gd" id="1_kq8qh"]
+
+[node name="CombatLine" type="VBoxContainer"]
+offset_right = 64.0
+offset_bottom = 572.0
+theme_override_constants/separation = 1
+alignment = 1
+script = ExtResource("1_kq8qh")

@@ -1,9 +1,6 @@
 extends Entity
 class_name Soldier
 
-#Informational
-var squad : Squad
-
 #Equipment
 var armour : Armour
 var main : Weapon
@@ -16,7 +13,7 @@ var bonusToughness : int = 0
 var bonusSave : int = 0
 
 #Constructor that is sent an information array to build a basic stat profile.
-func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, bw: int = 0, bs: int = 0, bt: int = 0, bS: int = 0):
+func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, fac: Faction, bw: int = 0, bs: int = 0, bt: int = 0, bS: int = 0):
 	ballisticSkill = arr[0]
 	weaponSkill = arr[1]
 	armour = arm
@@ -34,7 +31,7 @@ func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, bw: int = 0
 	var names = Names.new().marineNames
 	generateTitle(names)
 
-func weapons(distance: int) -> Array[Weapon]:
+func getActiveWeapons(distance: int) -> Array[Weapon]:
 	var weapons: Array[Weapon] = [getMain(), getOff()]
 	
 	match distance:
@@ -49,9 +46,9 @@ func weapons(distance: int) -> Array[Weapon]:
 	return weapons
 
 ## Setters
-func setSquad(val : Squad):
+func setUnit(val : Squad):
 	if val.addToRoster(self):
-		squad = val
+		unit = val
 	else:
 		print("Error: Unable to join Unit")
 
@@ -79,8 +76,6 @@ func setBonuses(a: int = bonusWounds, b: int = bonusSpeed, c: int = bonusToughne
 
 
 ## Getters
-func getSquad() -> Squad:
-	return squad
 func getArmour() -> Armour:
 	return armour
 func getMain() -> Weapon:

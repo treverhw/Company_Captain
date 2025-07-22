@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://b3o7qfbn8pdab"]
+[gd_scene load_steps=4 format=3 uid="uid://b3o7qfbn8pdab"]
 
 [ext_resource type="Script" path="res://Scripts/Menus/Combat.gd" id="1_ypynm"]
 [ext_resource type="Texture2D" uid="uid://ds4iduhxx8efx" path="res://Assets/ui/CombatBack.png" id="2_cihwv"]
-[ext_resource type="Script" path="res://Scripts/CombatArmy.gd" id="3_370nc"]
 [ext_resource type="PackedScene" uid="uid://camopmcfhyyr3" path="res://Scenes/CombatLine.tscn" id="3_dbyqq"]
 
 [node name="Combat" type="Control"]
@@ -39,36 +38,28 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -1170.0
 offset_top = -390.0
-offset_right = -775.0
+offset_right = -766.0
 offset_bottom = 390.0
 grow_horizontal = 0
 grow_vertical = 2
-theme_override_constants/separation = 1
 alignment = 2
-script = ExtResource("3_370nc")
 
 [node name="6" parent="Attacker" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="5" parent="Attacker" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="4" parent="Attacker" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="3" parent="Attacker" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="2" parent="Attacker" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="1" parent="Attacker" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="Defender" type="HBoxContainer" parent="."]
@@ -76,36 +67,28 @@ layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 775.0
+offset_left = 764.0
 offset_top = -390.0
-offset_right = 1170.0
+offset_right = 1168.0
 offset_bottom = 390.0
 grow_vertical = 2
-theme_override_constants/separation = 1
-script = ExtResource("3_370nc")
 
 [node name="1" parent="Defender" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="2" parent="Defender" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="3" parent="Defender" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="4" parent="Defender" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="5" parent="Defender" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [node name="6" parent="Defender" instance=ExtResource("3_dbyqq")]
-custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

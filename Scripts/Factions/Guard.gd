@@ -14,17 +14,13 @@ func start():
 	spawnSquad()
 	spawnSquad()
 	spawnSquad()
-	spawnSquad()
-	spawnSquad()
-	spawnSquad()
-	spawnSquad()
 
 func customGuard(val1 : String, val2 : String, val3 : String) -> Entity:
 	var arm : Armour = Armour.new(armour.guardArmour[val1])
 	var wpn1 : Weapon = Weapon.new(weapons.guardWeapons[val2])
 	var wpn2 : Weapon = Weapon.new(weapons.guardWeapons[val3])
 	var guy = load("res://Scenes/Entities/Soldier.tscn").instantiate()
-	guy.define(soldiers.soldiers["Guardsman"], arm, wpn1, wpn2)
+	guy.define(soldiers.soldiers["Guardsman"], arm, wpn1, wpn2, self)
 	return guy
 
 func spawnBase() -> Entity:
@@ -32,7 +28,7 @@ func spawnBase() -> Entity:
 	var wpn1 : Weapon = Weapon.new(weapons.guardWeapons["Lasgun"])
 	var wpn2 : Weapon = Weapon.new(weapons.guardWeapons["Close Combat Weapon"])
 	var guy = load("res://Scenes/Entities/Soldier.tscn").instantiate()
-	guy.define(soldiers.soldiers["Guardsman"], arm, wpn1, wpn2)
+	guy.define(soldiers.soldiers["Guardsman"], arm, wpn1, wpn2, self)
 	return guy
 
 func spawnSquad() -> Squad:

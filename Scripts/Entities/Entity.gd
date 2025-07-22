@@ -22,13 +22,13 @@ func checkWounds() -> bool:
 		return true
 	return false
 
-func seatbelt() -> bool:
+func alive() -> bool:
 	if wounds <= 0:
-		return true
-	return false
+		return false
+	return true
 
 func KILL():
-	queue_free()
+	getFaction().removeEntity(self)
 
 func findColumn() -> VBoxContainer:
 	return unit.get_parent()
@@ -61,7 +61,9 @@ func getTitle() -> String:
 func getFaction() -> Faction:
 	return faction
 func getTeam() -> String:
-	return faction.getTeam()
+	return getFaction().getTeam()
+func getUnit() -> Unit:
+	return unit
 
 func getBallisticSkill() -> int:
 	return ballisticSkill
@@ -75,6 +77,8 @@ func getBattlescars() -> int:
 	return battlescars
 func getMaxBattlescars() -> int:
 	return maxBattlescars
+func getActiveWeapons(distance: int) -> Array[Weapon]:
+	return [null]
 
 func _to_string() -> String:
 	return getTitle()

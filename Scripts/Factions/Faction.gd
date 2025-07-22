@@ -9,6 +9,13 @@ var title : String
 var team : String
 var roster : Array[Unit] = []
 
+func removeEntity(model: Entity):
+	var unit = model.unit
+	unit.roster.erase(model)
+	if !unit.validate():
+		roster.erase(unit)
+	model.queue_free()
+
 func setTitle(t : String):
 	title = t
 	

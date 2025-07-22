@@ -14,6 +14,7 @@ func _init(arr : Array):
 	toughness = arr[2]
 	save = arr[3]
 	wounds = arr[4]
+	description = arr[5]
 
 #Getters
 func getTitle() -> String:
