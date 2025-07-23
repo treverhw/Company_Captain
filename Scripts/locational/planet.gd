@@ -2,13 +2,13 @@ extends Location
 class_name Planet
 
 var settlements: Array[Settlement]
+var exclude: Array[Settlement] = []
 
 func _ready() -> void:
 	generateTitle(Names.new().planetNames)
 	print(title)
 	for n in range(0, randi_range(20,20)):
 		var newSettlement = load("res://Scenes/Locational/Settlement.tscn").instantiate()
-		print("Loopin")
 		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250,250))
 		var counter = 0
 		while !validateDistance(newSettlement) and counter != 100:
@@ -19,8 +19,34 @@ func _ready() -> void:
 			settlements.append(newSettlement)
 		else:
 			break
-		
-	createConnections()
+	
+	await createConnections()
+	var temp: Array[Settlement]
+	var temp2: Array[Settlement]
+	for item in settlements:
+		temp.append(item)
+	temp2.append(temp.pop_front())
+	for x in range(0,20):
+		for item in temp2:
+			for val in item.getConnections():
+				if val in temp:
+					temp.erase(val)
+					temp2.append(val)
+	if temp.size() < temp2.size():
+		for node in temp:
+			if node.line != null:
+				node.line.queue_free()
+			settlements.erase(node)
+			node.queue_free()
+	else:
+		for node in temp2:
+			if node.line != null:
+				node.line.queue_free()
+			settlements.erase(node)
+			node.queue_free()
+
+func turn():
+	settlements.front().turn
 
 func createConnections():
 	for n in settlements:
@@ -34,10 +60,12 @@ func createConnections():
 				newLine.add_point(n.position)
 				newLine.add_point(m.position)
 				add_child(newLine)
+				n.line = newLine
 	for n in settlements:
 		if n.getConnections().size() <= 0:
 			settlements.erase(n)
 			n.queue_free()
+	return
 
 func sortDictByValues(dict: Dictionary) -> Dictionary:
 			var temp = {}
