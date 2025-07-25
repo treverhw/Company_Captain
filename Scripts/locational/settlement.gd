@@ -2,19 +2,19 @@ extends Location
 class_name Settlement
 
 var connections: Dictionary = {}
-var newCounter: int = 0
+var type: String
+var newUnitCounter: int = 0
 var line
 
 func getConnections() -> Dictionary:
 	return connections
 
 func _ready() -> void:
-	get_parent().get_node("Button").button_down.connect(turn)
+	#get_parent().get_node("Button").button_down.connect(turn)
 	generateTitle(Names.new().planetNames)
 	get_node("Name").text = name
-	
 
-func shortestPath(settlements: Array[Settlement], source: Settlement = self):
+func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> Array[Settlement]:
 	var dist = {}
 	var prev = {}
 	var queue: Array[Settlement]
@@ -43,7 +43,7 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self):
 				prev[settlement] = closestSettlement
 	
 	#find nearest unowned node
-	var path = []
+	var path: Array[Settlement]= []
 	var target: Settlement
 	var distance: int = 1000
 	for settlement in settlements:
@@ -53,25 +53,52 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self):
 	while target != null:
 		path.push_front(target)
 		target = prev[target]
+	print(dist)
+	print(prev)
 	print(path)
-	return 
+	return path
+
+func spawn() -> Unit:
+	var unit = roster.front().getFaction().spawnLocational(self)
+	return unit
 
 func turn():
-	shortestPath(get_parent().settlements)
-	if roster.size() > 2:
-		pass
+	if team != "Unowned":
+		newUnitCounter += 1
+	if newUnitCounter >= 5:
+		roster.append(await spawn())
+		newUnitCounter = 0
+	if roster.size() > 2 and get_parent().compliance == false:
+		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements)
+		var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
+		get_parent().get_node("Convoys").add_child(convoy)
+		convoy.global_position = self.global_position
+		convoy.setRoster(roster)
+		convoy.setPath(tempPath)
+	get_node("Label").text = str(roster.size())
 
-func change(array: Array):
+func invade(arr: Array[Unit]):
+	pass
+
+func change(array: Array[Unit]):
 	team = array[0].getTeam()
 	roster = array
 
-func _process(delta: float) -> void:
+func changeIcon():
 	get_node("Label").text = str(roster.size())
 	if !roster.is_empty():
 		match team:
 			"Imperium":
 				get_node("TextureRect").set_texture(load("res://Assets/locational/Imperium.png"))
 			"Chaos":
+				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
+			"Aeldari":
+				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
+			"Ork":
+				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
+			"Tyranid":
+				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
+			"Tau":
 				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
 
 func _to_string() -> String:

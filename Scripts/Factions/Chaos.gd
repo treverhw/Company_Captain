@@ -7,9 +7,6 @@ func _init():
 
 func start():
 	spawnScoutSquad()
-	spawnScoutSquad()
-	spawnScoutSquad()
-	spawnScoutSquad()
 
 func customAstartes(val1 : String, val2 : String, val3 : String) -> Entity:
 	var arm : Armour = Armour.new(armour.astartesArmour[val1])
@@ -42,3 +39,6 @@ func spawnHurtSquad() -> Squad:
 	roster.append(newSquad)
 	newSquad.assignModels()
 	return newSquad
+
+func spawnBase() -> Unit:
+	return spawnScoutSquad()

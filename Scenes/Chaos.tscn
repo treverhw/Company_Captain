@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://fngdp1l2g2wj"]
-
-[ext_resource type="Script" uid="uid://0fgg1ftw7yb5" path="res://Scripts/Factions/Chaos.gd" id="1_xorna"]
-
-[node name="Chaos" type="Node"]
-script = ExtResource("1_xorna")

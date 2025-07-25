@@ -2,7 +2,7 @@ extends Node
 class_name Location
 
 var title: String
-var roster: Array
+var roster: Array[Unit]
 var team: String = "Unowned"
 
 func distance(Node1: Node, Node2: Node) -> float:

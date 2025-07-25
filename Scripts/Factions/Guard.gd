@@ -10,10 +10,6 @@ func start():
 	spawnSquad()
 	spawnSquad()
 	spawnSquad()
-	spawnSquad()
-	spawnSquad()
-	spawnSquad()
-	spawnSquad()
 
 func customGuard(val1 : String, val2 : String, val3 : String) -> Entity:
 	var arm : Armour = Armour.new(armour.guardArmour[val1])
@@ -23,7 +19,7 @@ func customGuard(val1 : String, val2 : String, val3 : String) -> Entity:
 	guy.define(soldiers.soldiers["Guardsman"], arm, wpn1, wpn2, self)
 	return guy
 
-func spawnBase() -> Entity:
+func spawnModel() -> Entity:
 	var arm : Armour = Armour.new(armour.guardArmour["FlakShit"])
 	var wpn1 : Weapon = Weapon.new(weapons.guardWeapons["Lasgun"])
 	var wpn2 : Weapon = Weapon.new(weapons.guardWeapons["Close Combat Weapon"])
@@ -34,7 +30,10 @@ func spawnBase() -> Entity:
 func spawnSquad() -> Squad:
 	var newSquad : Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
 	newSquad.define(str(roster.size()), 5, self)
-	newSquad.roster = [spawnBase(), spawnBase(), spawnBase(), spawnBase(), spawnBase()]
+	newSquad.roster = [spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel()]
 	roster.append(newSquad)
 	newSquad.assignModels()
 	return newSquad
+
+func spawnBase() -> Unit:
+	return spawnSquad()

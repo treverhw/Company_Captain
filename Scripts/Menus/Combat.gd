@@ -1,15 +1,16 @@
 extends Control
 
-var friendlyRoster: Array[Unit] = []
-var friendlies: Array[Entity] = []
+var attackerRoster: Array[Unit] = []
+var attackers: Array[Entity] = []
 
-var enemyRoster: Array[Unit] = []
-var enemies: Array[Entity] = []
+var defenseRoster: Array[Unit] = []
+var defenders: Array[Entity] = []
 
 var fullRoster: Array[Entity] = []
 var attacker: String
 var defender: String
 var auto: bool
+var winners: Array[Unit]
 
 func rolld6() -> int:
 	return randi_range(1,6)
@@ -30,52 +31,52 @@ func wound(s : Weapon, t : Entity, roll : int):
 func distance(Node1: Node, Node2: Node) -> float:
 	return Node1.global_position.distance_to(Node2.global_position)
 
-func populate(group1: Array[Unit], group2: Array[Unit], Attacking: bool, automatic: bool):
+func populate(attack: Array[Unit], defense: Array[Unit], Attacking: bool, automatic: bool) -> Array[Unit]:
 	
 	if automatic: 
 		self.visible = false
 		auto = true
 	
-	friendlyRoster = group1
-	enemyRoster = group2
-	attacker = friendlyRoster.front().getTeam()
-	defender = enemyRoster.front().getTeam()
+	attackerRoster = attack
+	defenseRoster = defense
+	attacker = attackerRoster.front().getTeam()
+	defender = defenseRoster.front().getTeam()
 	
 	var line = load("res://Scenes/CombatLine.tscn")
 
-	for unit in friendlyRoster:
+	for unit in attackerRoster:
 		get_node("Attacker/" + unit.getLine()).add_child(unit)
 		for model in unit.roster:
-			friendlies.append(model)
+			attackers.append(model)
 			fullRoster.append(model)
-	for unit in enemyRoster:
+	for unit in defenseRoster:
 		get_node("Defender/" + unit.getLine()).add_child(unit)
 		for model in unit.roster:
-			enemies.append(model)
+			defenders.append(model)
 			fullRoster.append(model)
 	
 	
-	get_node("Attacker").team = friendlyRoster.front().getTeam()
-	get_node("Defender").team = enemyRoster.front().getTeam()
+	get_node("Attacker").team = attackerRoster.front().getTeam()
+	get_node("Defender").team = defenseRoster.front().getTeam()
 	
-	realFight()
+	return await realFight()
 
 func targetColumn(model: Entity) -> VBoxContainer:
-	var friend: HBoxContainer = model.getUnit().get_parent().get_parent()
-	var enemy: HBoxContainer
-	match friend.name:
+	var friendlyArmy: HBoxContainer = model.getUnit().get_parent().get_parent()
+	var enemyArmy: HBoxContainer
+	match friendlyArmy.name:
 		"Attacker":
-			enemy = get_node("Defender")
+			enemyArmy = get_node("Defender")
 		"Defender":
-			enemy = get_node("Attacker")
+			enemyArmy = get_node("Attacker")
 	var counter = 0
-	var curr = enemy.get_child(counter)
+	var curr = enemyArmy.get_child(counter)
 	while (curr.get_children().size() <= 0):
 		counter += 1
-		curr = enemy.get_child(counter)
+		curr = enemyArmy.get_child(counter)
 	return curr
 
-func realFight():
+func realFight() -> Array[Unit]:
 	var targetColumn: VBoxContainer
 	var weapons: Array[Weapon]
 	
@@ -128,35 +129,38 @@ func realFight():
 										target.unit.get_parent().remove_child(target.unit)
 										#check for one army or the other winning.
 										if await endCheck():
-											return
+											return winners
 		
 		#Move the attacking army forward one line's length.
 		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
 			get_node("Attacker").global_position.x += 65
+	return winners
 
 func endCheck() -> bool:
-	var attackers: int = 0
-	var defenders: int = 0
+	var a: int = 0
+	var b: int = 0
 	for node in get_node("Attacker").get_children():
 		for unit in node.get_children():
-			attackers+=1
+			a+=1
 	for node in get_node("Defender").get_children():
 		for unit in node.get_children():
-			defenders+=1
-	if attackers == 0:
+			b+=1
+	if a == 0:
 		print("Defenders win!")
 		await cleanup()
 		self.queue_free()
+		winners = defenseRoster
 		return true
-	if defenders == 0:
+	if b == 0:
 		print("Attackers win!")
 		await cleanup()
 		self.queue_free()
+		winners = attackerRoster
 		return true
 	return false
 
 func cleanup() -> bool:
-	for model in (friendlies + enemies):
+	for model in (attackers + defenders):
 		if model.getWounds() <= 0:
 			model.battlescars += 1
 			if model.getBattlescars() <= 0:

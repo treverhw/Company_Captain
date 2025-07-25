@@ -3,6 +3,7 @@ class_name Planet
 
 var settlements: Array[Settlement]
 var exclude: Array[Settlement] = []
+var compliance: bool = false
 
 func _ready() -> void:
 	generateTitle(Names.new().planetNames)
@@ -45,8 +46,27 @@ func _ready() -> void:
 			settlements.erase(node)
 			node.queue_free()
 
+func complaince():
+		var teams: Array[String]
+		for settlement in settlements:
+			if !teams.has(settlement.team):
+				teams.append(settlement.team)
+		if teams.size() > 1:
+			compliance = false
+		else:
+			compliance = true
+
+var test: bool = false
 func turn():
-	settlements.front().turn
+	test = !test
+	while test == true:
+		complaince()
+		await get_tree().create_timer(.5).timeout
+		for settlement in settlements:
+			settlement.turn()
+		for convoy in get_node("Convoys").get_children():
+			print(convoy)
+			convoy.move()
 
 func createConnections():
 	for n in settlements:
@@ -85,3 +105,7 @@ func validateDistance(val: Settlement) -> bool:
 		if val.position.distance_to(n.position) < 120 && n != val:
 			return false
 	return true
+
+
+func _on_button_pressed() -> void:
+	turn()

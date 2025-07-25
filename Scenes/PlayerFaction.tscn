@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://csycqpibx73ix"]
-
-[ext_resource type="Script" uid="uid://cejnsu3vmbaeb" path="res://Scripts/Factions/PlayerFaction.gd" id="1_vu453"]
-
-[node name="PlayerFaction" type="Node"]
-script = ExtResource("1_vu453")

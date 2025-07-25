@@ -16,6 +16,13 @@ func removeEntity(model: Entity):
 		roster.erase(unit)
 	model.queue_free()
 
+func spawnLocational(location: Location):
+	var unit = spawnBase()
+	return unit
+
+func spawnBase() -> Unit:
+	return null
+
 func setTitle(t : String):
 	title = t
 	

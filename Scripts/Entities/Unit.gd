@@ -6,6 +6,7 @@ var roster : Array[Node] = []
 var rosterCap : int = 5
 var faction : Faction
 var line: int = 1
+var location: Location
 
 func define(t : String, rC : int, f : Faction):
 	title = t
@@ -61,6 +62,9 @@ func getTeam() -> String:
 
 func getLine() -> String:
 	return str(line)
+
+func getLocation() -> Location:
+	return location
 
 func _to_string() -> String:
 	var ret: String = getTitle() + " - " + str(getFaction().getTitle())

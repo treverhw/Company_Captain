@@ -64,6 +64,8 @@ func getTeam() -> String:
 	return getFaction().getTeam()
 func getUnit() -> Unit:
 	return unit
+func getLocation() -> Location:
+	return getUnit().getLocation()
 
 func getBallisticSkill() -> int:
 	return ballisticSkill
