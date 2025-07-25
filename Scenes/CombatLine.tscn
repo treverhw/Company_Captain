@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://camopmcfhyyr3"]
 
-[ext_resource type="Script" uid="uid://dyk5kxo0u3rlu" path="res://Scripts/CombatLine.gd" id="1_kq8qh"]
+[ext_resource type="Script" uid="uid://dyk5kxo0u3rlu" path="res://Scripts/Menus/CombatLine.gd" id="1_kq8qh"]
 
 [node name="CombatLine" type="VBoxContainer"]
 offset_right = 64.0

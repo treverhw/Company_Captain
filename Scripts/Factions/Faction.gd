@@ -8,12 +8,17 @@ const soldiers = preload("res://Scripts/Entities/Foot/SoldierArrays.gd")
 var title : String
 var team : String
 var roster : Array[Unit] = []
+var id : int
 
 func removeEntity(model: Entity):
 	var unit = model.unit
+	print(str(name) + " Removing Model: " + str(model.name))
 	unit.roster.erase(model)
 	if !unit.validate():
+		print(str(name) + " Removing Unit: " + str(unit.name))
+		unit.getLocation().getRoster().erase(unit)
 		roster.erase(unit)
+		unit.queue_free()
 	model.queue_free()
 
 func spawnLocational(location: Location):

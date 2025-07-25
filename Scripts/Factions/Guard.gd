@@ -4,12 +4,11 @@ class_name Guard
 func _init():
 	title = "Astra Militarum"
 	team = "Imperium"
+	id = 1
 
-func start():
-	spawnSquad()
-	spawnSquad()
-	spawnSquad()
-	spawnSquad()
+func start() -> Array[Unit]:
+	var arr: Array[Unit] = [spawnBase(),spawnBase(),spawnBase(),spawnBase()]
+	return arr
 
 func customGuard(val1 : String, val2 : String, val3 : String) -> Entity:
 	var arm : Armour = Armour.new(armour.guardArmour[val1])

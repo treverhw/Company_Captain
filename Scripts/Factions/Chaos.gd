@@ -4,9 +4,10 @@ class_name Chaos
 func _init():
 	title = "Death Guard"
 	team = "Chaos"
-
-func start():
-	spawnScoutSquad()
+	id = 2
+func start() -> Array[Unit]:
+	var arr: Array[Unit] = [spawnBase(), spawnBase()]
+	return arr
 
 func customAstartes(val1 : String, val2 : String, val3 : String) -> Entity:
 	var arm : Armour = Armour.new(armour.astartesArmour[val1])

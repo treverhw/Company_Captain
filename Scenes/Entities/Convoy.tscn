@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dj7pbty7tmqs7"]
 
-[ext_resource type="Script" uid="uid://b6thddtrrug62" path="res://Scripts/locational/Convoy.gd" id="1_qw2e6"]
+[ext_resource type="Script" uid="uid://b6thddtrrug62" path="res://Scripts/Entities/Convoy.gd" id="1_qw2e6"]
 [ext_resource type="Texture2D" uid="uid://c6kjntg0d4sp7" path="res://Assets/ship.png" id="2_brc3v"]
 
 [node name="Convoy" type="Node2D"]

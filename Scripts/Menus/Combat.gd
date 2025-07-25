@@ -3,7 +3,7 @@ extends Control
 var attackerRoster: Array[Unit] = []
 var attackers: Array[Entity] = []
 
-var defenseRoster: Array[Unit] = []
+var defenderRoster: Array[Unit] = []
 var defenders: Array[Entity] = []
 
 var fullRoster: Array[Entity] = []
@@ -11,6 +11,9 @@ var attacker: String
 var defender: String
 var auto: bool
 var winners: Array[Unit]
+
+func _ready() -> void:
+	global_position = Vector2((1920/2)-(1170/2), (1080/2)-(780/2))
 
 func rolld6() -> int:
 	return randi_range(1,6)
@@ -31,16 +34,17 @@ func wound(s : Weapon, t : Entity, roll : int):
 func distance(Node1: Node, Node2: Node) -> float:
 	return Node1.global_position.distance_to(Node2.global_position)
 
-func populate(attack: Array[Unit], defense: Array[Unit], Attacking: bool, automatic: bool) -> Array[Unit]:
+func populate(attack: Array[Unit], defense: Array[Unit]) -> Array[Unit]:
 	
-	if automatic: 
+	if attack.front().getFaction().id != 0 and defense.front().getFaction().id != 0 :
+		print("Fought Automatically")
 		self.visible = false
 		auto = true
 	
 	attackerRoster = attack
-	defenseRoster = defense
+	defenderRoster = defense
 	attacker = attackerRoster.front().getTeam()
-	defender = defenseRoster.front().getTeam()
+	defender = defenderRoster.front().getTeam()
 	
 	var line = load("res://Scenes/CombatLine.tscn")
 
@@ -49,7 +53,7 @@ func populate(attack: Array[Unit], defense: Array[Unit], Attacking: bool, automa
 		for model in unit.roster:
 			attackers.append(model)
 			fullRoster.append(model)
-	for unit in defenseRoster:
+	for unit in defenderRoster:
 		get_node("Defender/" + unit.getLine()).add_child(unit)
 		for model in unit.roster:
 			defenders.append(model)
@@ -57,7 +61,7 @@ func populate(attack: Array[Unit], defense: Array[Unit], Attacking: bool, automa
 	
 	
 	get_node("Attacker").team = attackerRoster.front().getTeam()
-	get_node("Defender").team = defenseRoster.front().getTeam()
+	get_node("Defender").team = defenderRoster.front().getTeam()
 	
 	return await realFight()
 
@@ -70,6 +74,8 @@ func targetColumn(model: Entity) -> VBoxContainer:
 		"Defender":
 			enemyArmy = get_node("Attacker")
 	var counter = 0
+	#print(friendlyArmy)
+	#print(enemyArmy)
 	var curr = enemyArmy.get_child(counter)
 	while (curr.get_children().size() <= 0):
 		counter += 1
@@ -93,12 +99,13 @@ func realFight() -> Array[Unit]:
 		
 		#For model in the whole roster
 		for model in queue:
+			print("Shooter: " + str(model.name))
 			
 			#Finds the enemy frontline
 			targetColumn = targetColumn(model)
 			#Sets active weapons based on distance
 			weapons = model.getActiveWeapons(distance(model.getUnit().get_parent(), targetColumn))
-			print("At distance [" + str(distance(model.getUnit().get_parent(), targetColumn)) + "]: " + str(weapons))
+			#print("At distance [" + str(distance(model.getUnit().get_parent(), targetColumn)) + "]: " + str(weapons))
 			for weapon in weapons:
 				for attack in weapon.getAttacks():
 					
@@ -125,15 +132,22 @@ func realFight() -> Array[Unit]:
 									fullRoster.erase(target)
 									model.xp += 1
 									#If the models unit is now empty, remove the unit from the battle.
+									print("Before:")
+									print(get_node("Attacker"))
+									print(get_node("Defender"))
 									if !target.unit.validate():
 										target.unit.get_parent().remove_child(target.unit)
 										#check for one army or the other winning.
+										print("After:")
+										print(get_node("Attacker"))
+										print(get_node("Defender"))
 										if await endCheck():
 											return winners
 		
 		#Move the attacking army forward one line's length.
 		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
 			get_node("Attacker").global_position.x += 65
+	queue_free()
 	return winners
 
 func endCheck() -> bool:
@@ -148,23 +162,24 @@ func endCheck() -> bool:
 	if a == 0:
 		print("Defenders win!")
 		await cleanup()
-		self.queue_free()
-		winners = defenseRoster
+		winners = defenderRoster
 		return true
 	if b == 0:
 		print("Attackers win!")
 		await cleanup()
-		self.queue_free()
 		winners = attackerRoster
 		return true
+	print("Attackers Left: " + str(a))
+	print("Defenders Left: " + str(b))
 	return false
 
 func cleanup() -> bool:
 	for model in (attackers + defenders):
 		if model.getWounds() <= 0:
 			model.battlescars += 1
-			if model.getBattlescars() <= 0:
+			if model.getBattlescars() >= model.getMaxBattlescars():
 				model.KILL()
+	print(attackerRoster + defenderRoster)
 	return true
 
 func _on_button_pressed() -> void:

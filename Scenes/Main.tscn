@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://cmsm54cloybk0"]
+[gd_scene load_steps=7 format=3 uid="uid://cmsm54cloybk0"]
 
 [ext_resource type="Script" uid="uid://di6vyailmkw1k" path="res://Scripts/Main.gd" id="1_c0oe7"]
 [ext_resource type="Texture2D" uid="uid://53123a0ts7hh" path="res://Assets/locational/SpaceBackground.png" id="2_0pm7d"]
+[ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="3_kln2b"]
+[ext_resource type="PackedScene" uid="uid://fngdp1l2g2wj" path="res://Scenes/Factions/Chaos.tscn" id="4_v1gob"]
+[ext_resource type="PackedScene" uid="uid://oy6pvmtm0asd" path="res://Scenes/Factions/Guard.tscn" id="5_jw32o"]
+[ext_resource type="PackedScene" uid="uid://csycqpibx73ix" path="res://Scenes/Factions/PlayerFaction.tscn" id="6_50glp"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -56,10 +60,54 @@ mouse_filter = 2
 texture = ExtResource("2_0pm7d")
 stretch_mode = 3
 
-[node name="Button" type="Button" parent="."]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
-text = "Combat"
+[node name="BottomBarBack" type="Sprite2D" parent="."]
+position = Vector2(951.5, 1298)
+scale = Vector2(3.79444, 1)
+texture = ExtResource("3_kln2b")
 
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[node name="TopBarBack" type="Sprite2D" parent="."]
+position = Vector2(1383, -227)
+scale = Vector2(14.3978, 1)
+texture = ExtResource("3_kln2b")
+
+[node name="BottomBar" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 1031.0
+offset_right = 1917.0
+offset_bottom = 1079.0
+alignment = 2
+
+[node name="Button" type="Button" parent="BottomBar"]
+layout_mode = 2
+text = "CombatTest
+"
+
+[node name="Turn" type="Button" parent="BottomBar"]
+layout_mode = 2
+text = "Turn"
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 1917.0
+offset_bottom = 39.0
+alignment = 2
+
+[node name="TurnCounter" type="Label" parent="TopBar"]
+layout_mode = 2
+text = "Turn: 0"
+
+[node name="Factions" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PlayerFaction" parent="Factions" instance=ExtResource("6_50glp")]
+
+[node name="Guard" parent="Factions" instance=ExtResource("5_jw32o")]
+
+[node name="Chaos" parent="Factions" instance=ExtResource("4_v1gob")]
+
+[connection signal="pressed" from="BottomBar/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="BottomBar/Turn" to="." method="_on_turn_pressed"]

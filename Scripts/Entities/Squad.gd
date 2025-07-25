@@ -8,10 +8,3 @@ func define(Title : String, RosterCap : int, Fac : Faction):
 
 func _process(delta: float) -> void:
 	sizeCheck()
-
-func _to_string() -> String:
-	var retstr: String = getTitle()
-	
-	for model in roster:
-		retstr += "\n" + str(model)
-	return retstr

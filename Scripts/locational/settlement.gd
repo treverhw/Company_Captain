@@ -6,8 +6,10 @@ var type: String
 var newUnitCounter: int = 0
 var line
 
-func getConnections() -> Dictionary:
-	return connections
+func appendRoster(arr: Array[Unit]):
+	roster.append_array(arr)
+	print(roster)
+	update()
 
 func _ready() -> void:
 	#get_parent().get_node("Button").button_down.connect(turn)
@@ -53,40 +55,48 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> 
 	while target != null:
 		path.push_front(target)
 		target = prev[target]
-	print(dist)
-	print(prev)
-	print(path)
 	return path
 
 func spawn() -> Unit:
+	print(self)
 	var unit = roster.front().getFaction().spawnLocational(self)
 	return unit
 
 func turn():
+	print(getTitle() + str(roster))
 	if team != "Unowned":
 		newUnitCounter += 1
 	if newUnitCounter >= 5:
 		roster.append(await spawn())
 		newUnitCounter = 0
-	if roster.size() > 2 and get_parent().compliance == false:
+	if roster.size() > 2 and get_parent().compliant == false:
 		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements)
 		var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 		get_parent().get_node("Convoys").add_child(convoy)
 		convoy.global_position = self.global_position
 		convoy.setRoster(roster)
 		convoy.setPath(tempPath)
-	get_node("Label").text = str(roster.size())
+	update()
 
 func invade(arr: Array[Unit]):
-	pass
+	var defenders: Array[Unit] = []
+	defenders.append_array(getRoster())
+	appendRoster(arr)
+	print("Invasion!")
+	print("Attackers: " + str(arr))
+	print("Defenders: " + str(roster))
+	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
+	add_child(combat)
+	var newRoster = await combat.populate(arr, getRoster())
+	roster = newRoster
+	update()
 
-func change(array: Array[Unit]):
-	team = array[0].getTeam()
-	roster = array
-
-func changeIcon():
+func update():
+	for unit in getRoster():
+		unit.setLocation(self)
 	get_node("Label").text = str(roster.size())
 	if !roster.is_empty():
+		setTeam(roster.front().getTeam())
 		match team:
 			"Imperium":
 				get_node("TextureRect").set_texture(load("res://Assets/locational/Imperium.png"))
@@ -100,6 +110,18 @@ func changeIcon():
 				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
 			"Tau":
 				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
+
+
+##Getters and Setters
+func getConnections() -> Dictionary:
+	return connections
+func getType() -> String:
+	return type
+
+func setConnections(val: Dictionary):
+	pass
+func setType(val: String):
+	type = val
 
 func _to_string() -> String:
 	return title

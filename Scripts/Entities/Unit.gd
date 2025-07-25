@@ -45,6 +45,9 @@ func setRosterCap(val : int):
 func setFaction(val : Faction):
 	faction = val
 
+func setLocation(val: Location):
+	location = val
+
 func getTitle() -> String:
 	return title
 
@@ -67,8 +70,17 @@ func getLocation() -> Location:
 	return location
 
 func _to_string() -> String:
-	var ret: String = getTitle() + " - " + str(getFaction().getTitle())
-	
-	for item in roster:
-		ret += "\n" + str(item)
+	var ret: String = str(getFaction().getTitle()) + " " + getTitle()
+	ret += str(roster)
+	return ret
+
+func _to_string_combat() -> String:
+	var ret: String = str(getFaction().getTitle()) + " " + getTitle()
+	var temp = "["
+	for unit in roster:
+		for model in unit.getRoster():
+			if model.alive():
+				temp += model + ", "
+		
+	ret += str(roster)
 	return ret

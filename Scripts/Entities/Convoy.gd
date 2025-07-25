@@ -13,19 +13,21 @@ func move():
 	if destination.distance(self, destination) < 50.0:
 		match(destination.team):
 			"Unowned":
-				destination.roster.append_array(roster)
-				destination.team = team
-				destination.changeIcon()
+				destination.getRoster().append_array(getRoster())
+				destination.setTeam(team)
+				destination.update()
 			team:
-				destination.roster.append_array(roster)
+				destination.getRoster().append_array(getRoster())
 			_:
-				destination.invade(roster)
+				if destination.getRoster().size() <= 0:
+					destination.getRoster().append_array(getRoster())
+				else:
+					destination.invade(getRoster())
 		self.queue_free()
 
 func setRoster(arr: Array[Unit]):
 	for x in range(2, arr.size()):
 		roster.append(arr.pop_back())
-	print(roster.size())
 func setPath(arr: Array[Settlement]):
 	path = arr
 	setDestination(path[1])

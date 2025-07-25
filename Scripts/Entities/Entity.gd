@@ -38,6 +38,7 @@ func setTitle(val : String):
 	title = val
 func generateTitle(val : Array):
 	title = val[rand.randi_range(0, val.size()-1)]
+	name = title
 func setFaction(val : Faction):
 	faction = val
 
@@ -83,4 +84,4 @@ func getActiveWeapons(distance: int) -> Array[Weapon]:
 	return [null]
 
 func _to_string() -> String:
-	return getTitle()
+	return getTitle() + " " + str(getWounds()) + "/" + str(getMaxWounds()) + " | " + str(getBattlescars()) + "/" + str(getMaxBattlescars())

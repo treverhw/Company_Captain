@@ -6,6 +6,7 @@ var playerFaction = load("res://Scenes/Factions/PlayerFaction.tscn").instantiate
 var guard = load("res://Scenes/Factions/Guard.tscn").instantiate()
 var chaos = load("res://Scenes/Factions/Chaos.tscn").instantiate()
 var squad : Squad
+var turn: int = 0
 var temp
 
 func _input(event: InputEvent) -> void:
@@ -21,19 +22,21 @@ func _ready() -> void:
 	add_child(chaos)
 
 func play():
+	get_node("BottomBarBack").visible = true
 	guard.start()
 	chaos.start()
-	temp = get_child(5)
-	temp.settlements[1].roster.append(guard.roster[0])
-	temp.settlements[1].roster.append(guard.roster[1])
-	temp.settlements[1].roster.append(guard.roster[2])
-	temp.settlements[1].roster.append(guard.roster[3])
-	#temp.settlements[8].roster.append(chaos.roster[0])
-	temp.settlements[1].team = "Imperium"
-	temp.settlements[1].changeIcon()
-	#temp.settlements[8].team = "Chaos"
+	temp = get_child(8)
+	#temp.settlements[1].roster.append(guard.roster[0])
+	#temp.settlements[1].roster.append(guard.roster[1])
+	#temp.settlements[1].roster.append(guard.roster[2])
+	#temp.settlements[1].roster.append(guard.roster[3])
+	#temp.settlements[5].roster.append(chaos.roster[0])
+	#temp.settlements[1].team = "Imperium"
+	#temp.settlements[1].update()
+	#temp.settlements[5].team = "Chaos"
+	#temp.settlements[5].update()
 	#print("\nLocation 1 Roster: \n" + str(temp.settlements[1].roster))
-	#print("Location 2 Roster: \n" + str(temp.settlements[4].roster))
+	#print("Location 2 Roster: \n" + str(temp.settlements[5].roster))
 
 
 func _on_button_pressed() -> void:
@@ -43,5 +46,8 @@ func _on_button_pressed() -> void:
 	chaos.start()
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
 	add_child(combat)
-	combat.global_position = Vector2((1920/2)-(1170/2), (1080/2)-(780/2))
 	combat.populate(guard.roster, chaos.roster, true, true)
+
+func _on_turn_pressed() -> void:
+	turn += 1
+	get_node("TopBar/TurnCounter").text = "Turns: " + str(turn)

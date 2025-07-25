@@ -21,9 +21,9 @@ func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, fac: Factio
 	off = wpn2
 	weapons = [main, off]
 	faction = fac
-	maxWounds = arr[2] + armour.getWounds()
+	maxWounds = armour.getWounds()
 	wounds = maxWounds
-	battlescars = arr[3]
+	battlescars = 0
 	maxBattlescars = arr[3]
 	bonusWounds = bw
 	bonusSpeed = bs
@@ -54,9 +54,6 @@ func getActiveWeapons(distance: int) -> Array[Weapon]:
 	for item in ret:
 		if item.isTwoHander():
 			ret = [item]
-	print(distance)
-	print(weapons)
-	print(ret)
 	return ret
 
 
@@ -106,14 +103,3 @@ func getToughness() -> int:
 	return armour.getToughness() + bonusToughness
 func getSave() -> int:
 	return armour.getSave() + bonusSave
-
-
-## Misc
-func _to_string() -> String:
-	var retstr = ("Name: " + str(getTitle()) + 
-		"\nWounds: " + str(getWounds()) + "/" + str(getMaxWounds()) + 
-		"\nBattle Scars: " + str(getBattlescars()) + "/" + str(getMaxBattlescars()) + 
-		"\nArmour: " + getArmour().getTitle() + 
-		"\nMain: " + getMain().getTitle() + 
-		"\nOff: " + getOff().getTitle() + "\n")
-	return retstr

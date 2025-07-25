@@ -3,9 +3,10 @@ class_name Planet
 
 var settlements: Array[Settlement]
 var exclude: Array[Settlement] = []
-var compliance: bool = false
+var compliant: bool = false
 
 func _ready() -> void:
+	get_parent().get_node("BottomBar/Turn").button_down.connect(turn)
 	generateTitle(Names.new().planetNames)
 	print(title)
 	for n in range(0, randi_range(20,20)):
@@ -20,6 +21,10 @@ func _ready() -> void:
 			settlements.append(newSettlement)
 		else:
 			break
+	var guard = get_parent().get_node("Factions/Guard").start()
+	var chaos = get_parent().get_node("Factions/Chaos").start()
+	settlements[0].appendRoster(guard)
+	settlements[settlements.size()-1].appendRoster(chaos)
 	
 	await createConnections()
 	var temp: Array[Settlement]
@@ -46,27 +51,23 @@ func _ready() -> void:
 			settlements.erase(node)
 			node.queue_free()
 
-func complaince():
+func compliance():
 		var teams: Array[String]
 		for settlement in settlements:
 			if !teams.has(settlement.team):
 				teams.append(settlement.team)
 		if teams.size() > 1:
-			compliance = false
+			compliant = false
 		else:
-			compliance = true
+			compliant = true
 
-var test: bool = false
 func turn():
-	test = !test
-	while test == true:
-		complaince()
-		await get_tree().create_timer(.5).timeout
-		for settlement in settlements:
-			settlement.turn()
-		for convoy in get_node("Convoys").get_children():
-			print(convoy)
-			convoy.move()
+	compliance()
+	await get_tree().create_timer(.5).timeout
+	for settlement in settlements:
+		settlement.turn()
+	for convoy in get_node("Convoys").get_children():
+		convoy.move()
 
 func createConnections():
 	for n in settlements:
@@ -105,7 +106,3 @@ func validateDistance(val: Settlement) -> bool:
 		if val.position.distance_to(n.position) < 120 && n != val:
 			return false
 	return true
-
-
-func _on_button_pressed() -> void:
-	turn()
