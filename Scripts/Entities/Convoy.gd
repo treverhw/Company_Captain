@@ -20,6 +20,7 @@ func move():
 				destination.getRoster().append_array(getRoster())
 			_:
 				if destination.getRoster().size() <= 0:
+					print("BLAM")
 					destination.getRoster().append_array(getRoster())
 				else:
 					destination.invade(getRoster())

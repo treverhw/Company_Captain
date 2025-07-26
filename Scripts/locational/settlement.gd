@@ -80,14 +80,15 @@ func turn():
 
 func invade(arr: Array[Unit]):
 	var defenders: Array[Unit] = []
-	defenders.append_array(getRoster())
+	for unit in getRoster():
+		defenders.append(unit)
 	appendRoster(arr)
 	print("Invasion!")
 	print("Attackers: " + str(arr))
-	print("Defenders: " + str(roster))
+	print("Defenders: " + str(defenders))
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
 	add_child(combat)
-	var newRoster = await combat.populate(arr, getRoster())
+	var newRoster = await combat.populate(arr, defenders)
 	roster = newRoster
 	update()
 

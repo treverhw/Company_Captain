@@ -3,6 +3,12 @@ class_name CombatArmy
 
 var team: String
 
+func getSize() -> int:
+	var n = 0
+	for node in get_children():
+		n += node.getRoster().size()
+	return n
+
 func _to_string() -> String:
 	var retstr = (str(name) + "\n"  +
 	str(get_child(0).name) + str(get_child(0).get_children()) + "\n" +

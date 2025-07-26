@@ -46,7 +46,7 @@ func _on_button_pressed() -> void:
 	chaos.start()
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
 	add_child(combat)
-	combat.populate(guard.roster, chaos.roster, true, true)
+	combat.populate(guard.start(), chaos.start())
 
 func _on_turn_pressed() -> void:
 	turn += 1
