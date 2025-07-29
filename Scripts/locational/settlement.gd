@@ -49,7 +49,8 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> 
 	var target: Settlement
 	var distance: int = 1000
 	for settlement in settlements:
-		if dist[settlement] < distance and settlement.team != self.team:
+		if dist[settlement] < distance and settlement.team != self.team and settlement.getWeight() <= getAttackWeight():
+			print("[Settlement] " + settlement.getTitle() + ": " + str(settlement.getWeight()) + " " + str(getAttackWeight()))
 			target = settlement
 			distance = dist[settlement]
 	while target != null:
@@ -63,7 +64,7 @@ func spawn() -> Unit:
 	return unit
 
 func turn():
-	print(getTitle() + str(roster))
+	print(getTitle() + ": " + str(getRoster()))
 	if team != "Unowned":
 		newUnitCounter += 1
 	if newUnitCounter >= 5:
@@ -71,6 +72,8 @@ func turn():
 		newUnitCounter = 0
 	if roster.size() > 2 and get_parent().compliant == false:
 		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements)
+		if tempPath.size() < 2:
+			return 
 		var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 		get_parent().get_node("Convoys").add_child(convoy)
 		convoy.global_position = self.global_position
@@ -79,18 +82,24 @@ func turn():
 	update()
 
 func invade(arr: Array[Unit]):
+	print("------------------INVASION-START------------------")
 	var defenders: Array[Unit] = []
 	for unit in getRoster():
 		defenders.append(unit)
 	appendRoster(arr)
-	print("Invasion!")
 	print("Attackers: " + str(arr))
 	print("Defenders: " + str(defenders))
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
-	add_child(combat)
+	get_node("/root/Main").add_child(combat)
 	var newRoster = await combat.populate(arr, defenders)
 	roster = newRoster
+	print(getRoster())
+	await combat.cleanup()
+	combat.queue_free()
+	print(getRoster())
 	update()
+	print(getRoster())
+	print("------------------INVASION-OVER------------------")
 
 func update():
 	for unit in getRoster():
@@ -118,6 +127,18 @@ func getConnections() -> Dictionary:
 	return connections
 func getType() -> String:
 	return type
+func getWeight() -> int:
+	var n: int = 0
+	for unit in getRoster():
+		n += unit.getWeight()
+	return n
+
+func getAttackWeight() -> int:
+	var n: int = 0
+	for unit in range(2, getRoster().size()):
+		n += getRoster()[unit].getWeight()
+	return n
+	
 
 func setConnections(val: Dictionary):
 	pass

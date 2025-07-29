@@ -27,12 +27,16 @@ func populate(attack: Array[Unit], defense: Array[Unit]) -> Array[Unit]:
 	var line = load("res://Scenes/CombatLine.tscn")
 
 	for unit in attackerRoster:
-		get_node("Attacker/" + unit.getLine()).add_child(unit)
+		unit.combatUpdate()
+		unit.visible = true
+		unit.reparent(get_node("Attacker/" + unit.getLine()))
 		get_node("Attacker/" + unit.getLine()).roster.append_array(unit.getRoster())
 		for model in unit.roster:
 			fullRoster.append(model)
 	for unit in defenderRoster:
-		get_node("Defender/" + unit.getLine()).add_child(unit)
+		unit.combatUpdate()
+		unit.visible = true
+		unit.reparent(get_node("Attacker/" + unit.getLine()))
 		get_node("Defender/" + unit.getLine()).roster.append_array(unit.getRoster())
 		for model in unit.roster:
 			fullRoster.append(model)
@@ -59,7 +63,7 @@ func realFight() -> Array[Unit]:
 		
 		#For model in the whole roster
 		for model in queue:
-			print("Shooter: " + str(model.name))
+			print("Shooter: " + str(model))
 			
 			#Finds the enemy frontline
 			targetColumn = targetColumn(model)
@@ -67,7 +71,9 @@ func realFight() -> Array[Unit]:
 			weapons = model.getActiveWeapons(distance(model.getUnit().get_parent(), targetColumn))
 			#print("At distance [" + str(distance(model.getUnit().get_parent(), targetColumn)) + "]: " + str(weapons))
 			for weapon in weapons:
+				print(weapon.getTitle())
 				for attack in weapon.getAttacks():
+					print(attack + 1)
 					
 					#select a random model in the frontline
 					var target: Entity = targetColumn.getRoster()[randi_range(0, targetColumn.getRoster().size()-1)]
@@ -82,12 +88,14 @@ func realFight() -> Array[Unit]:
 								#If all rolls succeed and the save fails, the target takes damage
 								#The shooter gains 1 xp on hits and another if the shot kills
 								target.wounds -= weapon.getDmg()
+								print("Hit!")
 								model.xp += 1
 								
 								#If mortally wounded, remove the model from the battle
 								if target.getWounds() <= 0:
 									queue.erase(target)
 									targetColumn.getRoster().erase(target)
+									target.getUnit().combatUpdate()
 									model.xp += 1
 									
 									#check for one army or the other winning.
@@ -98,7 +106,6 @@ func realFight() -> Array[Unit]:
 		#Needs to be changed to be the distance between their currently no
 		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
 			get_node("Attacker").global_position.x += 65
-	queue_free()
 	return winners
 
 func endCheck() -> bool:
@@ -106,12 +113,10 @@ func endCheck() -> bool:
 	var def = get_node("Defender").getSize()
 	if att <= 0:
 		print("Defenders win!")
-		await cleanup()
 		winners = defenderRoster
 		return true
 	if def <= 0:
 		print("Attackers win!")
-		await cleanup()
 		winners = attackerRoster
 		return true
 	print("Attackers Left: " + str(att))
@@ -119,12 +124,15 @@ func endCheck() -> bool:
 	return false
 
 func cleanup() -> bool:
-	for model in (attackers + defenders):
-		if model.getWounds() <= 0:
-			model.battlescars += 1
-			if model.getBattlescars() >= model.getMaxBattlescars():
-				model.KILL()
-	print(attackerRoster + defenderRoster)
+	for unit in attackerRoster:
+		unit.clean()
+		unit.visible = false
+		unit.reparent(unit.getFaction())
+	for unit in defenderRoster:
+		unit.clean()
+		unit.visible = false
+		unit.reparent(unit.getFaction())
+
 	return true
 
 

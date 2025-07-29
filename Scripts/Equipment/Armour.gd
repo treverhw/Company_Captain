@@ -6,6 +6,7 @@ var speed : int
 var toughness : int
 var save : int
 var wounds : int
+var weight : int
 var description : String
 
 func _init(arr : Array):
@@ -15,7 +16,8 @@ func _init(arr : Array):
 	toughness = arr[2]
 	save = arr[3]
 	wounds = arr[4]
-	description = arr[5]
+	weight = arr[5]
+	description = arr[6]
 
 #Getters
 func getTitle() -> String:
@@ -30,6 +32,8 @@ func getWounds() -> int:
 	return wounds
 func getDescription() -> String:
 	return description
+func getWeight() -> int:
+	return weight
 
 func _to_string() -> String:
 	return getTitle()

@@ -2,11 +2,11 @@ extends TextureRect
 class_name Unit
 
 var title : String
-var roster : Array[Node] = []
+var roster : Array[Entity] = []
 var rosterCap : int = 5
 var faction : Faction
-var line: int = 1
 var location: Location
+var line: int = 1
 
 func define(t : String, rC : int, f : Faction):
 	title = t
@@ -14,60 +14,67 @@ func define(t : String, rC : int, f : Faction):
 	faction = f
 
 func validate():
-	if size() <= 0: return false
+	if getAlive() <= 0: return false
 	else: 			return true
 
 func assignModels():
-	for model in roster:
+	for model in getRoster():
 		model.unit = self
 
 func removeEntity(model: Entity):
-	faction.removeEntity(model)
+	getFaction().removeEntity(model)
 
-func size():
+func getAlive() -> int:
 	var counter: int = 0
-	for model in roster:
+	for model in getRoster():
 		if model.alive():
 			counter += 1
 	return counter
 
-func sizeCheck():
-	scale.x = size()*.2
+func clean():
+	print("Cleaning!")
+	for model in getRoster():
+		if model.getWounds() <= 0:
+			model.battlescars += 1
+			if model.getBattlescars() > model.getMaxBattlescars():
+				print("Killing!")
+				model.kill()
+			else:
+				print("Scarring!")
+				model.setWounds(1)
 
+func combatUpdate():
+	pass
 
 ##Setters and Getters
 func setTitle(t : String):
 	title = t
-
 func setRosterCap(val : int):
 	rosterCap = val
-
 func setFaction(val : Faction):
 	faction = val
-
 func setLocation(val: Location):
 	location = val
 
 func getTitle() -> String:
 	return title
-
-func getRoster() -> Array[Node]:
+func getRoster() -> Array[Entity]:
 	return roster
-
 func getRosterCap() -> int:
 	return rosterCap
-
 func getFaction() -> Faction:
 	return faction
-
 func getTeam() -> String:
 	return getFaction().getTeam()
-
 func getLine() -> String:
 	return str(line)
-
 func getLocation() -> Location:
 	return location
+func getWeight() -> int:
+	var n: int = 0
+	for model in getRoster():
+		n += model.getWeight()
+	return n
 
 func _to_string() -> String:
 	var ret: String = str(getFaction().getTitle()) + " " + getTitle()

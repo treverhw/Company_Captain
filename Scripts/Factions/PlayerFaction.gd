@@ -32,4 +32,5 @@ func spawnScoutSquad() -> Squad:
 	newSquad.roster = [spawnScout(), spawnScout(), spawnScout(), spawnScout(), spawnScout()]
 	roster.append(newSquad)
 	newSquad.assignModels()
+	add_child(newSquad)
 	return newSquad

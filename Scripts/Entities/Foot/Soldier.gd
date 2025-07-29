@@ -63,7 +63,6 @@ func setUnit(val : Squad):
 		unit = val
 	else:
 		print("Error: Unable to join Unit")
-
 func setArmour(val : Armour):
 	if val:
 		#Return armour to armoury
@@ -103,3 +102,5 @@ func getToughness() -> int:
 	return armour.getToughness() + bonusToughness
 func getSave() -> int:
 	return armour.getSave() + bonusSave
+func getWeight() -> int:
+	return getArmour().getWeight()

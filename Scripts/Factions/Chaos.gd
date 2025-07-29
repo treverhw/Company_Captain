@@ -31,14 +31,7 @@ func spawnScoutSquad() -> Squad:
 	newSquad.roster = [spawnScout(), spawnScout(), spawnScout(), spawnScout(), spawnScout()]
 	roster.append(newSquad)
 	newSquad.assignModels()
-	return newSquad
-
-func spawnHurtSquad() -> Squad:
-	var newSquad : Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
-	newSquad.define("Squad: " + str(roster.size()), 5, self)
-	newSquad.roster = [spawnScout(), spawnScout(), spawnScout()]
-	roster.append(newSquad)
-	newSquad.assignModels()
+	add_child(newSquad)
 	return newSquad
 
 func spawnBase() -> Unit:

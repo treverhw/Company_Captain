@@ -32,6 +32,7 @@ func spawnSquad() -> Squad:
 	newSquad.roster = [spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel()]
 	roster.append(newSquad)
 	newSquad.assignModels()
+	add_child(newSquad)
 	return newSquad
 
 func spawnBase() -> Unit:

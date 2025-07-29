@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://camopmcfhyyr3" path="res://Scenes/CombatLine.tscn" id="3_dbyqq"]
 
 [node name="Combat" type="Control"]
-z_index = 6
+z_index = 10
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

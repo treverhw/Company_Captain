@@ -31,7 +31,10 @@ func setRoster(arr: Array[Unit]):
 		roster.append(arr.pop_back())
 func setPath(arr: Array[Settlement]):
 	path = arr
-	setDestination(path[1])
+	if path.size() <= 1:
+		setDestination(path[0])
+	else:
+		setDestination(path[1])
 func setDestination(dest: Settlement):
 	destination = dest
 	look_at(destination.global_position)

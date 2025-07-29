@@ -2,9 +2,9 @@ extends Control
 const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
 const armour = preload("res://Scripts/Equipment/ArmourArrays.gd")
 const soldiers = preload("res://Scripts/Entities/Foot/SoldierArrays.gd")
-var playerFaction = load("res://Scenes/Factions/PlayerFaction.tscn").instantiate()
-var guard = load("res://Scenes/Factions/Guard.tscn").instantiate()
-var chaos = load("res://Scenes/Factions/Chaos.tscn").instantiate()
+var playerFaction
+var guard
+var chaos
 var squad : Squad
 var turn: int = 0
 var temp
@@ -17,9 +17,9 @@ func _ready() -> void:
 	temp = load("res://Scenes/Menus/MainMenu.tscn").instantiate()
 	temp.get_node("VBoxContainer/Play").pressed.connect(play)
 	add_child(temp)
-	add_child(playerFaction)
-	add_child(guard)
-	add_child(chaos)
+	playerFaction = get_node("Factions/PlayerFaction")
+	guard = get_node("Factions/Guard")
+	chaos = get_node("Factions/Chaos")
 
 func play():
 	get_node("BottomBarBack").visible = true
@@ -40,10 +40,6 @@ func play():
 
 
 func _on_button_pressed() -> void:
-	guard.roster.clear()
-	guard.start()
-	chaos.roster.clear()
-	chaos.start()
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
 	add_child(combat)
 	combat.populate(guard.start(), chaos.start())
@@ -51,3 +47,6 @@ func _on_button_pressed() -> void:
 func _on_turn_pressed() -> void:
 	turn += 1
 	get_node("TopBar/TurnCounter").text = "Turns: " + str(turn)
+
+func getPlayer() -> Faction:
+	return playerFaction

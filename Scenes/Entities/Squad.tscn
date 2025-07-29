@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://4o43hg3oijps" path="res://Assets/combat/combatline.png" id="2_rbo6d"]
 
 [node name="Squad" type="TextureRect"]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -18,3 +19,11 @@ grow_vertical = 2
 size_flags_horizontal = 6
 texture = ExtResource("2_rbo6d")
 script = ExtResource("1_ujs8a")
+
+[node name="Roster Size" type="Label" parent="."]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 20.0
+offset_right = 67.0
+offset_bottom = 43.0
+text = "0"

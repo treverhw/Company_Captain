@@ -6,5 +6,8 @@ func define(Title : String, RosterCap : int, Fac : Faction):
 	rosterCap = RosterCap
 	faction = Fac
 
-func _process(delta: float) -> void:
-	sizeCheck()
+func combatUpdate():
+	var n = getAlive()
+	get_node("Roster Size").text = str(n)
+	if n <= 0:
+		visible = false

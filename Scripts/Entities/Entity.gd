@@ -20,12 +20,12 @@ var maxWounds : int
 
 #Checks for wounds above 0
 func alive() -> bool:
-	if wounds <= 0:
+	if getWounds() <= 0:
 		return false
 	return true
 
 #Calls upon the faction to remove this model from any unit its in.
-func KILL():
+func kill():
 	print(self.to_string())
 	getFaction().removeEntity(self)
 
@@ -82,6 +82,8 @@ func getMaxBattlescars() -> int:
 	return maxBattlescars
 func getActiveWeapons(distance: int) -> Array[Weapon]:
 	return [null]
+func getWeight() -> int:
+	return 0
 
 func _to_string() -> String:
 	return getTitle() + " " + str(getWounds()) + "/" + str(getMaxWounds()) + " | " + str(getBattlescars()) + "/" + str(getMaxBattlescars())
