@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dhpueejtv00ie"]
 
-[ext_resource type="Script" uid="uid://0mi13o1g622h" path="res://Scripts/locational/planet.gd" id="1_kmmuo"]
+[ext_resource type="Script" uid="uid://0mi13o1g622h" path="res://Scripts/locational/Planet.gd" id="1_kmmuo"]
 [ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="2_261pm"]
 
 [node name="Planet" type="Control"]

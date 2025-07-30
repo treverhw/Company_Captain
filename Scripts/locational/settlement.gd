@@ -45,14 +45,18 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> 
 				prev[settlement] = closestSettlement
 	
 	#find nearest unowned node
-	var path: Array[Settlement]= []
+	var path: Array[Settlement] = []
+	var options: Array[Settlement] =  settlements.duplicate()
 	var target: Settlement
 	var distance: int = 1000
-	for settlement in settlements:
-		if dist[settlement] < distance and settlement.team != self.team and settlement.getWeight() <= getAttackWeight():
+	for settlement in options:
+		if dist[settlement] < distance and settlement.team != self.team:
 			print("[Settlement] " + settlement.getTitle() + ": " + str(settlement.getWeight()) + " " + str(getAttackWeight()))
 			target = settlement
 			distance = dist[settlement]
+	#if destination has too many enemies, rally to node before destination.
+	if target.getWeight() >= getAttackWeight() * 1.5:
+		target = prev[target]
 	while target != null:
 		path.push_front(target)
 		target = prev[target]
@@ -70,15 +74,18 @@ func turn():
 	if newUnitCounter >= 5:
 		roster.append(await spawn())
 		newUnitCounter = 0
-	if roster.size() > 2 and get_parent().compliant == false:
+	var threatened: bool = false
+	for settlement in connections:
+		if settlement.team != self.team and settlement.getWeight() >= roster.front().getWeight() *2:
+			threatened = true
+	if roster.size() > 2 and get_parent().compliant == false and threatened == false:
 		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements)
-		if tempPath.size() < 2:
-			return 
-		var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
-		get_parent().get_node("Convoys").add_child(convoy)
-		convoy.global_position = self.global_position
-		convoy.setRoster(roster)
-		convoy.setPath(tempPath)
+		if tempPath.size() >= 2:
+			var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
+			get_parent().get_node("Convoys").add_child(convoy)
+			convoy.global_position = self.global_position
+			convoy.setRoster(roster)
+			convoy.setPath(tempPath)
 	update()
 
 func invade(arr: Array[Unit]):

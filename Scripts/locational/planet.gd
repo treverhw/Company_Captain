@@ -22,8 +22,14 @@ func _ready() -> void:
 		else:
 			break
 	var guard = get_parent().get_node("Factions/Guard").start()
+	var guard1 = get_parent().get_node("Factions/Guard").start()
+	var guard2 = get_parent().get_node("Factions/Guard").start()
+	var guard3 = get_parent().get_node("Factions/Guard").start()
 	var chaos = get_parent().get_node("Factions/Chaos").start()
 	settlements[0].appendRoster(guard)
+	settlements[1].appendRoster(guard1)
+	settlements[2].appendRoster(guard2)
+	settlements[3].appendRoster(guard3)
 	settlements[settlements.size()-1].appendRoster(chaos)
 	
 	await createConnections()
