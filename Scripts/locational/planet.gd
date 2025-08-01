@@ -72,8 +72,32 @@ func turn():
 	await get_tree().create_timer(.5).timeout
 	for settlement in settlements:
 		settlement.turn()
-	for convoy in get_node("Convoys").get_children():
+	
+	#Convoys fight if near eachother
+	var convoys = get_node("Convoys").get_children()
+	for convoy in convoys:
 		convoy.move()
+		for otherConvoy in convoys:
+			if distance(convoy, otherConvoy) <= 50.0 and convoy.getTeam() != otherConvoy.getTeam():
+				print("Convoy Fight")
+				var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
+				get_node("/root/Main").add_child(combat)
+				print("[Convoy Fight] Old Roster: " + str(getRoster()))
+				
+				var newRosters = await combat.populate(convoy.getRoster().duplicate(), otherConvoy.getRoster().duplicate())
+				if newRosters[0].front().getTeam() == convoy.getTeam():
+					convoy.roster = newRosters[0]
+					convoy.retreatConvoy()
+					otherConvoy.roster = newRosters[1]
+					otherConvoy.retreatConvoy()
+				else:
+					convoy.roster = newRosters[1]
+					convoy.retreatConvoy()
+					otherConvoy.roster = newRosters[0]
+					otherConvoy.retreatConvoy()
+				print("[Convoy Fight] New Roster: " + str(getRoster()))
+				await combat.cleanup()
+				combat.queue_free()
 
 func createConnections():
 	for n in settlements:

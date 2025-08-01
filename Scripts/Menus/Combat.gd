@@ -9,12 +9,14 @@ var defenders: Array[Entity] = []
 var fullRoster: Array[Entity] = []
 var auto: bool
 var winners: Array[Unit]
+var losers: Array[Unit]
+var end: Dictionary = {0: winners, 1: losers}
 
 func _ready() -> void:
 	global_position = Vector2((1920/2)-(1170/2), (1080/2)-(780/2))
 
 ##Combat in order
-func populate(attack: Array[Unit], defense: Array[Unit]) -> Array[Unit]:
+func populate(attack: Array[Unit], defense: Array[Unit]) -> Dictionary:
 	
 	if attack.front().getFaction().id != 0 and defense.front().getFaction().id != 0 :
 		print("[Combat]: Fought Automatically")
@@ -46,7 +48,7 @@ func populate(attack: Array[Unit], defense: Array[Unit]) -> Array[Unit]:
 	
 	return await realFight()
 
-func realFight() -> Array[Unit]:
+func realFight() -> Dictionary:
 	var targetColumn: VBoxContainer
 	var weapons: Array[Weapon]
 	
@@ -100,13 +102,13 @@ func realFight() -> Array[Unit]:
 									
 									#check for one army or the other winning.
 									if await endCheck():
-										return winners
+										return end
 		
 		#Move the attacking army forward one line's length based on the distance between their front lines.
 		#Needs to be changed to be the distance between their currently no
 		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
 			get_node("Attacker").global_position.x += 65
-	return winners
+	return end
 
 func endCheck() -> bool:
 	var att = get_node("Attacker").getSize()
@@ -114,10 +116,12 @@ func endCheck() -> bool:
 	if att <= 0:
 		print("Defenders win!")
 		winners = defenderRoster
+		losers = attackerRoster
 		return true
 	if def <= 0:
 		print("Attackers win!")
 		winners = attackerRoster
+		losers = defenderRoster
 		return true
 	print("Attackers Left: " + str(att))
 	print("Defenders Left: " + str(def))

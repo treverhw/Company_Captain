@@ -8,6 +8,7 @@ var title : String
 var faction: Faction
 var unit: Unit
 var weapons: Array[Weapon]
+var rank: String = "Base"
 var xp: int
 
 #Stats
