@@ -7,13 +7,16 @@ var home: Settlement
 var destination: Settlement
 
 func move():
-	var direction = (destination.global_position - self.global_position).normalized()
-	global_position += direction * 50
-	
+	print("Home: " + str(home) + " | Destination: " + str(destination) + " | Army: " + str(roster))
 	var team
 	if getRoster().is_empty():
 		queue_free()
+		get_parent().remove_child(self)
+		return
 	else: team = roster.front().getTeam()
+	var direction = (destination.global_position - self.global_position).normalized()
+	global_position += direction * 50
+	
 	var convoys: Array[Node] = destination.get_parent().get_node("Convoys").get_children()
 	
 	if destination.distance(self, destination) < 50.0:
@@ -21,7 +24,6 @@ func move():
 			"Unowned":
 				destination.getRoster().append_array(getRoster())
 				destination.setTeam(team)
-				destination.update()
 			team:
 				destination.getRoster().append_array(getRoster())
 			_:
@@ -30,17 +32,26 @@ func move():
 					destination.getRoster().append_array(getRoster())
 				else:
 					destination.invade(getRoster())
+		destination.update()
+		kill()
+
+func kill():
 		queue_free()
+		get_parent().remove_child(self)
 
 func retreatConvoy():
 	destination = home
 	move()
 
-func direct(army: Array[Unit] = roster, hm: Settlement = home, dst: Settlement = destination):
-	home = hm
-	destination = dst
-	roster = army
-	global_position = hm.global_position
+func setConvoy(army: Array[Unit] = roster, hm: Settlement = home, dst: Settlement = destination):
+	if !army.is_empty():
+		home = hm
+		destination = dst
+		roster = army
+		global_position = hm.global_position
+		look_at(destination.global_position)
+	else:
+		kill()
 
 func setRoster(arr: Array[Unit]):
 	roster = arr
@@ -62,5 +73,10 @@ func getPath() -> Array[Settlement]:
 func getDestination() -> Settlement:
 	return destination
 func getTeam() -> String:
-	print(roster)
+	#print("Home: " + str(home) + " | Destination: " + str(destination) + " | Army: " + str(roster))
 	return getRoster().front().getTeam()
+func getWeight() -> int:
+	var n: int = 0
+	for unit in getRoster():
+		n += unit.getWeight()
+	return n

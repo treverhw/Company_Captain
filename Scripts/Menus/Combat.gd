@@ -38,7 +38,7 @@ func populate(attack: Array[Unit], defense: Array[Unit]) -> Dictionary:
 	for unit in defenderRoster:
 		unit.combatUpdate()
 		unit.visible = true
-		unit.reparent(get_node("Attacker/" + unit.getLine()))
+		unit.reparent(get_node("Defender/" + unit.getLine()))
 		get_node("Defender/" + unit.getLine()).roster.append_array(unit.getRoster())
 		for model in unit.roster:
 			fullRoster.append(model)
@@ -51,6 +51,7 @@ func populate(attack: Array[Unit], defense: Array[Unit]) -> Dictionary:
 func realFight() -> Dictionary:
 	var targetColumn: VBoxContainer
 	var weapons: Array[Weapon]
+	visible = true
 	
 	var queue = fullRoster.duplicate()
 	#Combat loop starts
@@ -62,24 +63,25 @@ func realFight() -> Dictionary:
 		#only process by shooting round if combat isn't automatic
 		if !auto:
 			await get_tree().create_timer(1).timeout
-		
 		#For model in the whole roster
 		for model in queue:
-			print("Shooter: " + str(model))
+			print("Shooter: " + str(model) + " " + str(model.getTeam()))
 			
 			#Finds the enemy frontline
 			targetColumn = targetColumn(model)
+			#print(targetColumn)
 			#Sets active weapons based on distance
 			weapons = model.getActiveWeapons(distance(model.getUnit().get_parent(), targetColumn))
 			#print("At distance [" + str(distance(model.getUnit().get_parent(), targetColumn)) + "]: " + str(weapons))
 			for weapon in weapons:
-				print(weapon.getTitle())
+				#print(weapon.getTitle())
 				for attack in weapon.getAttacks():
-					print(attack + 1)
+					#print(attack + 1)
 					
 					#select a random model in the frontline
-					var target: Entity = targetColumn.getRoster()[randi_range(0, targetColumn.getRoster().size()-1)]
-					
+					var rand = RandomNumberGenerator.new()
+					var target: Entity = targetColumn.getRoster()[rand.randi_range(0, targetColumn.getRoster().size()-1)]
+					print("Target: " + str(target) + " " + str(target.getTeam()))
 					#Hit
 					if rolld6() >= model.getBallisticSkill():
 						#Wound
@@ -102,6 +104,7 @@ func realFight() -> Dictionary:
 									
 									#check for one army or the other winning.
 									if await endCheck():
+										cleanup()
 										return end
 		
 		#Move the attacking army forward one line's length based on the distance between their front lines.
@@ -115,16 +118,20 @@ func endCheck() -> bool:
 	var def = get_node("Defender").getSize()
 	if att <= 0:
 		print("Defenders win!")
-		winners = defenderRoster
-		losers = attackerRoster
+		end[0] = defenderRoster
+		#print("[Combat] Winners: \n" + str(end[0]))
+		end[1] = attackerRoster
+		#print("[Combat] Losers: \n" + str(end[1]))
 		return true
 	if def <= 0:
 		print("Attackers win!")
-		winners = attackerRoster
-		losers = defenderRoster
+		end[0] = attackerRoster
+		#print("[Combat] Winners: \n" + str(end[0]))
+		end[1] = defenderRoster
+		#print("[Combat] Losers: \n" + str(end[1]))
 		return true
-	print("Attackers Left: " + str(att))
-	print("Defenders Left: " + str(def))
+	#print("Attackers Left: " + str(att))
+	#print("Defenders Left: " + str(def))
 	return false
 
 func cleanup() -> bool:
@@ -132,10 +139,14 @@ func cleanup() -> bool:
 		unit.clean()
 		unit.visible = false
 		unit.reparent(unit.getFaction())
+		if !is_instance_valid(unit):
+			attackerRoster.erase(unit)
 	for unit in defenderRoster:
 		unit.clean()
 		unit.visible = false
 		unit.reparent(unit.getFaction())
+		if !is_instance_valid(unit):
+			defenderRoster.erase(unit)
 
 	return true
 
@@ -174,12 +185,14 @@ func targetColumn(model: Entity) -> VBoxContainer:
 	var curr = enemyArmy.get_child(counter)
 	while (curr.getRoster().size() <= 0):
 		counter += 1
+		if counter > 5:
+			break
 		curr = enemyArmy.get_child(counter)
 	return curr
 
+func getEnding() -> Dictionary:
+	endCheck()
+	return end
+
 func getFullSize() -> int:
 	return get_node("Attacker").getSize() + get_node("Defender").getSize()
-
-func _on_button_pressed() -> void:
-	for model in fullRoster:
-		print(str(model) + " | " + str(model.unit.faction.title) + ": " + str(model.wounds)+ " Wounds.")

@@ -71,6 +71,7 @@ scale = Vector2(14.3978, 1)
 texture = ExtResource("3_kln2b")
 
 [node name="BottomBar" type="HBoxContainer" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 4.0
 offset_top = 1031.0

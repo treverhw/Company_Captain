@@ -69,35 +69,63 @@ func compliance():
 
 func turn():
 	compliance()
-	await get_tree().create_timer(.5).timeout
-	for settlement in settlements:
-		settlement.turn()
 	
 	#Convoys fight if near eachother
+	for settlement in settlements:
+		settlement.turn()
 	var convoys = get_node("Convoys").get_children()
 	for convoy in convoys:
-		convoy.move()
+		await convoy.move()
+	convoys = get_node("Convoys").get_children()
+	for convoy in convoys:
+		var alreadyFought: Array[Convoy] = []
 		for otherConvoy in convoys:
-			if distance(convoy, otherConvoy) <= 50.0 and convoy.getTeam() != otherConvoy.getTeam():
-				print("Convoy Fight")
-				var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
-				get_node("/root/Main").add_child(combat)
-				print("[Convoy Fight] Old Roster: " + str(getRoster()))
-				
-				var newRosters = await combat.populate(convoy.getRoster().duplicate(), otherConvoy.getRoster().duplicate())
-				if newRosters[0].front().getTeam() == convoy.getTeam():
-					convoy.roster = newRosters[0]
-					convoy.retreatConvoy()
-					otherConvoy.roster = newRosters[1]
-					otherConvoy.retreatConvoy()
-				else:
-					convoy.roster = newRosters[1]
-					convoy.retreatConvoy()
-					otherConvoy.roster = newRosters[0]
-					otherConvoy.retreatConvoy()
-				print("[Convoy Fight] New Roster: " + str(getRoster()))
-				await combat.cleanup()
-				combat.queue_free()
+			if !alreadyFought.has(convoy) and!alreadyFought.has(otherConvoy):
+				if distance(convoy, otherConvoy) <= 50.0 and convoy.getTeam() != otherConvoy.getTeam():
+					alreadyFought.append(convoy)
+					alreadyFought.append(otherConvoy)
+					print("[Convoy Fight] Start:")
+					var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
+					get_node("/root/Main").add_child(combat)
+					print("[Convoy Fight] Old Roster: " + str(convoy.roster))
+					print("[Convoy Fight] Old Roster: " + str(otherConvoy.roster))
+					
+					await combat.populate(convoy.getRoster().duplicate(), otherConvoy.getRoster().duplicate())
+					var newRosters = combat.getEnding()
+					for unit in range(newRosters[0].size()-1, -1, -1):
+						if !is_instance_valid(newRosters[0][unit]) or newRosters[0][unit].getRoster().size() <= 0:
+							newRosters[0][unit].queue_free()
+							newRosters[0].erase(newRosters[0][unit])
+					for unit in range(newRosters[1].size()-1, -1, -1):
+						if !is_instance_valid(newRosters[1][unit]) or newRosters[1][unit].getRoster().size() <= 0:
+							newRosters[1][unit].queue_free()
+							newRosters[1].erase(newRosters[1][unit])
+					
+					if newRosters[0].front().getTeam() == convoy.getTeam():
+						if newRosters[0].is_empty():
+							convoy.kill()
+						else:
+							convoy.roster = newRosters[0]
+							convoy.retreatConvoy()
+						if newRosters[1].is_empty():
+							otherConvoy.kill()
+						else:
+							otherConvoy.roster = newRosters[1]
+							otherConvoy.retreatConvoy()
+					else:
+						if newRosters[1].is_empty():
+							convoy.kill()
+						else:
+							convoy.roster = newRosters[1]
+							convoy.retreatConvoy()
+						if newRosters[0].is_empty():
+							otherConvoy.kill()
+						else:
+							otherConvoy.roster = newRosters[0]
+							otherConvoy.retreatConvoy()
+					print("[Convoy Fight] New Roster: " + str(convoy.roster))
+					print("[Convoy Fight] New Roster: " + str(otherConvoy.roster))
+					combat.queue_free()
 
 func createConnections():
 	for n in settlements:

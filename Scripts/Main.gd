@@ -23,6 +23,7 @@ func _ready() -> void:
 
 func play():
 	get_node("BottomBarBack").visible = true
+	get_node("BottomBar").visible = true
 	guard.start()
 	chaos.start()
 	temp = get_child(8)
@@ -47,6 +48,9 @@ func _on_button_pressed() -> void:
 func _on_turn_pressed() -> void:
 	turn += 1
 	get_node("TopBar/TurnCounter").text = "Turns: " + str(turn)
+	get_node("BottomBar/Turn").disabled = true
+	await get_tree().create_timer(.5).timeout
+	get_node("BottomBar/Turn").disabled = false
 
 func getPlayer() -> Faction:
 	return playerFaction

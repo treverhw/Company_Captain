@@ -33,15 +33,19 @@ func getAlive() -> int:
 
 func clean():
 	print("Cleaning!")
-	for model in getRoster():
-		if model.getWounds() <= 0:
-			model.battlescars += 1
-			if model.getBattlescars() > model.getMaxBattlescars():
+	for model in range(getRoster().size() - 1, -1, -1):
+		print(str(getRoster()[model]))
+		if getRoster()[model].getWounds() <= 0:
+			getRoster()[model].battlescars += 1
+			if getRoster()[model].getBattlescars() > getRoster()[model].getMaxBattlescars():
 				print("Killing!")
-				model.kill()
+				getRoster()[model].kill()
 			else:
 				print("Scarring!")
-				model.setWounds(1)
+				getRoster()[model].setWounds(1)
+	if getRoster().is_empty():
+		get_parent().remove_child(self)
+		queue_free()
 
 func combatUpdate():
 	pass

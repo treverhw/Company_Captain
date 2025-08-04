@@ -19,7 +19,7 @@ func customGuard(val1 : String, val2 : String, val3 : String) -> Entity:
 	return guy
 
 func spawnModel() -> Entity:
-	var arm : Armour = Armour.new(armour.guardArmour["FlakShit"])
+	var arm : Armour = Armour.new(armour.guardArmour["Flak"])
 	var wpn1 : Weapon = Weapon.new(weapons.guardWeapons["Lasgun"])
 	var wpn2 : Weapon = Weapon.new(weapons.guardWeapons["Close Combat Weapon"])
 	var guy = load("res://Scenes/Entities/Soldier.tscn").instantiate()

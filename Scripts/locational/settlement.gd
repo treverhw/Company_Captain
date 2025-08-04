@@ -8,7 +8,7 @@ var line
 
 func appendRoster(arr: Array[Unit]):
 	roster.append_array(arr)
-	print(roster)
+	#print(roster)
 	update()
 
 func _ready() -> void:
@@ -51,7 +51,7 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> 
 	var distance: int = 1000
 	for settlement in options:
 		if dist[settlement] < distance and settlement.team != self.team:
-			print("[Settlement] " + settlement.getTitle() + ": " + str(settlement.getWeight()) + " " + str(getAttackWeight()))
+			#print("[Settlement] " + settlement.getTitle() + ": " + str(settlement.getWeight()) + " " + str(getAttackWeight()))
 			target = settlement
 			distance = dist[settlement]
 	#if destination has too many enemies, rally to node before destination.
@@ -63,85 +63,122 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> 
 	return path
 
 func spawn() -> Unit:
-	print(self)
 	var unit = roster.front().getFaction().spawnLocational(self)
 	return unit
 
 func turn():
 	print(getTitle() + ": " + str(getRoster()))
+	var threatened: bool = false
 	if team != "Unowned":
 		newUnitCounter += 1
-	if newUnitCounter >= 5:
-		roster.append(await spawn())
-		newUnitCounter = 0
-	var threatened: bool = false
-	for settlement in connections:
-		if !settlement.getRoster().is_empty():
-			if settlement.team != self.team and settlement.getWeight() >= settlement.getRoster().front().getWeight() *2:
-				threatened = true
-	if threatened == false and get_parent().compliant == false:
-		spawnConvoy()
-	update()
+		if newUnitCounter >= 5:
+			roster.append(await spawn())
+			newUnitCounter = 0
+		var threatWeight: int = 0 
+		for settlement in connections:
+			if !settlement.getRoster().is_empty():
+				if settlement.team != self.team:
+					threatWeight += settlement.getAttackWeight()
+		for convoy in get_parent().get_node("Convoys").get_children():
+			if convoy.getTeam() != self.team:
+				if convoy.destination == self or connections.has(convoy.destination):
+					threatWeight += convoy.getWeight()
+		print("[" + str(self) + "] Weight: " + str(getWeight()) + " | ThreatWeight: " + str(threatWeight))
+		if threatWeight >= getWeight():
+			print("[Threatened] " + str(self))
+			threatened = true
+		if !threatened and !get_parent().compliant and roster.size() > 2:
+			print("Spawning Convoy: " + str(self))
+			await spawnConvoy()
+		if threatened == true:
+			overwhelmCheck()
+		update()
 
-func spawnConvoy() -> Convoy:
-	var convoy: Convoy
+func spawnConvoy(destination:Settlement = null) -> Convoy:
+	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
+	get_parent().get_node("Convoys").add_child(convoy)
 	var leftBehind: Array[Unit]
 	var counter = 0
+	#Leave behind two base units
 	for unit in getRoster():
 		if unit.getRoster().front().rank == "Base" and counter < 2:
 			counter += 1
 			leftBehind.append(unit)
-	if roster.size() > 2:
+	for unit in getRoster():
+		if !leftBehind.has(unit):
+			convoy.roster.append(unit)
+	#Directed Movement
+	if destination != null:
+		print("Directed") 
+		convoy.setConvoy(convoy.roster, self, destination)
+		roster = leftBehind
+	#Automatic
+	else:
 		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements)
 		if tempPath.size() >= 2:
-			convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
-			get_parent().get_node("Convoys").add_child(convoy)
-			convoy.global_position = self.global_position
-			for unit in roster:
-				if !leftBehind.has(unit):
-					convoy.roster.append(unit)
-			convoy.setPath(tempPath)
+			print("Auto") 
+			convoy.setConvoy(convoy.roster, self, tempPath[1])
+		else:
+			print("Too Small") 
+			convoy.setConvoy(convoy.roster, self, self)
 		roster = leftBehind
+	update()
 	return convoy
 
-func overwhelmCheck(dst: Settlement, team: String):
+func overwhelmCheck():
+	print("Overhelm Check for " + str(self))
 	var overwhelm = false
 	var weight: int = getWeight()
 	var theirWeight: int = 0
 	for settlement in connections:
+		#print(weight)
+		#print(theirWeight)
 		if settlement.getTeam() != getTeam():
 			theirWeight += settlement.getAttackWeight()
+		#print(weight)
+		#print(theirWeight)
 		if theirWeight >= weight:
 			overwhelm = true
+			for connection in connections:
+				if connection.getTeam() != getTeam():
+					print("Overwhleming Convoy")
+					connection.spawnConvoy(self)
+			update()
 			break
-	for settlement in connections:
-		if settlement.getTeam() != getTeam():
-			var convoy = settlement.spawnConvoy()
-			convoy.direct(settlement, self)
 
 func invade(attackers: Array[Unit]):
 	print("------------------INVASION-START------------------")
+	print("->LOCATION:" + getTitle())
 	var defenders: Array[Unit] = []
 	for unit in getRoster():
 		defenders.append(unit)
 	appendRoster(attackers)
-	print("Attackers: " + str(attackers))
-	print("Defenders: " + str(defenders))
+	#print("Attackers: " + str(attackers))
+	#print("Defenders: " + str(defenders))
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
 	get_node("/root/Main").add_child(combat)
-	var newRosters = await combat.populate(attackers, defenders)
+	await combat.populate(attackers, defenders)
 	var retreat = false
-	for settlement in getConnections():
-		if settlement.getTeam() == newRosters[1].front().getTeam():
-			retreat = true
-			var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
-			get_parent().get_node("Convoys").add_child(convoy)
-			convoy.direct(newRosters[1], self, settlement)
-			break
+	var newRosters = combat.getEnding()
+	print("Winners: \n" + str(newRosters[0]))
+	print("Losers: \n" + str(newRosters[1]))
+	#Retreat living units
+	for unit in range(newRosters[1].size()-1, -1, -1):
+		if !is_instance_valid(newRosters[1][unit]) or newRosters[1][unit].getRoster().size() <= 0:
+			newRosters[1][unit].queue_free()
+			newRosters[1].erase(newRosters[1][unit])
+	if !newRosters[1].is_empty():
+		for settlement in getConnections():
+			if settlement.getTeam() == newRosters[1].front().getTeam():
+				retreat = true
+				var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
+				get_parent().get_node("Convoys").add_child(convoy)
+				convoy.setConvoy(newRosters[1], self, settlement)
+				convoy.move()
+				break
 	if retreat == false:
 		print("Cornered and Slaughtered.")
 	roster = newRosters[0]
-	await combat.cleanup()
 	combat.queue_free()
 	update()
 	print("------------------INVASION-OVER------------------")
@@ -183,7 +220,6 @@ func getAttackWeight() -> int:
 	for unit in range(2, getRoster().size()):
 		n += getRoster()[unit].getWeight()
 	return n
-	
 
 func setConnections(val: Dictionary):
 	pass

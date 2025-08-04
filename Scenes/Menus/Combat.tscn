@@ -22,14 +22,6 @@ z_index = -5
 position = Vector2(585, 390)
 texture = ExtResource("2_cihwv")
 
-[node name="Button" type="Button" parent="."]
-layout_mode = 0
-offset_left = 515.0
-offset_top = -56.0
-offset_right = 596.0
-offset_bottom = -25.0
-text = "HP Check"
-
 [node name="Attacker" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 6
@@ -107,5 +99,3 @@ layout_mode = 2
 [node name="6" parent="Defender" instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
-
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

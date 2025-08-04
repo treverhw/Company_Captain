@@ -5,8 +5,8 @@ var title : String
 var speed : int
 var toughness : int
 var save : int
-var wounds : int
 var weight : int
+var wounds : int
 var description : String
 
 func _init(arr : Array):
@@ -15,8 +15,8 @@ func _init(arr : Array):
 	speed = arr[1]
 	toughness = arr[2]
 	save = arr[3]
-	wounds = arr[4]
-	weight = arr[5]
+	weight = arr[4]
+	wounds = arr[5]
 	description = arr[6]
 
 #Getters
