@@ -1,7 +1,6 @@
-extends Node2D
+extends Location
 class_name Convoy
 
-var roster: Array[Unit]
 var path: Array[Settlement]
 var home: Settlement
 var destination: Settlement
@@ -11,7 +10,8 @@ func move():
 	var team
 	if getRoster().is_empty():
 		queue_free()
-		get_parent().remove_child(self)
+		if get_parent() != null:
+			get_parent().remove_child(self)
 		return
 	else: team = roster.front().getTeam()
 	var direction = (destination.global_position - self.global_position).normalized()
@@ -33,11 +33,11 @@ func move():
 				else:
 					destination.invade(getRoster())
 		destination.update()
-		kill()
 
 func kill():
 		queue_free()
-		get_parent().remove_child(self)
+		if get_parent() != null:
+			get_parent().remove_child(self)
 
 func retreatConvoy():
 	destination = home
@@ -48,10 +48,20 @@ func setConvoy(army: Array[Unit] = roster, hm: Settlement = home, dst: Settlemen
 		home = hm
 		destination = dst
 		roster = army
+		for unit in army:
+			unit.setLocation(self)
 		global_position = hm.global_position
 		look_at(destination.global_position)
 	else:
 		kill()
+
+func cleanup() -> bool:
+	for unit in range(getRoster().size()-1, -1, -1):
+		if !is_instance_valid(getRoster()[unit]):
+			getRoster().erase(getRoster()[unit])
+	if getRoster().is_empty():
+		kill()
+	return true
 
 func setRoster(arr: Array[Unit]):
 	roster = arr

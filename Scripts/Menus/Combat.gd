@@ -1,4 +1,4 @@
-extends Control
+extends Node2D
 
 var attackerRoster: Array[Unit] = []
 var attackers: Array[Entity] = []
@@ -55,7 +55,7 @@ func realFight() -> Dictionary:
 	
 	var queue = fullRoster.duplicate()
 	#Combat loop starts
-	while(true):
+	while(!endCheck()):
 		queue.shuffle()
 		#sort by speed
 		queue.sort_custom(func(a,b): return a.getSpeed() > b.getSpeed())
@@ -104,7 +104,7 @@ func realFight() -> Dictionary:
 									
 									#check for one army or the other winning.
 									if await endCheck():
-										cleanup()
+										await cleanup()
 										return end
 		
 		#Move the attacking army forward one line's length based on the distance between their front lines.
@@ -135,19 +135,18 @@ func endCheck() -> bool:
 	return false
 
 func cleanup() -> bool:
-	for unit in attackerRoster:
-		unit.clean()
-		unit.visible = false
-		unit.reparent(unit.getFaction())
-		if !is_instance_valid(unit):
-			attackerRoster.erase(unit)
-	for unit in defenderRoster:
-		unit.clean()
-		unit.visible = false
-		unit.reparent(unit.getFaction())
-		if !is_instance_valid(unit):
-			defenderRoster.erase(unit)
-
+	for unit in range(attackerRoster.size() -1, -1, -1):
+		attackerRoster[unit].reparent(attackerRoster[unit].getFaction())
+		attackerRoster[unit].visible = false
+		attackerRoster[unit].clean()
+		if !is_instance_valid(attackerRoster[unit]):
+			attackerRoster.erase(attackerRoster[unit])
+	for unit in range(defenderRoster.size() -1, -1, -1):
+		defenderRoster[unit].reparent(defenderRoster[unit].getFaction())
+		defenderRoster[unit].visible = false
+		defenderRoster[unit].clean()
+		if !is_instance_valid(defenderRoster[unit]):
+			defenderRoster.erase(defenderRoster[unit])
 	return true
 
 

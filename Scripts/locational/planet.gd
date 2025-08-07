@@ -6,9 +6,11 @@ var exclude: Array[Settlement] = []
 var compliant: bool = false
 
 func _ready() -> void:
+	global_position = Vector2((1920/2), (1080/2))
 	get_parent().get_node("BottomBar/Turn").button_down.connect(turn)
 	generateTitle(Names.new().planetNames)
 	print(title)
+	get_node("Label").text = title
 	for n in range(0, randi_range(20,20)):
 		var newSettlement = load("res://Scenes/Locational/Settlement.tscn").instantiate()
 		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250,250))
@@ -25,11 +27,15 @@ func _ready() -> void:
 	var guard1 = get_parent().get_node("Factions/Guard").start()
 	var guard2 = get_parent().get_node("Factions/Guard").start()
 	var guard3 = get_parent().get_node("Factions/Guard").start()
+	var guard4 = get_parent().get_node("Factions/Guard").start()
+	var guard5 = get_parent().get_node("Factions/Guard").start()
 	var chaos = get_parent().get_node("Factions/Chaos").start()
 	settlements[0].appendRoster(guard)
 	settlements[1].appendRoster(guard1)
 	settlements[2].appendRoster(guard2)
 	settlements[3].appendRoster(guard3)
+	settlements[4].appendRoster(guard4)
+	settlements[5].appendRoster(guard5)
 	settlements[settlements.size()-1].appendRoster(chaos)
 	
 	await createConnections()
@@ -44,18 +50,30 @@ func _ready() -> void:
 				if val in temp:
 					temp.erase(val)
 					temp2.append(val)
-	if temp.size() < temp2.size():
-		for node in temp:
-			if node.line != null:
-				node.line.queue_free()
-			settlements.erase(node)
-			node.queue_free()
-	else:
-		for node in temp2:
-			if node.line != null:
-				node.line.queue_free()
-			settlements.erase(node)
-			node.queue_free()
+	print(temp2.size())
+	if temp.size() > 1:
+		var distances: Dictionary = {}
+		for x in temp:
+			distances[x] = [x,4000]
+			for y in temp2:
+				var length: float = distance(x,y) 
+				if length < distances[x][1]:
+					distances[x] = [y, length]
+		var shortest: Array = [null, null, 4000]
+		for x in distances:
+			if distances[x][1] < shortest[2]:
+				shortest[0] = x
+				shortest[1] = distances[x][0]
+				shortest[2] = distances[x][1]
+		shortest[0].getConnections()[shortest[1]] = shortest[2]
+		shortest[1].getConnections()[shortest[0]] = shortest[2]
+		var newLine = Line2D.new()
+		newLine.width = 3
+		newLine.add_point(shortest[0].position)
+		newLine.add_point(shortest[1].position)
+		add_child(newLine)
+		print("Connected " + str(shortest[0]) + " " + str(shortest[1]))
+
 
 func compliance():
 		var teams: Array[String]
@@ -68,20 +86,25 @@ func compliance():
 			compliant = true
 
 func turn():
+	await cleanup()
 	compliance()
+	
 	
 	#Convoys fight if near eachother
 	for settlement in settlements:
 		settlement.turn()
+		await cleanup()
 	var convoys = get_node("Convoys").get_children()
 	for convoy in convoys:
 		await convoy.move()
+		await cleanup()
 	convoys = get_node("Convoys").get_children()
 	for convoy in convoys:
 		var alreadyFought: Array[Convoy] = []
 		for otherConvoy in convoys:
 			if !alreadyFought.has(convoy) and!alreadyFought.has(otherConvoy):
 				if distance(convoy, otherConvoy) <= 50.0 and convoy.getTeam() != otherConvoy.getTeam():
+					await cleanup()
 					alreadyFought.append(convoy)
 					alreadyFought.append(otherConvoy)
 					print("[Convoy Fight] Start:")
@@ -126,6 +149,22 @@ func turn():
 					print("[Convoy Fight] New Roster: " + str(convoy.roster))
 					print("[Convoy Fight] New Roster: " + str(otherConvoy.roster))
 					combat.queue_free()
+					
+
+func cleanup() -> bool:
+	for settlement in settlements:
+		var temp = settlement.getRoster()
+		for unit in temp:
+			if !is_instance_valid(unit):
+				temp.erase(unit)
+	for convoy in get_node("Convoys").get_children():
+		var temp = convoy.getRoster()
+		for unit in temp:
+			if !is_instance_valid(unit):
+				temp.erase(unit)
+		if convoy.getRoster().is_empty():
+			convoy.kill()
+	return true
 
 func createConnections():
 	for n in settlements:
@@ -139,7 +178,6 @@ func createConnections():
 				newLine.add_point(n.position)
 				newLine.add_point(m.position)
 				add_child(newLine)
-				n.line = newLine
 	for n in settlements:
 		if n.getConnections().size() <= 0:
 			settlements.erase(n)

@@ -40,11 +40,13 @@ func clean():
 			if getRoster()[model].getBattlescars() > getRoster()[model].getMaxBattlescars():
 				print("Killing!")
 				getRoster()[model].kill()
+				getRoster()[model].erase(getRoster()[model])
 			else:
 				print("Scarring!")
 				getRoster()[model].setWounds(1)
 	if getRoster().is_empty():
 		get_parent().remove_child(self)
+		getFaction().getRoster().erase(self)
 		queue_free()
 
 func combatUpdate():

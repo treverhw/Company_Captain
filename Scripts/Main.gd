@@ -22,11 +22,12 @@ func _ready() -> void:
 	chaos = get_node("Factions/Chaos")
 
 func play():
+	temp = load("res://Scenes/Locational/Planet.tscn").instantiate()
+	add_child(temp)
 	get_node("BottomBarBack").visible = true
 	get_node("BottomBar").visible = true
 	guard.start()
 	chaos.start()
-	temp = get_child(8)
 	#temp.settlements[1].roster.append(guard.roster[0])
 	#temp.settlements[1].roster.append(guard.roster[1])
 	#temp.settlements[1].roster.append(guard.roster[2])
@@ -49,8 +50,14 @@ func _on_turn_pressed() -> void:
 	turn += 1
 	get_node("TopBar/TurnCounter").text = "Turns: " + str(turn)
 	get_node("BottomBar/Turn").disabled = true
-	await get_tree().create_timer(.5).timeout
+	await get_tree().create_timer(.2).timeout
 	get_node("BottomBar/Turn").disabled = false
 
 func getPlayer() -> Faction:
 	return playerFaction
+
+func _on_planet_test_pressed() -> void:
+	remove_child(temp)
+	temp.queue_free()
+	temp = load("res://Scenes/Locational/Planet.tscn").instantiate()
+	add_child(temp)

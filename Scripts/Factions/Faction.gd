@@ -11,10 +11,10 @@ var roster : Array[Unit] = []
 var id : int
 
 func removeEntity(model: Entity):
-	var unit = model.unit
+	var unit = model.getUnit()
 	print(str(name) + " Removing Model: " + str(model.name))
-	unit.roster.erase(model)
-	if !unit.validate():
+	unit.getRoster().erase(model)
+	if unit.getRoster().size() <= 0:
 		print(str(name) + " Removing Unit: " + str(unit.name))
 		unit.getLocation().getRoster().erase(unit)
 		roster.erase(unit)

@@ -74,7 +74,7 @@ func turn():
 		if newUnitCounter >= 5:
 			roster.append(await spawn())
 			newUnitCounter = 0
-		var threatWeight: int = 0 
+		var threatWeight: int = 0
 		for settlement in connections:
 			if !settlement.getRoster().is_empty():
 				if settlement.team != self.team:
@@ -163,6 +163,10 @@ func invade(attackers: Array[Unit]):
 	print("Winners: \n" + str(newRosters[0]))
 	print("Losers: \n" + str(newRosters[1]))
 	#Retreat living units
+	for unit in range(newRosters[0].size()-1, -1, -1):
+		if !is_instance_valid(newRosters[0][unit]) or newRosters[0][unit].getRoster().size() <= 0:
+			newRosters[0][unit].queue_free()
+			newRosters[0].erase(newRosters[0][unit])
 	for unit in range(newRosters[1].size()-1, -1, -1):
 		if !is_instance_valid(newRosters[1][unit]) or newRosters[1][unit].getRoster().size() <= 0:
 			newRosters[1][unit].queue_free()
@@ -183,9 +187,16 @@ func invade(attackers: Array[Unit]):
 	update()
 	print("------------------INVASION-OVER------------------")
 
+func cleanup():
+	for unit in range(getRoster().size()-1, -1, -1):
+		if !is_instance_valid(getRoster()[unit]):
+			getRoster().erase(getRoster()[unit])
+
 func update():
-	for unit in getRoster():
-		unit.setLocation(self)
+	for unit in range(getRoster().size()-1, -1, -1):
+		if !is_instance_valid(getRoster()[unit]):
+			getRoster().erase(getRoster()[unit])
+		getRoster()[unit].setLocation(self)
 	get_node("Label").text = str(roster.size())
 	if !roster.is_empty():
 		setTeam(roster.front().getTeam())
@@ -210,6 +221,7 @@ func getConnections() -> Dictionary:
 func getType() -> String:
 	return type
 func getWeight() -> int:
+	print(getTitle() + ": " + str(getRoster()))
 	var n: int = 0
 	for unit in getRoster():
 		n += unit.getWeight()

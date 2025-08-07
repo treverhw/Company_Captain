@@ -3,15 +3,12 @@
 [ext_resource type="Script" uid="uid://cacghagx0lkvb" path="res://Scripts/locational/Settlement.gd" id="1_y8rnc"]
 [ext_resource type="Texture2D" uid="uid://bxm1r1mcs1ykb" path="res://Assets/locational/unowned.png" id="2_22kux"]
 
-[node name="Settlement" type="Control"]
-layout_mode = 3
-anchors_preset = 0
+[node name="Settlement" type="Node2D"]
 scale = Vector2(0.3, 0.3)
 script = ExtResource("1_y8rnc")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 z_index = 1
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -27,7 +24,6 @@ texture = ExtResource("2_22kux")
 
 [node name="Label" type="Label" parent="."]
 z_index = 1
-layout_mode = 0
 offset_left = -6.66667
 offset_top = -23.3333
 offset_right = 33.3333
@@ -37,7 +33,6 @@ text = "0"
 
 [node name="Name" type="Label" parent="."]
 z_index = 1
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
