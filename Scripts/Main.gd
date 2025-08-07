@@ -28,6 +28,10 @@ func play():
 	get_node("BottomBar").visible = true
 	guard.start()
 	chaos.start()
+	while(true):
+		await get_tree().create_timer(.2).timeout
+		_on_turn_pressed()
+		temp.turn()
 	#temp.settlements[1].roster.append(guard.roster[0])
 	#temp.settlements[1].roster.append(guard.roster[1])
 	#temp.settlements[1].roster.append(guard.roster[2])

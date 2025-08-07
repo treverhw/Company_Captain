@@ -1,7 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://dj7pbty7tmqs7"]
+[gd_scene load_steps=5 format=3 uid="uid://dj7pbty7tmqs7"]
 
 [ext_resource type="Script" uid="uid://b6thddtrrug62" path="res://Scripts/Entities/Convoy.gd" id="1_qw2e6"]
 [ext_resource type="Texture2D" uid="uid://c6kjntg0d4sp7" path="res://Assets/ship.png" id="2_brc3v"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_brc3v"]
+radius = 50.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_00kql"]
+radius = 11.0
 
 [node name="Convoy" type="Node2D"]
 script = ExtResource("1_qw2e6")
@@ -11,3 +17,17 @@ metadata/_custom_type_script = "uid://b6thddtrrug62"
 z_index = 5
 scale = Vector2(0.7, 0.7)
 texture = ExtResource("2_brc3v")
+
+[node name="VisionRange" type="Area2D" parent="."]
+priority = 1
+
+[node name="CollisionShape" type="CollisionShape2D" parent="VisionRange"]
+shape = SubResource("CircleShape2D_brc3v")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("CircleShape2D_00kql")
+
+[connection signal="area_entered" from="VisionRange" to="." method="_on_vision_range_area_entered"]
+[connection signal="body_entered" from="VisionRange" to="." method="_on_vision_range_body_entered"]

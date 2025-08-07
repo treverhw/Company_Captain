@@ -89,81 +89,73 @@ func turn():
 	await cleanup()
 	compliance()
 	
-	
-	#Convoys fight if near eachother
 	for settlement in settlements:
-		settlement.turn()
+		await settlement.turn()
 		await cleanup()
 	var convoys = get_node("Convoys").get_children()
 	for convoy in convoys:
 		await convoy.move()
 		await cleanup()
+	
+	#Convoys fight if near eachother
 	convoys = get_node("Convoys").get_children()
-	for convoy in convoys:
-		var alreadyFought: Array[Convoy] = []
-		for otherConvoy in convoys:
-			if !alreadyFought.has(convoy) and!alreadyFought.has(otherConvoy):
-				if distance(convoy, otherConvoy) <= 50.0 and convoy.getTeam() != otherConvoy.getTeam():
+	var alreadyFought: Array[Convoy] = []
+	for convoy in range(convoys.size()-1,-1,-1):
+		var bodies: Array[Node2D] = convoys[convoy].get_node("VisionRange").get_overlapping_bodies()
+		if !bodies.is_empty():
+			for body in bodies:
+				var otherConvoy = body.get_parent()
+				if (!alreadyFought.has(convoys[convoy]) or !alreadyFought.has(otherConvoy)) and convoys[convoy] != otherConvoy:
 					await cleanup()
-					alreadyFought.append(convoy)
-					alreadyFought.append(otherConvoy)
-					print("[Convoy Fight] Start:")
-					var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
-					get_node("/root/Main").add_child(combat)
-					print("[Convoy Fight] Old Roster: " + str(convoy.roster))
-					print("[Convoy Fight] Old Roster: " + str(otherConvoy.roster))
-					
-					await combat.populate(convoy.getRoster().duplicate(), otherConvoy.getRoster().duplicate())
-					var newRosters = combat.getEnding()
-					for unit in range(newRosters[0].size()-1, -1, -1):
-						if !is_instance_valid(newRosters[0][unit]) or newRosters[0][unit].getRoster().size() <= 0:
-							newRosters[0][unit].queue_free()
-							newRosters[0].erase(newRosters[0][unit])
-					for unit in range(newRosters[1].size()-1, -1, -1):
-						if !is_instance_valid(newRosters[1][unit]) or newRosters[1][unit].getRoster().size() <= 0:
-							newRosters[1][unit].queue_free()
-							newRosters[1].erase(newRosters[1][unit])
-					
-					if newRosters[0].front().getTeam() == convoy.getTeam():
-						if newRosters[0].is_empty():
-							convoy.kill()
-						else:
-							convoy.roster = newRosters[0]
-							convoy.retreatConvoy()
-						if newRosters[1].is_empty():
-							otherConvoy.kill()
-						else:
-							otherConvoy.roster = newRosters[1]
-							otherConvoy.retreatConvoy()
-					else:
-						if newRosters[1].is_empty():
-							convoy.kill()
-						else:
-							convoy.roster = newRosters[1]
-							convoy.retreatConvoy()
-						if newRosters[0].is_empty():
-							otherConvoy.kill()
-						else:
-							otherConvoy.roster = newRosters[0]
-							otherConvoy.retreatConvoy()
-					print("[Convoy Fight] New Roster: " + str(convoy.roster))
-					print("[Convoy Fight] New Roster: " + str(otherConvoy.roster))
-					combat.queue_free()
-					
+					await print(str(convoys[convoy]) + " | Destination: " + str(convoys[convoy].getDestination()) + " | Size: " + str(convoys[convoy].getRoster().size()))
+					await print(str(otherConvoy) + " | Destination: " + str(otherConvoy.getDestination()) + " | Size: " + str(otherConvoy.getRoster().size()))
+					if convoys[convoy].getTeam() != otherConvoy.getTeam() and convoys[convoy].getDestination() == otherConvoy.getHome() and !convoys[convoy].getRoster().is_empty() and !otherConvoy.getRoster().is_empty():
+						alreadyFought.append(convoy)
+						alreadyFought.append(otherConvoy)
+						await convoyFight(convoys[convoy], otherConvoy)
+	await cleanup()
+
+
+func convoyFight(val1: Convoy, val2: Convoy):
+	await cleanup()
+	print("[Convoy Fight] Start:")
+	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
+	get_node("/root/Main").add_child(combat)
+	
+	var newRosters = await combat.populate(val1.getRoster(), val2.getRoster())
+	for unit in range(newRosters[0].size()-1, -1, -1):
+		if !is_instance_valid(newRosters[0][unit]) or newRosters[0][unit].getRoster().size() <= 0:
+			newRosters[0][unit].queue_free()
+			newRosters[0].erase(newRosters[0][unit])
+	for unit in range(newRosters[1].size()-1, -1, -1):
+		if !is_instance_valid(newRosters[1][unit]) or newRosters[1][unit].getRoster().size() <= 0:
+			newRosters[1][unit].queue_free()
+			newRosters[1].erase(newRosters[1][unit])
+	
+	if val1.getRoster().is_empty():
+		val1.kill()
+	else:
+		val1.retreatConvoy()
+	if val2.getRoster().is_empty():
+		val2.kill()
+	else:
+		val2.retreatConvoy()
+	combat.queue_free()
+	
 
 func cleanup() -> bool:
 	for settlement in settlements:
 		var temp = settlement.getRoster()
-		for unit in temp:
-			if !is_instance_valid(unit):
-				temp.erase(unit)
+		for unit in range(temp.size()-1,-1,-1):
+			if !is_instance_valid(temp[unit]):
+				temp.erase(temp[unit])
 	for convoy in get_node("Convoys").get_children():
 		var temp = convoy.getRoster()
-		for unit in temp:
-			if !is_instance_valid(unit):
-				temp.erase(unit)
+		for unit in range(temp.size()-1,-1,-1):
+			if !is_instance_valid(temp[unit]):
+				temp.erase(temp[unit])
 		if convoy.getRoster().is_empty():
-			convoy.kill()
+			await convoy.kill()
 	return true
 
 func createConnections():

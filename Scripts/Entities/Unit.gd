@@ -40,7 +40,6 @@ func clean():
 			if getRoster()[model].getBattlescars() > getRoster()[model].getMaxBattlescars():
 				print("Killing!")
 				getRoster()[model].kill()
-				getRoster()[model].erase(getRoster()[model])
 			else:
 				print("Scarring!")
 				getRoster()[model].setWounds(1)

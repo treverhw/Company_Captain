@@ -27,7 +27,6 @@ func alive() -> bool:
 
 #Calls upon the faction to remove this model from any unit its in.
 func kill():
-	print(self.to_string())
 	getFaction().removeEntity(self)
 
 #returns current combat line in combat

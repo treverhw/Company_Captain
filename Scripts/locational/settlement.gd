@@ -7,8 +7,9 @@ var newUnitCounter: int = 0
 var line
 
 func appendRoster(arr: Array[Unit]):
-	roster.append_array(arr)
-	#print(roster)
+	for unit in arr:
+		getRoster().append(unit)
+		unit.setLocation(self)
 	update()
 
 func _ready() -> void:
@@ -67,9 +68,9 @@ func spawn() -> Unit:
 	return unit
 
 func turn():
-	print(getTitle() + ": " + str(getRoster()))
+	#print(getTitle() + ": " + str(getRoster()))
 	var threatened: bool = false
-	if team != "Unowned":
+	if team != "Unowned" and getRoster().size() > 0:
 		newUnitCounter += 1
 		if newUnitCounter >= 5:
 			roster.append(await spawn())
@@ -83,12 +84,12 @@ func turn():
 			if convoy.getTeam() != self.team:
 				if convoy.destination == self or connections.has(convoy.destination):
 					threatWeight += convoy.getWeight()
-		print("[" + str(self) + "] Weight: " + str(getWeight()) + " | ThreatWeight: " + str(threatWeight))
+		#print("[" + str(self) + "] Weight: " + str(getWeight()) + " | ThreatWeight: " + str(threatWeight))
 		if threatWeight >= getWeight():
-			print("[Threatened] " + str(self))
+			#print("[Threatened] " + str(self))
 			threatened = true
 		if !threatened and !get_parent().compliant and roster.size() > 2:
-			print("Spawning Convoy: " + str(self))
+			#print("Spawning Convoy: " + str(self))
 			await spawnConvoy()
 		if threatened == true:
 			overwhelmCheck()
@@ -109,17 +110,17 @@ func spawnConvoy(destination:Settlement = null) -> Convoy:
 			convoy.roster.append(unit)
 	#Directed Movement
 	if destination != null:
-		print("Directed") 
+		#print("Directed") 
 		convoy.setConvoy(convoy.roster, self, destination)
 		roster = leftBehind
 	#Automatic
 	else:
 		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements)
 		if tempPath.size() >= 2:
-			print("Auto") 
+			#print("Auto") 
 			convoy.setConvoy(convoy.roster, self, tempPath[1])
 		else:
-			print("Too Small") 
+			#print("Too Small") 
 			convoy.setConvoy(convoy.roster, self, self)
 		roster = leftBehind
 	update()
@@ -141,7 +142,7 @@ func overwhelmCheck():
 			overwhelm = true
 			for connection in connections:
 				if connection.getTeam() != getTeam():
-					print("Overwhleming Convoy")
+					#print("Overwhleming Convoy")
 					connection.spawnConvoy(self)
 			update()
 			break
@@ -149,20 +150,22 @@ func overwhelmCheck():
 func invade(attackers: Array[Unit]):
 	print("------------------INVASION-START------------------")
 	print("->LOCATION:" + getTitle())
+	##Set locations and divide the fight.
 	var defenders: Array[Unit] = []
 	for unit in getRoster():
 		defenders.append(unit)
 	appendRoster(attackers)
 	#print("Attackers: " + str(attackers))
 	#print("Defenders: " + str(defenders))
+	##Initiate Combat
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
 	get_node("/root/Main").add_child(combat)
-	await combat.populate(attackers, defenders)
+	var newRosters = await combat.populate(attackers, defenders)
+	##Post-Combat
 	var retreat = false
-	var newRosters = combat.getEnding()
-	print("Winners: \n" + str(newRosters[0]))
-	print("Losers: \n" + str(newRosters[1]))
-	#Retreat living units
+	#print("Winners: \n" + str(newRosters[0]))
+	#print("Losers: \n" + str(newRosters[1]))
+	#Safety Cleanup
 	for unit in range(newRosters[0].size()-1, -1, -1):
 		if !is_instance_valid(newRosters[0][unit]) or newRosters[0][unit].getRoster().size() <= 0:
 			newRosters[0][unit].queue_free()
@@ -171,6 +174,7 @@ func invade(attackers: Array[Unit]):
 		if !is_instance_valid(newRosters[1][unit]) or newRosters[1][unit].getRoster().size() <= 0:
 			newRosters[1][unit].queue_free()
 			newRosters[1].erase(newRosters[1][unit])
+	#Retreat living units
 	if !newRosters[1].is_empty():
 		for settlement in getConnections():
 			if settlement.getTeam() == newRosters[1].front().getTeam():
@@ -180,8 +184,10 @@ func invade(attackers: Array[Unit]):
 				convoy.setConvoy(newRosters[1], self, settlement)
 				convoy.move()
 				break
+	#or not
 	if retreat == false:
-		print("Cornered and Slaughtered.")
+		#print("Cornered and Slaughtered.")
+		pass
 	roster = newRosters[0]
 	combat.queue_free()
 	update()
@@ -221,7 +227,7 @@ func getConnections() -> Dictionary:
 func getType() -> String:
 	return type
 func getWeight() -> int:
-	print(getTitle() + ": " + str(getRoster()))
+	#print(getTitle() + ": " + str(getRoster()))
 	var n: int = 0
 	for unit in getRoster():
 		n += unit.getWeight()

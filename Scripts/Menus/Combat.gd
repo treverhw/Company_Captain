@@ -56,16 +56,21 @@ func realFight() -> Dictionary:
 	var queue = fullRoster.duplicate()
 	#Combat loop starts
 	while(!endCheck()):
+		for model in range(queue.size()-1,-1,-1):
+			if queue[model].getWounds() <= 0:
+				queue.erase(queue[model])
 		queue.shuffle()
-		#sort by speed
-		queue.sort_custom(func(a,b): return a.getSpeed() > b.getSpeed())
+		#sort by speed backwards
+		queue.sort_custom(func(a,b): return a.getSpeed() < b.getSpeed())
 		
 		#only process by shooting round if combat isn't automatic
 		if !auto:
 			await get_tree().create_timer(1).timeout
 		#For model in the whole roster
 		for model in queue:
-			print("Shooter: " + str(model) + " " + str(model.getTeam()))
+			if model.getWounds() <= 0:
+				continue
+			#print("Shooter: " + str(model) + " " + str(model.getTeam()))
 			
 			#Finds the enemy frontline
 			targetColumn = targetColumn(model)
@@ -81,7 +86,7 @@ func realFight() -> Dictionary:
 					#select a random model in the frontline
 					var rand = RandomNumberGenerator.new()
 					var target: Entity = targetColumn.getRoster()[rand.randi_range(0, targetColumn.getRoster().size()-1)]
-					print("Target: " + str(target) + " " + str(target.getTeam()))
+					#print("Target: " + str(target) + " " + str(target.getTeam()))
 					#Hit
 					if rolld6() >= model.getBallisticSkill():
 						#Wound
@@ -92,15 +97,14 @@ func realFight() -> Dictionary:
 								#If all rolls succeed and the save fails, the target takes damage
 								#The shooter gains 1 xp on hits and another if the shot kills
 								target.wounds -= weapon.getDmg()
-								print("Hit!")
+								#print("Hit!")
 								model.xp += 1
 								
 								#If mortally wounded, remove the model from the battle
 								if target.getWounds() <= 0:
-									queue.erase(target)
+									model.xp += 1
 									targetColumn.getRoster().erase(target)
 									target.getUnit().combatUpdate()
-									model.xp += 1
 									
 									#check for one army or the other winning.
 									if await endCheck():
@@ -111,6 +115,7 @@ func realFight() -> Dictionary:
 		#Needs to be changed to be the distance between their currently no
 		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
 			get_node("Attacker").global_position.x += 65
+	await cleanup()
 	return end
 
 func endCheck() -> bool:
@@ -119,19 +124,17 @@ func endCheck() -> bool:
 	if att <= 0:
 		print("Defenders win!")
 		end[0] = defenderRoster
-		#print("[Combat] Winners: \n" + str(end[0]))
 		end[1] = attackerRoster
+		#print("[Combat] Winners: \n" + str(end[0]))
 		#print("[Combat] Losers: \n" + str(end[1]))
 		return true
 	if def <= 0:
 		print("Attackers win!")
 		end[0] = attackerRoster
-		#print("[Combat] Winners: \n" + str(end[0]))
 		end[1] = defenderRoster
+		#print("[Combat] Winners: \n" + str(end[0]))
 		#print("[Combat] Losers: \n" + str(end[1]))
 		return true
-	#print("Attackers Left: " + str(att))
-	#print("Defenders Left: " + str(def))
 	return false
 
 func cleanup() -> bool:
@@ -139,14 +142,10 @@ func cleanup() -> bool:
 		attackerRoster[unit].reparent(attackerRoster[unit].getFaction())
 		attackerRoster[unit].visible = false
 		attackerRoster[unit].clean()
-		if !is_instance_valid(attackerRoster[unit]):
-			attackerRoster.erase(attackerRoster[unit])
 	for unit in range(defenderRoster.size() -1, -1, -1):
 		defenderRoster[unit].reparent(defenderRoster[unit].getFaction())
 		defenderRoster[unit].visible = false
 		defenderRoster[unit].clean()
-		if !is_instance_valid(defenderRoster[unit]):
-			defenderRoster.erase(defenderRoster[unit])
 	return true
 
 

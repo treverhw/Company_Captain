@@ -6,7 +6,7 @@ var home: Settlement
 var destination: Settlement
 
 func move():
-	print("Home: " + str(home) + " | Destination: " + str(destination) + " | Army: " + str(roster))
+	#print("Home: " + str(home) + " | Destination: " + str(destination) + " | Army: " + str(roster))
 	var team
 	if getRoster().is_empty():
 		queue_free()
@@ -16,8 +16,6 @@ func move():
 	else: team = roster.front().getTeam()
 	var direction = (destination.global_position - self.global_position).normalized()
 	global_position += direction * 50
-	
-	var convoys: Array[Node] = destination.get_parent().get_node("Convoys").get_children()
 	
 	if destination.distance(self, destination) < 50.0:
 		match(destination.team):
@@ -32,6 +30,7 @@ func move():
 					destination.getRoster().append_array(getRoster())
 				else:
 					destination.invade(getRoster())
+		queue_free()
 		destination.update()
 
 func kill():
@@ -40,14 +39,20 @@ func kill():
 			get_parent().remove_child(self)
 
 func retreatConvoy():
-	destination = home
-	move()
+	if !getRoster().is_empty():
+		destination = home
+		for unit in getRoster():
+			unit.setLocation(self)
+		move()
+	else:
+		kill()
 
 func setConvoy(army: Array[Unit] = roster, hm: Settlement = home, dst: Settlement = destination):
 	if !army.is_empty():
 		home = hm
 		destination = dst
 		roster = army
+		team = army.front().getTeam()
 		for unit in army:
 			unit.setLocation(self)
 		global_position = hm.global_position
@@ -80,11 +85,12 @@ func getRoster() -> Array[Unit]:
 	return roster
 func getPath() -> Array[Settlement]:
 	return path
+func getHome() -> Settlement:
+	return home
 func getDestination() -> Settlement:
 	return destination
 func getTeam() -> String:
-	#print("Home: " + str(home) + " | Destination: " + str(destination) + " | Army: " + str(roster))
-	return getRoster().front().getTeam()
+	return team
 func getWeight() -> int:
 	var n: int = 0
 	for unit in getRoster():
