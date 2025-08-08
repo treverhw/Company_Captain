@@ -1,0 +1,20 @@
+extends Ship
+class_name SpaceShip
+
+var shuttles: Array[Shuttle] = []
+
+func embark(shuttle: Shuttle):
+	shuttles.append(shuttle)
+	getRoster().append_array(shuttle.getRoster())
+
+func disembark(units: Array[Unit], destiantion: Planet, port: Settlement = null):
+	var available = getShuttles()
+	if available.is_empty():
+		return
+	var shuttle = available.front()
+
+func getShuttles() -> Array[Shuttle]:
+	for shuttle in range(shuttles.size()-1,-1,-1):
+		if !is_instance_valid(shuttles[shuttle]):
+			shuttles.erase(shuttles[shuttle])
+	return shuttles

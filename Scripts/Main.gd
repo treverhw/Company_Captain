@@ -8,7 +8,7 @@ var chaos
 var squad : Squad
 var turn: int = 0
 var temp
-var planet: Planet
+var system: System
 var testing: bool = false
 
 func _input(event: InputEvent) -> void:
@@ -24,8 +24,8 @@ func _ready() -> void:
 	chaos = get_node("Factions/Chaos")
 
 func play():
-	planet = load("res://Scenes/Locational/Planet.tscn").instantiate()
-	add_child(planet)
+	system = load("res://Scenes/Locational/System.tscn").instantiate()
+	add_child(system)
 	get_node("BottomBarBack").visible = true
 	get_node("BottomBar").visible = true
 	guard.start()
@@ -72,17 +72,25 @@ func resetFactions() -> bool:
 
 func _on_planet_test_pressed() -> void:
 	testing = !testing
-	var counter = 0
-	while(turn <= 10000):
+	var counter = 1
+	while(counter):
 		await get_tree().create_timer(.15).timeout
 		_on_turn_pressed()
-		planet.turn()
-		if planet.compliance():
-			await resetFactions()
-			counter += 1
-			print("Planet " + str(counter))
-			remove_child(planet)
-			planet.queue_free()
-			planet = load("res://Scenes/Locational/Planet.tscn").instantiate()
-			add_child(planet)
+		for planet in system.getPlanets():
+			planet.turn()
+			if system.getCompliance() == true:
+				counter += 1
+				await resetFactions()
+				remove_child(system)
+				system.queue_free()
+				system = load("res://Scenes/Locational/System.tscn").instantiate()
+				add_child(system)
 	print("It works!")
+
+
+func _on_new_system_pressed() -> void:
+	await resetFactions()
+	remove_child(system)
+	system.queue_free()
+	system = load("res://Scenes/Locational/System.tscn").instantiate()
+	add_child(system)

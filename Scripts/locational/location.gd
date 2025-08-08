@@ -14,6 +14,11 @@ func generateTitle(val : Array):
 func appendRoster(val: Array[Unit]):
 	roster.append_array(val)
 
+func validateDistance(val: Location, arr, range: int) -> bool:
+	for n in arr:
+		if val.position.distance_to(n.position) < range && n != val:
+			return false
+	return true
 
 #Setters and Getters
 func setTitle(Title: String):

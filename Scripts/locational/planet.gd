@@ -4,33 +4,37 @@ class_name Planet
 var settlements: Array[Settlement]
 var exclude: Array[Settlement] = []
 var compliant: bool = false
+var port: Settlement
+var arrivalTime: int
 
 func _ready() -> void:
+	var main = get_node("/root/Main/")
 	global_position = Vector2((1920/2), (1080/2))
-	get_parent().get_node("BottomBar/Turn").button_down.connect(turn)
+	main.get_node("BottomBar/Turn").button_down.connect(turn)
 	generateTitle(Names.new().planetNames)
 	print(title)
-	get_node("Label").text = title
+	get_node("PlanetMenu/Label").text = title
+	get_node("PlanetNode/Label").text = title
 	for n in range(0, randi_range(16,25)):
 		var newSettlement = load("res://Scenes/Locational/Settlement.tscn").instantiate()
 		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250,250))
 		var counter = 0
-		while !validateDistance(newSettlement) and counter != 100:
+		while !validateDistance(newSettlement, settlements, 125) and counter != 100:
 			counter +=1
 			newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250,250))
 		if counter != 100:
-			add_child(newSettlement)
+			get_node("PlanetMenu").add_child(newSettlement)
 			settlements.append(newSettlement)
 		else:
 			break
-	var guard = get_parent().get_node("Factions/Guard").start()
-	var guard1 = get_parent().get_node("Factions/Guard").start()
-	var guard2 = get_parent().get_node("Factions/Guard").start()
-	var guard3 = get_parent().get_node("Factions/Guard").start()
-	var guard4 = get_parent().get_node("Factions/Guard").start()
-	var guard5 = get_parent().get_node("Factions/Guard").start()
-	var chaos = get_parent().get_node("Factions/Chaos").start()
-	var chaos2 = get_parent().get_node("Factions/Chaos").start()
+	var guard = main.get_node("Factions/Guard").start()
+	var guard1 = main.get_node("Factions/Guard").start()
+	var guard2 = main.get_node("Factions/Guard").start()
+	var guard3 = main.get_node("Factions/Guard").start()
+	var guard4 = main.get_node("Factions/Guard").start()
+	var guard5 = main.get_node("Factions/Guard").start()
+	var chaos = main.get_node("Factions/Chaos").start()
+	var chaos2 = main.get_node("Factions/Chaos").start()
 	settlements[0].appendRoster(guard)
 	settlements[1].appendRoster(guard1)
 	settlements[2].appendRoster(guard2)
@@ -77,8 +81,9 @@ func _ready() -> void:
 				newLine.width = 3
 				newLine.add_point(shortest[0].position)
 				newLine.add_point(shortest[1].position)
-				add_child(newLine)
-				#print("Connected " + str(shortest[0]) + " " + str(shortest[1]))
+				get_node("PlanetMenu").add_child(newLine)
+				#print("Connected " + str(shortest[0]) + " " + str(shortest[1]))\
+	port = settlements[0]
 
 
 func compliance():
@@ -99,13 +104,13 @@ func turn():
 	for settlement in settlements:
 		await settlement.turn()
 		await cleanup()
-	var convoys = get_node("Convoys").get_children()
+	var convoys = get_node("PlanetMenu/Convoys").get_children()
 	for convoy in convoys:
 		await convoy.move()
 		await cleanup()
 	
 	#Convoys fight if near eachother
-	convoys = get_node("Convoys").get_children()
+	convoys = get_node("PlanetMenu/Convoys").get_children()
 	var alreadyFought: Array[Convoy] = []
 	for convoy in range(convoys.size()-1,-1,-1):
 		var bodies: Array[Node2D] = convoys[convoy].get_node("VisionRange").get_overlapping_bodies()
@@ -159,7 +164,7 @@ func cleanup() -> bool:
 		for unit in range(temp.size()-1,-1,-1):
 			if !is_instance_valid(temp[unit]):
 				temp.erase(temp[unit])
-	for convoy in get_node("Convoys").get_children():
+	for convoy in get_node("PlanetMenu/Convoys").get_children():
 		var temp = convoy.getRoster()
 		for unit in range(temp.size()-1,-1,-1):
 			if !is_instance_valid(temp[unit]):
@@ -167,6 +172,14 @@ func cleanup() -> bool:
 		if convoy.getRoster().is_empty():
 			await convoy.kill()
 	return true
+
+func getBalance(team: String) -> int:
+	var balance: int = 0
+	for settlement in settlements:
+		if settlement.getTeam() == team:
+			balance += settlement.getWeight()
+		else: balance -= settlement.getWeight()
+	return balance
 
 func createConnections():
 	for n in settlements:
@@ -179,7 +192,7 @@ func createConnections():
 				newLine.width = 3
 				newLine.add_point(n.position)
 				newLine.add_point(m.position)
-				add_child(newLine)
+				get_node("PlanetMenu").add_child(newLine)
 	for n in settlements:
 		if n.getConnections().size() <= 0:
 			settlements.erase(n)
@@ -199,8 +212,9 @@ func sortDictByValues(dict: Dictionary) -> Dictionary:
 				temp[smallestKey] = smallestNum
 			return temp
 
-func validateDistance(val: Settlement) -> bool:
-	for n in settlements:
-		if val.position.distance_to(n.position) < 125 && n != val:
-			return false
-	return true
+
+func _on_sprite_2d_pressed() -> void:
+	get_node("PlanetMenu").visible = !get_node("PlanetMenu").visible
+
+func _on_button_pressed() -> void:
+	get_node("PlanetMenu").visible = !get_node("PlanetMenu").visible

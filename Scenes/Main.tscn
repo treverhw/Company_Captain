@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cmsm54cloybk0"]
+[gd_scene load_steps=8 format=3 uid="uid://cmsm54cloybk0"]
 
 [ext_resource type="Script" uid="uid://di6vyailmkw1k" path="res://Scripts/Main.gd" id="1_c0oe7"]
 [ext_resource type="Texture2D" uid="uid://53123a0ts7hh" path="res://Assets/locational/SpaceBackground.png" id="2_0pm7d"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://fngdp1l2g2wj" path="res://Scenes/Factions/Chaos.tscn" id="4_v1gob"]
 [ext_resource type="PackedScene" uid="uid://oy6pvmtm0asd" path="res://Scenes/Factions/Guard.tscn" id="5_jw32o"]
 [ext_resource type="PackedScene" uid="uid://csycqpibx73ix" path="res://Scenes/Factions/PlayerFaction.tscn" id="6_50glp"]
+[ext_resource type="Script" uid="uid://b63nwif8x41wb" path="res://Scenes/mouse_pos.gd" id="7_jw32o"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -79,6 +80,10 @@ offset_right = 1917.0
 offset_bottom = 1079.0
 alignment = 2
 
+[node name="NewSystem" type="Button" parent="BottomBar"]
+layout_mode = 2
+text = "New System"
+
 [node name="PlanetTest" type="Button" parent="BottomBar"]
 layout_mode = 2
 text = "Planet Test"
@@ -114,6 +119,13 @@ offset_bottom = 40.0
 
 [node name="Chaos" parent="Factions" instance=ExtResource("4_v1gob")]
 
+[node name="MousePos" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("7_jw32o")
+
+[connection signal="pressed" from="BottomBar/NewSystem" to="." method="_on_new_system_pressed"]
 [connection signal="pressed" from="BottomBar/PlanetTest" to="." method="_on_planet_test_pressed"]
 [connection signal="pressed" from="BottomBar/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="BottomBar/Turn" to="." method="_on_turn_pressed"]

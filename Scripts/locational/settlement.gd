@@ -6,6 +6,8 @@ var type: String
 var newUnitCounter: int = 0
 var line
 var threatened: bool = false
+var shuttles: Array[Shuttle] = []
+
 
 func appendRoster(arr: Array[Unit]):
 	for unit in arr:
@@ -95,7 +97,7 @@ func turn():
 		if threatWeight*1.2 >= getWeight():
 			#print("[Threatened] " + str(self))
 			threatened = true
-		if !threatened and !get_parent().compliant and roster.size() > 2:
+		if !threatened and !get_parent().get_parent().compliant and roster.size() > 2:
 			#print("Spawning Convoy: " + str(self))
 			var guy = spawnConvoy()
 			guy.source = "Normal Move"
@@ -127,7 +129,7 @@ func spawnConvoy(destination:Settlement = null) -> Convoy:
 		roster = leftBehind
 	#Automatic
 	else:
-		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements, convoy.speed)
+		var tempPath: Array[Settlement] = shortestPath(get_parent().get_parent().settlements, convoy.speed)
 		if tempPath.size() >= 2:
 			#print("Auto") 
 			convoy.setConvoy(convoy.roster, self, tempPath[1])
@@ -231,7 +233,6 @@ func update():
 	else:
 		team = "Unowned"
 		get_node("TextureRect").set_texture(load("res://Assets/locational/unowned.png"))
-
 
 ##Getters and Setters
 func getConnections() -> Dictionary:
