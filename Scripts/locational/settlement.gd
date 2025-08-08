@@ -66,15 +66,20 @@ func shortestPath(settlements: Array[Settlement], speed: int = 50, source: Settl
 	return path
 
 func spawn() -> Unit:
-	var unit = roster.front().getFaction().spawnLocational(self)
-	return unit
+	var ret: Unit
+	for unit in roster:
+		var temp = unit.getRoster().front().getFaction()
+		if temp is not PlayerFaction:
+			ret = temp.spawnLocational(self)
+			break
+	return ret
 
 func turn():
 	threatened = false
 	#print(getTitle() + ": " + str(getRoster()))
 	if team != "Unowned" and getRoster().size() > 0:
 		newUnitCounter += 1
-		if newUnitCounter >= 5:
+		if newUnitCounter >= 10:
 			roster.append(spawn())
 			newUnitCounter = 0
 		var threatWeight: int = 0
