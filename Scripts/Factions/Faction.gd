@@ -12,11 +12,12 @@ var id : int
 
 func removeEntity(model: Entity):
 	var unit = model.getUnit()
-	print(str(name) + " Removing Model: " + str(model.name))
+	#print(str(name) + " Removing Model: " + str(model.name))
 	unit.getRoster().erase(model)
 	if unit.getRoster().size() <= 0:
-		print(str(name) + " Removing Unit: " + str(unit.name))
-		unit.getLocation().getRoster().erase(unit)
+		#print(str(name) + " Removing Unit: " + str(unit.name))
+		if is_instance_valid(unit.getLocation()):
+			unit.getLocation().getRoster().erase(unit)
 		roster.erase(unit)
 		unit.queue_free()
 	model.queue_free()
@@ -43,14 +44,10 @@ func getTeam() -> String:
 	return team
 
 func getRoster() -> Array[Unit]:
+	for unit in range(roster.size()-1,-1,-1):
+		if !is_instance_valid(roster[unit]):
+			roster.erase(roster[unit])
 	return roster
-
-func getEntities() -> Array[Entity]:
-	var arr : Array[Entity] = []
-	for unit in getRoster():
-		for ent in unit.getRoster():
-			arr.append(ent)
-	return arr
 
 func _to_string() -> String:
 	var ret: String = getTitle()

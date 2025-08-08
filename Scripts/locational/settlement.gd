@@ -5,11 +5,13 @@ var connections: Dictionary = {}
 var type: String
 var newUnitCounter: int = 0
 var line
+var threatened: bool = false
 
 func appendRoster(arr: Array[Unit]):
 	for unit in arr:
-		getRoster().append(unit)
-		unit.setLocation(self)
+		if is_instance_valid(unit):
+			getRoster().append(unit)
+			unit.setLocation(self)
 	update()
 
 func _ready() -> void:
@@ -17,7 +19,7 @@ func _ready() -> void:
 	generateTitle(Names.new().planetNames)
 	get_node("Name").text = name
 
-func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> Array[Settlement]:
+func shortestPath(settlements: Array[Settlement], speed: int = 50, source: Settlement = self) -> Array[Settlement]:
 	var dist = {}
 	var prev = {}
 	var queue: Array[Settlement]
@@ -36,7 +38,7 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> 
 				shortest = dist[settlement]
 		queue.erase(closestSettlement)
 		for settlement in closestSettlement.getConnections():
-			var temp = floor(distance(closestSettlement, settlement)/50)
+			var temp = floor(distance(closestSettlement, settlement)/speed)
 			#convoys move 50px a turn.
 			if dist[settlement] >= 1000:
 				dist[settlement] = dist[closestSettlement] + temp
@@ -48,7 +50,7 @@ func shortestPath(settlements: Array[Settlement], source: Settlement = self) -> 
 	#find nearest unowned node
 	var path: Array[Settlement] = []
 	var options: Array[Settlement] =  settlements.duplicate()
-	var target: Settlement
+	var target: Settlement = self
 	var distance: int = 1000
 	for settlement in options:
 		if dist[settlement] < distance and settlement.team != self.team:
@@ -68,12 +70,12 @@ func spawn() -> Unit:
 	return unit
 
 func turn():
+	threatened = false
 	#print(getTitle() + ": " + str(getRoster()))
-	var threatened: bool = false
 	if team != "Unowned" and getRoster().size() > 0:
 		newUnitCounter += 1
 		if newUnitCounter >= 5:
-			roster.append(await spawn())
+			roster.append(spawn())
 			newUnitCounter = 0
 		var threatWeight: int = 0
 		for settlement in connections:
@@ -85,17 +87,20 @@ func turn():
 				if convoy.destination == self or connections.has(convoy.destination):
 					threatWeight += convoy.getWeight()
 		#print("[" + str(self) + "] Weight: " + str(getWeight()) + " | ThreatWeight: " + str(threatWeight))
-		if threatWeight >= getWeight():
+		if threatWeight*1.2 >= getWeight():
 			#print("[Threatened] " + str(self))
 			threatened = true
 		if !threatened and !get_parent().compliant and roster.size() > 2:
 			#print("Spawning Convoy: " + str(self))
-			await spawnConvoy()
+			var guy = spawnConvoy()
+			guy.source = "Normal Move"
 		if threatened == true:
 			overwhelmCheck()
 		update()
 
 func spawnConvoy(destination:Settlement = null) -> Convoy:
+	if getRoster().size() <= 2:
+		return Convoy.new()
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
 	var leftBehind: Array[Unit]
@@ -107,7 +112,9 @@ func spawnConvoy(destination:Settlement = null) -> Convoy:
 			leftBehind.append(unit)
 	for unit in getRoster():
 		if !leftBehind.has(unit):
-			convoy.roster.append(unit)
+			convoy.getRoster().append(unit)
+	if convoy.getRoster().size() <= 0:
+		return Convoy.new()
 	#Directed Movement
 	if destination != null:
 		#print("Directed") 
@@ -115,7 +122,7 @@ func spawnConvoy(destination:Settlement = null) -> Convoy:
 		roster = leftBehind
 	#Automatic
 	else:
-		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements)
+		var tempPath: Array[Settlement] = shortestPath(get_parent().settlements, convoy.speed)
 		if tempPath.size() >= 2:
 			#print("Auto") 
 			convoy.setConvoy(convoy.roster, self, tempPath[1])
@@ -127,29 +134,24 @@ func spawnConvoy(destination:Settlement = null) -> Convoy:
 	return convoy
 
 func overwhelmCheck():
-	print("Overhelm Check for " + str(self))
-	var overwhelm = false
+	#print("Overhelm Check for " + str(self))
 	var weight: int = getWeight()
 	var theirWeight: int = 0
 	for settlement in connections:
-		#print(weight)
-		#print(theirWeight)
 		if settlement.getTeam() != getTeam():
 			theirWeight += settlement.getAttackWeight()
-		#print(weight)
-		#print(theirWeight)
 		if theirWeight >= weight:
-			overwhelm = true
 			for connection in connections:
 				if connection.getTeam() != getTeam():
 					#print("Overwhleming Convoy")
-					connection.spawnConvoy(self)
+					var guy = connection.spawnConvoy(self)
+					guy.source = "Overwhelm"
 			update()
 			break
 
 func invade(attackers: Array[Unit]):
-	print("------------------INVASION-START------------------")
-	print("->LOCATION:" + getTitle())
+	#print("------------------INVASION-START------------------")
+	#print("->LOCATION:" + getTitle())
 	##Set locations and divide the fight.
 	var defenders: Array[Unit] = []
 	for unit in getRoster():
@@ -181,6 +183,7 @@ func invade(attackers: Array[Unit]):
 				retreat = true
 				var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 				get_parent().get_node("Convoys").add_child(convoy)
+				convoy.source = "Invasion Retreat"
 				convoy.setConvoy(newRosters[1], self, settlement)
 				convoy.move()
 				break
@@ -191,7 +194,7 @@ func invade(attackers: Array[Unit]):
 	roster = newRosters[0]
 	combat.queue_free()
 	update()
-	print("------------------INVASION-OVER------------------")
+	#print("------------------INVASION-OVER------------------")
 
 func cleanup():
 	for unit in range(getRoster().size()-1, -1, -1):
@@ -202,10 +205,11 @@ func update():
 	for unit in range(getRoster().size()-1, -1, -1):
 		if !is_instance_valid(getRoster()[unit]):
 			getRoster().erase(getRoster()[unit])
-		getRoster()[unit].setLocation(self)
+		else:
+			getRoster()[unit].setLocation(self)
 	get_node("Label").text = str(roster.size())
-	if !roster.is_empty():
-		setTeam(roster.front().getTeam())
+	if !getRoster().is_empty():
+		setTeam(getRoster().front().getTeam())
 		match team:
 			"Imperium":
 				get_node("TextureRect").set_texture(load("res://Assets/locational/Imperium.png"))
@@ -219,6 +223,9 @@ func update():
 				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
 			"Tau":
 				get_node("TextureRect").set_texture(load("res://Assets/locational/Bad.png"))
+	else:
+		team = "Unowned"
+		get_node("TextureRect").set_texture(load("res://Assets/locational/unowned.png"))
 
 
 ##Getters and Setters
@@ -230,13 +237,15 @@ func getWeight() -> int:
 	#print(getTitle() + ": " + str(getRoster()))
 	var n: int = 0
 	for unit in getRoster():
-		n += unit.getWeight()
+		if is_instance_valid(unit):
+			n += unit.getWeight()
 	return n
 
 func getAttackWeight() -> int:
 	var n: int = 0
 	for unit in range(2, getRoster().size()):
-		n += getRoster()[unit].getWeight()
+		if is_instance_valid(getRoster()[unit]):
+			n += getRoster()[unit].getWeight()
 	return n
 
 func setConnections(val: Dictionary):

@@ -19,7 +19,7 @@ func _ready() -> void:
 func populate(attack: Array[Unit], defense: Array[Unit]) -> Dictionary:
 	
 	if attack.front().getFaction().id != 0 and defense.front().getFaction().id != 0 :
-		print("[Combat]: Fought Automatically")
+		#print("[Combat]: Fought Automatically")
 		self.visible = false
 		auto = true
 	
@@ -107,29 +107,29 @@ func realFight() -> Dictionary:
 									target.getUnit().combatUpdate()
 									
 									#check for one army or the other winning.
-									if await endCheck():
-										await cleanup()
+									if endCheck():
+										cleanup()
 										return end
 		
 		#Move the attacking army forward one line's length based on the distance between their front lines.
 		#Needs to be changed to be the distance between their currently no
 		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
 			get_node("Attacker").global_position.x += 65
-	await cleanup()
+	cleanup()
 	return end
 
 func endCheck() -> bool:
 	var att = get_node("Attacker").getSize()
 	var def = get_node("Defender").getSize()
 	if att <= 0:
-		print("Defenders win!")
+		#print("Defenders win!")
 		end[0] = defenderRoster
 		end[1] = attackerRoster
 		#print("[Combat] Winners: \n" + str(end[0]))
 		#print("[Combat] Losers: \n" + str(end[1]))
 		return true
 	if def <= 0:
-		print("Attackers win!")
+		#print("Attackers win!")
 		end[0] = attackerRoster
 		end[1] = defenderRoster
 		#print("[Combat] Winners: \n" + str(end[0]))
@@ -139,11 +139,13 @@ func endCheck() -> bool:
 
 func cleanup() -> bool:
 	for unit in range(attackerRoster.size() -1, -1, -1):
-		attackerRoster[unit].reparent(attackerRoster[unit].getFaction())
+		if attackerRoster[unit].get_parent() != null:
+			attackerRoster[unit].reparent(attackerRoster[unit].getFaction())
 		attackerRoster[unit].visible = false
 		attackerRoster[unit].clean()
 	for unit in range(defenderRoster.size() -1, -1, -1):
-		defenderRoster[unit].reparent(defenderRoster[unit].getFaction())
+		if defenderRoster[unit].get_parent() != null:
+			defenderRoster[unit].reparent(defenderRoster[unit].getFaction())
 		defenderRoster[unit].visible = false
 		defenderRoster[unit].clean()
 	return true

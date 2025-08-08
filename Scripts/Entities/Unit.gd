@@ -32,19 +32,20 @@ func getAlive() -> int:
 	return counter
 
 func clean():
-	print("Cleaning!")
+	#print("Cleaning!")
 	for model in range(getRoster().size() - 1, -1, -1):
-		print(str(getRoster()[model]))
+		#print(str(getRoster()[model]))
 		if getRoster()[model].getWounds() <= 0:
 			getRoster()[model].battlescars += 1
 			if getRoster()[model].getBattlescars() > getRoster()[model].getMaxBattlescars():
-				print("Killing!")
+				#print("Killing!")
 				getRoster()[model].kill()
 			else:
-				print("Scarring!")
+				#print("Scarring!")
 				getRoster()[model].setWounds(1)
 	if getRoster().is_empty():
-		get_parent().remove_child(self)
+		if get_parent() != null:
+			get_parent().remove_child(self)
 		getFaction().getRoster().erase(self)
 		queue_free()
 
@@ -64,6 +65,9 @@ func setLocation(val: Location):
 func getTitle() -> String:
 	return title
 func getRoster() -> Array[Entity]:
+	for unit in range(roster.size()-1,-1,-1):
+		if !is_instance_valid(roster[unit]):
+			roster.erase(roster[unit])
 	return roster
 func getRosterCap() -> int:
 	return rosterCap
@@ -74,7 +78,10 @@ func getTeam() -> String:
 func getLine() -> String:
 	return str(line)
 func getLocation() -> Location:
-	return location
+	if is_instance_valid(location): 
+		return location
+	else: 
+		return null
 func getWeight() -> int:
 	var n: int = 0
 	for model in getRoster():

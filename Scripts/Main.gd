@@ -8,6 +8,8 @@ var chaos
 var squad : Squad
 var turn: int = 0
 var temp
+var planet: Planet
+var testing: bool = false
 
 func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("Escape"):
@@ -22,17 +24,13 @@ func _ready() -> void:
 	chaos = get_node("Factions/Chaos")
 
 func play():
-	temp = load("res://Scenes/Locational/Planet.tscn").instantiate()
-	add_child(temp)
+	planet = load("res://Scenes/Locational/Planet.tscn").instantiate()
+	add_child(planet)
 	get_node("BottomBarBack").visible = true
 	get_node("BottomBar").visible = true
 	guard.start()
 	chaos.start()
-	while(true):
-		await get_tree().create_timer(.2).timeout
-		_on_turn_pressed()
-		temp.turn()
-	#temp.settlements[1].roster.append(guard.roster[0])
+ 	#temp.settlements[1].roster.append(guard.roster[0])
 	#temp.settlements[1].roster.append(guard.roster[1])
 	#temp.settlements[1].roster.append(guard.roster[2])
 	#temp.settlements[1].roster.append(guard.roster[3])
@@ -54,14 +52,37 @@ func _on_turn_pressed() -> void:
 	turn += 1
 	get_node("TopBar/TurnCounter").text = "Turns: " + str(turn)
 	get_node("BottomBar/Turn").disabled = true
-	await get_tree().create_timer(.2).timeout
+	await get_tree().create_timer(.1).timeout
 	get_node("BottomBar/Turn").disabled = false
 
 func getPlayer() -> Faction:
 	return playerFaction
 
+func resetFactions() -> bool:
+	for child in guard.get_children():
+		guard.remove_child(child)
+		guard.getRoster().clear()
+	for child in chaos.get_children():
+		chaos.remove_child(child)
+		chaos.getRoster().clear()
+	for child in playerFaction.get_children():
+		playerFaction.remove_child(child)
+		playerFaction.getRoster().clear()
+	return true
+
 func _on_planet_test_pressed() -> void:
-	remove_child(temp)
-	temp.queue_free()
-	temp = load("res://Scenes/Locational/Planet.tscn").instantiate()
-	add_child(temp)
+	testing = !testing
+	var counter = 0
+	while(turn <= 10000):
+		await get_tree().create_timer(.15).timeout
+		_on_turn_pressed()
+		planet.turn()
+		if planet.compliance():
+			await resetFactions()
+			counter += 1
+			print("Planet " + str(counter))
+			remove_child(planet)
+			planet.queue_free()
+			planet = load("res://Scenes/Locational/Planet.tscn").instantiate()
+			add_child(planet)
+	print("It works!")

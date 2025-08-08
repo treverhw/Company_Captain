@@ -4,10 +4,11 @@ class_name Convoy
 var path: Array[Settlement]
 var home: Settlement
 var destination: Settlement
+var source: String = ""
+var speed: int = 25
 
 func move():
 	#print("Home: " + str(home) + " | Destination: " + str(destination) + " | Army: " + str(roster))
-	var team
 	if getRoster().is_empty():
 		queue_free()
 		if get_parent() != null:
@@ -15,9 +16,13 @@ func move():
 		return
 	else: team = roster.front().getTeam()
 	var direction = (destination.global_position - self.global_position).normalized()
-	global_position += direction * 50
+	global_position += direction * speed
 	
-	if destination.distance(self, destination) < 50.0:
+	get_node("Node2D/Label").text = str(int(floor(distance(self, destination)/speed)))
+	get_node("Node2D/Label2").text = team.split()[0]
+	get_node("Node2D/Label3").text = str(getRoster().size())
+	get_node("Node2D").global_rotation = 0.0
+	if destination.distance(self, destination) < speed:
 		match(destination.team):
 			"Unowned":
 				destination.getRoster().append_array(getRoster())
@@ -41,6 +46,7 @@ func kill():
 func retreatConvoy():
 	if !getRoster().is_empty():
 		destination = home
+		look_at(destination.global_position)
 		for unit in getRoster():
 			unit.setLocation(self)
 		move()
@@ -82,6 +88,9 @@ func setDestination(dest: Settlement):
 	look_at(destination.global_position)
 
 func getRoster() -> Array[Unit]:
+	for unit in range(roster.size()-1,-1,-1):
+		if !is_instance_valid(roster[unit]):
+			roster.erase(roster[unit])
 	return roster
 func getPath() -> Array[Settlement]:
 	return path
@@ -94,5 +103,6 @@ func getTeam() -> String:
 func getWeight() -> int:
 	var n: int = 0
 	for unit in getRoster():
-		n += unit.getWeight()
+		if is_instance_valid(unit):
+			n += unit.getWeight()
 	return n

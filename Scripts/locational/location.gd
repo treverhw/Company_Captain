@@ -26,6 +26,9 @@ func setTeam(val: String):
 func getTitle() -> String:
 	return title
 func getRoster() -> Array[Unit]:
+	for unit in range(roster.size()-1,-1,-1):
+		if !is_instance_valid(roster[unit]):
+			roster.erase(roster[unit])
 	return roster
 func getTeam() -> String:
 	return team

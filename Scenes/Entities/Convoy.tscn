@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://c6kjntg0d4sp7" path="res://Assets/ship.png" id="2_brc3v"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_brc3v"]
-radius = 50.0
+radius = 25.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_00kql"]
 radius = 11.0
@@ -28,6 +28,38 @@ shape = SubResource("CircleShape2D_brc3v")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 shape = SubResource("CircleShape2D_00kql")
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="Label" type="Label" parent="Node2D"]
+z_index = 5
+offset_left = -31.0
+offset_top = 2.0
+offset_right = 9.0
+offset_bottom = 25.0
+theme_override_font_sizes/font_size = 12
+text = "99"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="Node2D"]
+z_index = 5
+offset_left = -12.0
+offset_top = 2.0
+offset_right = 28.0
+offset_bottom = 25.0
+theme_override_font_sizes/font_size = 12
+text = "I"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="Node2D"]
+z_index = 5
+offset_left = -20.0
+offset_top = -8.0
+offset_right = 20.0
+offset_bottom = 15.0
+theme_override_font_sizes/font_size = 12
+text = "0"
+horizontal_alignment = 1
 
 [connection signal="area_entered" from="VisionRange" to="." method="_on_vision_range_area_entered"]
 [connection signal="body_entered" from="VisionRange" to="." method="_on_vision_range_body_entered"]

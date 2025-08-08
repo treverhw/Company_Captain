@@ -28,8 +28,8 @@ func spawnModel() -> Entity:
 
 func spawnSquad() -> Squad:
 	var newSquad : Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
-	newSquad.define(str(roster.size()), 5, self)
-	newSquad.roster = [spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel()]
+	newSquad.define(str(roster.size()), 10, self)
+	newSquad.roster = [spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel(),spawnModel()]
 	roster.append(newSquad)
 	newSquad.assignModels()
 	add_child(newSquad)
