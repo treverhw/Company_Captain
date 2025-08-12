@@ -62,13 +62,13 @@ texture = ExtResource("2_0pm7d")
 stretch_mode = 3
 
 [node name="BottomBarBack" type="Sprite2D" parent="."]
-position = Vector2(951.5, 1298)
-scale = Vector2(3.79444, 1)
+position = Vector2(951.5, 1469)
+scale = Vector2(3.79444, 1.64815)
 texture = ExtResource("3_kln2b")
 
 [node name="TopBarBack" type="Sprite2D" parent="."]
-position = Vector2(1383, -227)
-scale = Vector2(14.3978, 1)
+position = Vector2(963, -406)
+scale = Vector2(5.63333, 1.66296)
 texture = ExtResource("3_kln2b")
 
 [node name="BottomBar" type="HBoxContainer" parent="."]
@@ -86,7 +86,7 @@ text = "New System"
 
 [node name="PlanetTest" type="Button" parent="BottomBar"]
 layout_mode = 2
-text = "Planet Test"
+text = "War Test"
 
 [node name="Button" type="Button" parent="BottomBar"]
 layout_mode = 2
@@ -104,6 +104,11 @@ offset_right = 1917.0
 offset_bottom = 39.0
 alignment = 2
 
+[node name="MousePos" type="Label" parent="TopBar"]
+layout_mode = 2
+text = "Mouse Position"
+script = ExtResource("7_jw32o")
+
 [node name="TurnCounter" type="Label" parent="TopBar"]
 layout_mode = 2
 text = "Turn: 0"
@@ -118,12 +123,6 @@ offset_bottom = 40.0
 [node name="Guard" parent="Factions" instance=ExtResource("5_jw32o")]
 
 [node name="Chaos" parent="Factions" instance=ExtResource("4_v1gob")]
-
-[node name="MousePos" type="Label" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-script = ExtResource("7_jw32o")
 
 [connection signal="pressed" from="BottomBar/NewSystem" to="." method="_on_new_system_pressed"]
 [connection signal="pressed" from="BottomBar/PlanetTest" to="." method="_on_planet_test_pressed"]

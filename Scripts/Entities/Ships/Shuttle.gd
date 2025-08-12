@@ -4,19 +4,17 @@ class_name Shuttle
 var mothership: SpaceShip = null
 var destination = null
 var used: bool = false
-var capacity: int = 2
+var capacity: int = 20
 
 func turn():
 	used = false
 	if destination != null:
 		destination.getRoster().append_array(getRoster())
-			
 
 func setDestination(location, from: Planet = null):
 	destination = location
 	if from != null:
-		setRoster(from)
+		embark(from)
 
-func setRoster(planet: Planet):
-	for settlement in planet.getSettlements():
-		pass
+func embark(planet: Planet):
+	roster.append_array(planet.getExcess())

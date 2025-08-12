@@ -5,7 +5,7 @@ var title : String
 var roster : Array[Entity] = []
 var rosterCap : int = 5
 var faction : Faction
-var location: Location
+var location
 var line: int = 1
 
 func define(t : String, rC : int, f : Faction):
@@ -86,6 +86,11 @@ func getWeight() -> int:
 	var n: int = 0
 	for model in getRoster():
 		n += model.getWeight()
+	return n
+func getSize() -> int:
+	var n: int = 0
+	for model in getRoster():
+		n += model.getSize()
 	return n
 
 func _to_string() -> String:

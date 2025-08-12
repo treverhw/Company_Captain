@@ -3,6 +3,7 @@ class_name System
 
 var ships: Array[Ship] = []
 var planets: Array[Planet] = []
+var priority: Array[Planet] = []
 
 func _ready() -> void:
 	get_node("SystemSprite").global_position = Vector2(1920/2,1080/2 - 52)
@@ -17,10 +18,21 @@ func _ready() -> void:
 		add_child(planet)
 		planets.append(planet)
 		print(str(planet.get_node("PlanetNode").global_position))
+	getPlanetPriority("Imperium")
+
+func getPlanetPriority(team: String):
+	var test = {}
+	planets = getPlanets()
+	for planet in planets:
+		if !planet.compliance():
+			planet.setBalance(team)
+			test[planet] = planet.balance
+	planets.sort_custom(func(a,b): return a.balance < b.balance)
+	print(test)
 
 func getCompliance() -> bool:
 	for planet in getPlanets():
-		if planet.compliance() == false:
+		if !planet.compliance():
 			return false
 	return true
 

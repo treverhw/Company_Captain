@@ -4,8 +4,7 @@ class_name Planet
 var settlements: Array[Settlement]
 var exclude: Array[Settlement] = []
 var compliant: bool = false
-var port: Settlement
-var arrivalTime: int
+var balance: int
 
 func _ready() -> void:
 	var main = get_node("/root/Main/")
@@ -27,22 +26,18 @@ func _ready() -> void:
 			settlements.append(newSettlement)
 		else:
 			break
-	var guard = main.get_node("Factions/Guard").start()
-	var guard1 = main.get_node("Factions/Guard").start()
-	var guard2 = main.get_node("Factions/Guard").start()
-	var guard3 = main.get_node("Factions/Guard").start()
-	var guard4 = main.get_node("Factions/Guard").start()
-	var guard5 = main.get_node("Factions/Guard").start()
-	var chaos = main.get_node("Factions/Chaos").start()
-	var chaos2 = main.get_node("Factions/Chaos").start()
-	settlements[0].appendRoster(guard)
-	settlements[1].appendRoster(guard1)
-	settlements[2].appendRoster(guard2)
-	settlements[3].appendRoster(guard3)
-	settlements[4].appendRoster(guard4)
-	settlements[5].appendRoster(guard5)
-	settlements[settlements.size()-1].appendRoster(chaos)
-	settlements[settlements.size()-2].appendRoster(chaos2)
+	
+	for n in randi_range(4, 8):
+		var guard1 = main.get_node("Factions/Guard").start()
+		var settlement = settlements[randi_range(0, settlements.size()-1)]
+		settlement.appendRoster(guard1)
+	for n in randi_range(4, 5):
+		var chaos1 = main.get_node("Factions/Chaos").start()
+		var num = randi_range(0, settlements.size()-1)
+		while settlements[num].getTeam() == "Imperium":
+			num = randi_range(0, settlements.size()-1)
+		var settlement = settlements[num]
+		settlement.appendRoster(chaos1)
 	
 	await createConnections()
 	var temp: Array[Settlement]
@@ -82,8 +77,8 @@ func _ready() -> void:
 				newLine.add_point(shortest[0].position)
 				newLine.add_point(shortest[1].position)
 				get_node("PlanetMenu").add_child(newLine)
-				#print("Connected " + str(shortest[0]) + " " + str(shortest[1]))\
-	port = settlements[0]
+				#print("Connected " + str(shortest[0]) + " " + str(shortest[1]))
+	update()
 
 
 func compliance():
@@ -99,6 +94,7 @@ func compliance():
 
 func turn():
 	await cleanup()
+	update()
 	compliance()
 	
 	for settlement in settlements:
@@ -173,13 +169,26 @@ func cleanup() -> bool:
 			await convoy.kill()
 	return true
 
-func getBalance(team: String) -> int:
-	var balance: int = 0
+func update():
+	setBalance("Imperium")
+	get_node("PlanetNode/Balance").text = str(balance)
+	if balance > 0:
+		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Imperium.png")
+	elif balance < 0:
+		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Bad.png")
+	else:
+		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/unowned.png")
+
+func setBalance(team: String):
+	balance = 0
 	for settlement in settlements:
 		if settlement.getTeam() == team:
 			balance += settlement.getWeight()
 		else: balance -= settlement.getWeight()
-	return balance
+	for convoy in get_node("PlanetMenu/Convoys").get_children():
+		if convoy.getTeam() == team:
+			balance += convoy.getWeight()
+		else: balance -= convoy.getWeight()
 
 func createConnections():
 	for n in settlements:
@@ -212,6 +221,19 @@ func sortDictByValues(dict: Dictionary) -> Dictionary:
 				temp[smallestKey] = smallestNum
 			return temp
 
+func getExcess(capacity: int = 99999) -> Array[Unit]:
+	var ret: Array[Unit] = []
+	var currentSize: int = 0
+	if compliant:
+		for settlement in settlements:
+			if currentSize >= capacity:
+				return ret
+			for unit in settlement:
+				var n = unit.getSize()
+				if n + currentSize <= capacity:
+					ret.append(unit)
+					currentSize += n
+	return ret
 
 func _on_sprite_2d_pressed() -> void:
 	get_node("PlanetMenu").visible = !get_node("PlanetMenu").visible

@@ -25,6 +25,7 @@ func define(arr : Array, arm : Armour, wpn1 : Weapon, wpn2 : Weapon, fac: Factio
 	wounds = maxWounds
 	battlescars = 0
 	maxBattlescars = arr[3]
+	
 	bonusWounds = bw
 	bonusSpeed = bs
 	bonusToughness = bt
@@ -104,3 +105,5 @@ func getSave() -> int:
 	return armour.getSave() + bonusSave
 func getWeight() -> int:
 	return getArmour().getWeight()
+func getSize() -> int:
+	return getArmour().getSize()

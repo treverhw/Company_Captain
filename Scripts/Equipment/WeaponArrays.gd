@@ -15,8 +15,16 @@ static var astartesWeapons = {
 
 static var guardWeapons = {
 	#Ranged                     Title      att str ap dmg twoH  melee  pistol  desc
-	"Lasgun" :					["Lasgun", 2, 3, 0, 1, true, false, false, "'Anyone got a flashlight?'"],
+	"Lasgun" :					["Lasgun", 2, 3, 0, 1,    true, false, false, "'Anyone got a flashlight?'"],
 	"Laspistol" :				["Laspistol", 1, 3, 0, 1, false, true, true, "'No, a smaller one.'"],
 	#Melee
 	"Close Combat Weapon" : 	["Close Combat Weapon", 2, 3, 0, 1, false, true, false, "Standard melee weapon."],
+}
+
+static var chaosWeapons = {
+	#Ranged                     Title          att str ap dmg twoH  melee  pistol  desc
+	"Autopistol" :				["Autopistol", 1, 3, 0, 1,    false, false, true, "'Brrrrr'"],
+	"Bolt Pistol" : 			["Bolt Pistol", 1, 4, 0, 1, false, true, true, "Wrist Snapper 9000."],
+	#Melee
+	"Brutal Assault Weapon" : 	["Brutal Assault Weapon", 2, 3, 0, 1, false, true, false, "Chaos melee weapon."]
 }

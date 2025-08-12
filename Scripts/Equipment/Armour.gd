@@ -8,6 +8,7 @@ var save : int
 var weight : int
 var wounds : int
 var description : String
+var size: int
 
 func _init(arr : Array):
 	name = arr[0]
@@ -17,7 +18,8 @@ func _init(arr : Array):
 	save = arr[3]
 	weight = arr[4]
 	wounds = arr[5]
-	description = arr[6]
+	size = arr[6]
+	description = arr[7]
 
 #Getters
 func getTitle() -> String:
@@ -34,6 +36,8 @@ func getDescription() -> String:
 	return description
 func getWeight() -> int:
 	return weight
+func getSize() -> int:
+	return size
 
 func _to_string() -> String:
 	return getTitle()

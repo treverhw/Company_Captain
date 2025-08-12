@@ -210,10 +210,7 @@ func cleanup():
 
 func update():
 	for unit in range(getRoster().size()-1, -1, -1):
-		if !is_instance_valid(getRoster()[unit]):
-			getRoster().erase(getRoster()[unit])
-		else:
-			getRoster()[unit].setLocation(self)
+		getRoster()[unit].setLocation(self)
 	get_node("Label").text = str(roster.size())
 	if !getRoster().is_empty():
 		setTeam(getRoster().front().getTeam())

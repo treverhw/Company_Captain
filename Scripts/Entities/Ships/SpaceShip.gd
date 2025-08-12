@@ -3,6 +3,11 @@ class_name SpaceShip
 
 var shuttles: Array[Shuttle] = []
 
+func turn():
+	for shuttle in getShuttles():
+		shuttle.used = false
+		
+
 func embark(shuttle: Shuttle):
 	shuttles.append(shuttle)
 	getRoster().append_array(shuttle.getRoster())
