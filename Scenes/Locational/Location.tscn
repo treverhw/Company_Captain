@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bgi7asbtsnte"]
 
-[ext_resource type="Script" uid="uid://wh17jgh0tqxf" path="res://Scripts/LocationalRename/Location.gd" id="1_7wqg4"]
+[ext_resource type="Script" uid="uid://wh17jgh0tqxf" path="res://Scripts/Locational/Location.gd" id="1_7wqg4"]
 
 [node name="Location" type="Control"]
 layout_mode = 3
