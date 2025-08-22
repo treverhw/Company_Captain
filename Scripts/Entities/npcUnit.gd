@@ -1,2 +1,2 @@
 extends Unit
-class_name npcUnit
+class_name NPCUnit

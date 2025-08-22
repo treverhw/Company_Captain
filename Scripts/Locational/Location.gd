@@ -4,6 +4,7 @@ class_name Location
 var title: String
 var roster: Array[Unit]
 var team: String = "Unowned"
+var compliant: bool = false
 
 func distance(Node1: Node, Node2: Node) -> float:
 	return Node1.global_position.distance_to(Node2.global_position)

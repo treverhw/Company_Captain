@@ -3,7 +3,6 @@ class_name Planet
 
 var settlements: Array[Settlement]
 var exclude: Array[Settlement] = []
-var compliant: bool = false
 var balance: int
 
 func _ready() -> void:

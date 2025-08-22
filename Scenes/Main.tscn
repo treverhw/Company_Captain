@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://fngdp1l2g2wj" path="res://Scenes/Factions/Chaos.tscn" id="4_v1gob"]
 [ext_resource type="PackedScene" uid="uid://oy6pvmtm0asd" path="res://Scenes/Factions/Guard.tscn" id="5_jw32o"]
 [ext_resource type="PackedScene" uid="uid://csycqpibx73ix" path="res://Scenes/Factions/PlayerFaction.tscn" id="6_50glp"]
-[ext_resource type="Script" path="res://Scenes/mouse_pos.gd" id="7_jw32o"]
+[ext_resource type="Script" uid="uid://b63nwif8x41wb" path="res://mouse_pos.gd" id="7_jw32o"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
