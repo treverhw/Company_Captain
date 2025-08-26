@@ -2,11 +2,11 @@ extends Ship
 class_name SpaceShip
 
 var shuttles: Array[Shuttle] = []
+var capacity: int = 250
 
 func turn():
 	for shuttle in getShuttles():
 		shuttle.used = false
-		
 
 func embark(shuttle: Shuttle):
 	shuttles.append(shuttle)

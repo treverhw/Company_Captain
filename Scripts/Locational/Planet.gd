@@ -179,15 +179,17 @@ func update():
 		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/unowned.png")
 
 func setBalance(team: String):
-	balance = 0
+	var temp = 0
 	for settlement in settlements:
 		if settlement.getTeam() == team:
-			balance += settlement.getWeight()
-		else: balance -= settlement.getWeight()
+			temp += settlement.getWeight()
+		else: temp -= settlement.getWeight()
 	for convoy in get_node("PlanetMenu/Convoys").get_children():
 		if convoy.getTeam() == team:
-			balance += convoy.getWeight()
-		else: balance -= convoy.getWeight()
+			temp += convoy.getWeight()
+		else: temp -= convoy.getWeight()
+	balance = temp
+	return temp
 
 func createConnections():
 	for n in settlements:
@@ -220,19 +222,16 @@ func sortDictByValues(dict: Dictionary) -> Dictionary:
 				temp[smallestKey] = smallestNum
 			return temp
 
-func getExcess(capacity: int = 99999) -> Array[Unit]:
+func getExcess(team: String) -> Array[Unit]:
 	var ret: Array[Unit] = []
-	var currentSize: int = 0
-	if compliant:
-		for settlement in settlements:
-			if currentSize >= capacity:
-				return ret
-			for unit in settlement:
-				var n = unit.getSize()
-				if n + currentSize <= capacity:
-					ret.append(unit)
-					currentSize += n
+	for settlement in settlements:
+		for unit in settlement:
+			if unit.getTeam() == team:
+				ret.append(unit)
 	return ret
+
+func getBalance(team: String) -> int:
+	return setBalance(team)
 
 func _on_sprite_2d_pressed() -> void:
 	get_node("PlanetMenu").visible = !get_node("PlanetMenu").visible
