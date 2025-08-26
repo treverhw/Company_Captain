@@ -8,7 +8,7 @@ var chaos
 var squad : Squad
 var turn: int = 0
 var temp
-var system: System
+var sector: Sector
 var testing: bool = false
 
 func _input(event: InputEvent) -> void:
@@ -24,8 +24,8 @@ func _ready() -> void:
 	chaos = get_node("Factions/Chaos")
 
 func play():
-	system = load("res://Scenes/Locational/System.tscn").instantiate()
-	add_child(system)
+	sector = load("res://Scenes/Locational/Sector.tscn").instantiate()
+	add_child(sector)
 	get_node("BottomBarBack").visible = true
 	get_node("BottomBar").visible = true
 	guard.start()
@@ -62,35 +62,51 @@ func resetFactions() -> bool:
 	for child in guard.get_children():
 		guard.remove_child(child)
 		guard.getRoster().clear()
+		guard.ships.clear()
 	for child in chaos.get_children():
 		chaos.remove_child(child)
 		chaos.getRoster().clear()
+		chaos.ships.clear()
 	for child in playerFaction.get_children():
 		playerFaction.remove_child(child)
 		playerFaction.getRoster().clear()
+		playerFaction.ships.clear()
 	return true
+
+#Default is Player Faction
+func getFaction(faction: String) -> Faction:
+	match faction:
+		"guard":
+			return get_node("Factions/Guard")
+		"chaos":
+			return get_node("Factions/Chaos")
+		"tyranids":
+			return get_node("Factions/Tyranids")
+		"orkz":
+			return get_node("Factions/Orkz")
+		_:
+			return get_node("Factions/PlayerFaction")
 
 func _on_planet_test_pressed() -> void:
 	testing = !testing
 	var counter = 1
-	while(counter):
+	while(counter < 100 and testing):
 		await get_tree().create_timer(.15).timeout
 		_on_turn_pressed()
-		for planet in system.getPlanets():
-			planet.turn()
-			if system.getCompliance() == true:
-				counter += 1
-				await resetFactions()
-				remove_child(system)
-				system.queue_free()
-				system = load("res://Scenes/Locational/System.tscn").instantiate()
-				add_child(system)
+		var system = sector.getSystems().front()
+		sector.turn()
+		if system.getCompliance():
+			counter += 1
+			await resetFactions()
+			remove_child(system)
+			system.queue_free()
+			system = load("res://Scenes/Locational/System.tscn").instantiate()
+			add_child(system)
 	print("It works!")
-
 
 func _on_new_system_pressed() -> void:
 	await resetFactions()
-	remove_child(system)
-	system.queue_free()
-	system = load("res://Scenes/Locational/System.tscn").instantiate()
-	add_child(system)
+	remove_child(sector.getSystems().front())
+	sector.getSystems().front().queue_free()
+	sector.getSystems().append(load("res://Scenes/Locational/System.tscn").instantiate())
+	add_child(sector.getSystems().front())

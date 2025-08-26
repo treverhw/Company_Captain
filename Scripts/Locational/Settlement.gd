@@ -110,35 +110,39 @@ func spawnConvoy(destination:Settlement = null) -> Convoy:
 		return Convoy.new()
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
-	var leftBehind: Array[Unit]
-	var counter = 0
-	#Leave behind two base units
-	for unit in getRoster():
-		if unit.getRoster().front().rank == "Base" and counter < 2:
-			counter += 1
-			leftBehind.append(unit)
-	for unit in getRoster():
-		if !leftBehind.has(unit):
-			convoy.getRoster().append(unit)
+	var toGo: Array[Unit] = allButTwo()
 	if convoy.getRoster().size() <= 0:
 		return Convoy.new()
 	#Directed Movement
 	if destination != null:
-		#print("Directed") 
-		convoy.setConvoy(convoy.roster, self, destination)
-		roster = leftBehind
+		print("Directed") 
+		convoy.setConvoy(toGo, self, destination)
 	#Automatic
 	else:
 		var tempPath: Array[Settlement] = shortestPath(get_parent().get_parent().settlements, convoy.speed)
 		if tempPath.size() >= 2:
-			#print("Auto") 
-			convoy.setConvoy(convoy.roster, self, tempPath[1])
+			print("Auto") 
+			convoy.setConvoy(toGo, self, tempPath[1])
 		else:
-			#print("Too Small") 
-			convoy.setConvoy(convoy.roster, self, self)
-		roster = leftBehind
+			print("Too Small") 
+			print(get_parent().get_parent())
+			print(tempPath)
+			convoy.setConvoy(toGo, self, self)
+	for unit in toGo:
+		getRoster().erase(unit)
 	update()
 	return convoy
+
+func allButTwo() -> Array[Unit]:
+	var counter: int = 0
+	var ret: Array[Unit] = []
+	for unit in getRoster():
+		if unit.getRoster().front().rank == "Base" and counter < 2:
+			counter +=1
+		else:
+			ret.append(unit)
+	print(str(getRoster().size()) + " | " + str(ret.size()))
+	return ret
 
 func overwhelmCheck():
 	#print("Overhelm Check for " + str(self))
@@ -231,7 +235,7 @@ func update():
 		team = "Unowned"
 		get_node("TextureRect").set_texture(load("res://Assets/locational/unowned.png"))
 
-##Getters and Setters
+#region Getters and Setters
 func getConnections() -> Dictionary:
 	return connections
 func getType() -> String:
@@ -255,6 +259,7 @@ func setConnections(val: Dictionary):
 	pass
 func setType(val: String):
 	type = val
+#endregion
 
 func _to_string() -> String:
 	return title

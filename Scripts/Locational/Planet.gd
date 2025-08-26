@@ -8,7 +8,6 @@ var balance: int
 func _ready() -> void:
 	var main = get_node("/root/Main/")
 	global_position = Vector2((1920/2), (1080/2))
-	main.get_node("BottomBar/Turn").button_down.connect(turn)
 	generateTitle(Names.new().planetNames)
 	print(title)
 	get_node("PlanetMenu/Label").text = title
@@ -27,11 +26,11 @@ func _ready() -> void:
 			break
 	
 	for n in randi_range(4, 8):
-		var guard1 = main.get_node("Factions/Guard").start()
+		var guard1 = main.getFaction("guard").start()
 		var settlement = settlements[randi_range(0, settlements.size()-1)]
 		settlement.appendRoster(guard1)
 	for n in randi_range(4, 5):
-		var chaos1 = main.get_node("Factions/Chaos").start()
+		var chaos1 = main.getFaction("chaos").start()
 		var num = randi_range(0, settlements.size()-1)
 		while settlements[num].getTeam() == "Imperium":
 			num = randi_range(0, settlements.size()-1)
@@ -222,12 +221,11 @@ func sortDictByValues(dict: Dictionary) -> Dictionary:
 				temp[smallestKey] = smallestNum
 			return temp
 
-func getExcess(team: String) -> Array[Unit]:
+func getExcess(tempTeam: String) -> Array[Unit]:
 	var ret: Array[Unit] = []
 	for settlement in settlements:
-		for unit in settlement:
-			if unit.getTeam() == team:
-				ret.append(unit)
+		for unit in settlement.allButTwo():
+			ret.append(unit)
 	return ret
 
 func getBalance(team: String) -> int:

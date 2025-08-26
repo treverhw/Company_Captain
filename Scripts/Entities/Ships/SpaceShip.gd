@@ -23,3 +23,14 @@ func getShuttles() -> Array[Shuttle]:
 		if !is_instance_valid(shuttles[shuttle]):
 			shuttles.erase(shuttles[shuttle])
 	return shuttles
+
+func _ready() -> void:
+	var names = Names.new().shipNames
+	generateTitle(names)
+
+func _to_string() -> String:
+	var used: int = 0
+	for shuttle in shuttles:
+		if shuttle.used == false:
+			used += 1
+	return title + " (" + str(used) + "/" + str(shuttles.size()) + ")" 

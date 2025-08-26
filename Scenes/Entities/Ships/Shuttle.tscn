@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cnsaq66nf806i"]
+
+[ext_resource type="Script" uid="uid://crn4frudswuvc" path="res://Scripts/Entities/Ships/Shuttle.gd" id="1_5svva"]
+
+[node name="Shuttle" type="Node"]
+script = ExtResource("1_5svva")
+metadata/_custom_type_script = "uid://crn4frudswuvc"

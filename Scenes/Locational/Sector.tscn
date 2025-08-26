@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://blkphbfnpvuiu"]
+
+[ext_resource type="Script" uid="uid://b5pjcx4c43lwp" path="res://Scripts/Locational/Sector.gd" id="1_di6kx"]
+
+[node name="Sector" type="Node2D"]
+script = ExtResource("1_di6kx")
+metadata/_custom_type_script = "uid://b5pjcx4c43lwp"

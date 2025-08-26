@@ -16,8 +16,13 @@ func turn():
 	onloadShips()
 	if compliant:
 		transferShips()
+	var text = "Ships: " + str(ships.size())
+	for ship in ships:
+		text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
+	get_node("ShipCount").text = text
 
 func offloadShips():
+	print("Offloading!")
 	var teams: Array[String] = []
 	for ship in getShips():
 		if !teams.has(ship.getTeam()):
@@ -42,7 +47,7 @@ func offloadShips():
 		var planetShuttles = {}
 		for planet in getPlanets():
 			requests[planet] = requests[planet]*need
-			planetShuttles[planet] = Array[Ship].new()
+			planetShuttles[planet] = []
 		shuttles = sortShuttles(shuttles)
 		for planet in getPlanets():
 			for shuttle in shuttles:
@@ -65,12 +70,14 @@ func offloadShips():
 				shuttle.disembark(planet)
 
 func onloadShips():
+	print("Onloading!")
 	for ship in getShips():
 		for shuttle in ship.getShuttles():
 			if shuttle.used == false:
 				for planet in getPlanets():
-					if planet.compliance() == true:
-						shuttle.embark()
+					if planet.compliance() == true and planet.getTeam() == ship.getTeam():
+						print(planet.getTitle() + " is Embarking!")
+						shuttle.embark(planet)
 
 func transferShips():
 	pass
@@ -83,12 +90,11 @@ func createPlanetPriority(team: String):
 			planet.setBalance(team)
 			test[planet] = planet.balance
 	planets.sort_custom(func(a,b): return a.balance < b.balance)
-	print(test)
+	#print(test)
 
 func sortShuttles(shuttles: Array[Ship]) -> Array[Ship]:
 	shuttles.sort_custom(func(a,b): return a.getWeight() < b.getWeight())
 	return shuttles
-	
 
 func getCompliance() -> bool:
 	compliant = true
@@ -96,6 +102,8 @@ func getCompliance() -> bool:
 		if !planet.compliance():
 			compliant = false
 			return false
+		else:
+			print(str(planet) + " is compliant!")
 	return true
 
 func getBalanceSum(team: String) -> int:
@@ -111,7 +119,6 @@ func getPlanets() -> Array[Planet]:
 	return planets
 
 func _ready() -> void:
-	get_node("SystemSprite").global_position = Vector2(1920/2,1080/2 - 52)
 	var positions = [Vector2(478, 813), Vector2(762, 724), Vector2(1079, 704), Vector2(1567, 897), 
 					 Vector2(233, 716), Vector2(478, 616), Vector2(998, 551),  Vector2(1404, 605),
 					 Vector2(218, 550), Vector2(597, 443), Vector2(937, 412),  Vector2(1385, 446),  Vector2(1706, 545)]
@@ -122,4 +129,17 @@ func _ready() -> void:
 		positions.erase(val)
 		add_child(planet)
 		planets.append(planet)
-		print(str(planet.get_node("PlanetNode").global_position))
+		#print(str(planet.get_node("PlanetNode").global_position))
+	
+	#Create some ships (To be replaced later by Sector map generation)
+	var guard = get_node("/root/Main/").getFaction("guard")
+	var chaos = get_node("/root/Main/").getFaction("guard")
+	guard.spawnShip("Bigun", self)
+	guard.spawnShip("Bigun", self)
+	chaos.spawnShip("Bigun", self)
+	chaos.spawnShip("Bigun", self)
+	print(ships)
+	var text = "Ships: " + str(ships.size())
+	for ship in ships:
+		text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
+	get_node("ShipCount").text = text
