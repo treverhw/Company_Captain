@@ -172,10 +172,13 @@ func update():
 	get_node("PlanetNode/Balance").text = str(balance)
 	if balance > 0:
 		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Imperium.png")
+		setTeam("Imperium")
 	elif balance < 0:
 		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Bad.png")
+		setTeam("Chaos")
 	else:
 		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/unowned.png")
+		setTeam("Unowned")
 
 func setBalance(team: String):
 	var temp = 0

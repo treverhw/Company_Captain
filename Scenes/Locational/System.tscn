@@ -27,3 +27,12 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 text = "Ships: #"
+
+[node name="Button" type="Button" parent="."]
+offset_left = 1750.0
+offset_top = 78.0
+offset_right = 1872.0
+offset_bottom = 109.0
+text = "See Ship Cargo"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

@@ -94,8 +94,7 @@ func getSize() -> int:
 	return n
 
 func _to_string() -> String:
-	var ret: String = str(getFaction().getTitle()) + " " + getTitle()
-	ret += str(roster)
+	var ret: String = str(getFaction().getTitle()) + " " + getTitle() + " - Size[" + str(getRoster().size()) + "]"
 	return ret
 
 func _to_string_combat() -> String:

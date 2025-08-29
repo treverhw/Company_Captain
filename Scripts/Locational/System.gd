@@ -43,6 +43,8 @@ func offloadShips():
 					shuttle.fill()
 					shuttle.used = true
 					shuttleSum += shuttle.getWeight()
+		if balanceSum == 0:
+			break
 		var need: float = shuttleSum/balanceSum
 		var planetShuttles = {}
 		for planet in getPlanets():
@@ -72,10 +74,12 @@ func offloadShips():
 func onloadShips():
 	print("Onloading!")
 	for ship in getShips():
-		for shuttle in ship.getShuttles():
-			if shuttle.used == false:
-				for planet in getPlanets():
-					if planet.compliance() == true and planet.getTeam() == ship.getTeam():
+		for planet in getPlanets():
+			for shuttle in ship.getShuttles():
+				if shuttle.used == false:
+					print(planet)
+					print(str(ship) + " | " + str(planet.getTeam()))
+					if planet.compliance() and planet.getTeam() == ship.getTeam():
 						print(planet.getTitle() + " is Embarking!")
 						shuttle.embark(planet)
 
@@ -133,7 +137,7 @@ func _ready() -> void:
 	
 	#Create some ships (To be replaced later by Sector map generation)
 	var guard = get_node("/root/Main/").getFaction("guard")
-	var chaos = get_node("/root/Main/").getFaction("guard")
+	var chaos = get_node("/root/Main/").getFaction("chaos")
 	guard.spawnShip("Bigun", self)
 	guard.spawnShip("Bigun", self)
 	chaos.spawnShip("Bigun", self)
@@ -143,3 +147,8 @@ func _ready() -> void:
 	for ship in ships:
 		text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
 	get_node("ShipCount").text = text
+
+
+func _on_button_pressed() -> void:
+	for ship in getShips():
+		print(str(ship) + "\n" + str(ship.getRoster()))

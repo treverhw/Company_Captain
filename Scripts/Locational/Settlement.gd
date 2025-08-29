@@ -106,13 +106,14 @@ func turn():
 		update()
 
 func spawnConvoy(destination:Settlement = null) -> Convoy:
+	print("Spawn Convoy Happened")
 	if getRoster().size() <= 2:
 		return Convoy.new()
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
 	var toGo: Array[Unit] = allButTwo()
-	if convoy.getRoster().size() <= 0:
-		return Convoy.new()
+	#if convoy.getRoster().size() <= 0:
+	#	return Convoy.new()
 	#Directed Movement
 	if destination != null:
 		print("Directed") 
@@ -141,7 +142,7 @@ func allButTwo() -> Array[Unit]:
 			counter +=1
 		else:
 			ret.append(unit)
-	print(str(getRoster().size()) + " | " + str(ret.size()))
+	#print(str(getRoster().size()) + " | " + str(ret.size()))
 	return ret
 
 func overwhelmCheck():

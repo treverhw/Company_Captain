@@ -53,6 +53,7 @@ func spawnShuttles(n: int, ship: Ship):
 		var shuttle = load("res://Scenes/Entities/Ships/Shuttle.tscn").instantiate()
 		ship.shuttles.append(shuttle)
 		shuttle.setFaction(self)
+		shuttle.mothership = ship
 		add_child(shuttle)
 
 #endregion
