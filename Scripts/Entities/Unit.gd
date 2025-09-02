@@ -59,7 +59,7 @@ func setRosterCap(val : int):
 	rosterCap = val
 func setFaction(val : Faction):
 	faction = val
-func setLocation(val: Location):
+func setLocation(val):
 	location = val
 
 func getTitle() -> String:

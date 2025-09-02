@@ -106,7 +106,7 @@ func turn():
 		update()
 
 func spawnConvoy(destination:Settlement = null) -> Convoy:
-	print("Spawn Convoy Happened")
+	#print("Spawn Convoy Happened")
 	if getRoster().size() <= 2:
 		return Convoy.new()
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
@@ -116,18 +116,18 @@ func spawnConvoy(destination:Settlement = null) -> Convoy:
 	#	return Convoy.new()
 	#Directed Movement
 	if destination != null:
-		print("Directed") 
+		#print("Directed") 
 		convoy.setConvoy(toGo, self, destination)
 	#Automatic
 	else:
 		var tempPath: Array[Settlement] = shortestPath(get_parent().get_parent().settlements, convoy.speed)
 		if tempPath.size() >= 2:
-			print("Auto") 
+			#print("Auto") 
 			convoy.setConvoy(toGo, self, tempPath[1])
 		else:
-			print("Too Small") 
-			print(get_parent().get_parent())
-			print(tempPath)
+			#print("Too Small") 
+			#print(get_parent().get_parent())
+			#print(tempPath)
 			convoy.setConvoy(toGo, self, self)
 	for unit in toGo:
 		getRoster().erase(unit)

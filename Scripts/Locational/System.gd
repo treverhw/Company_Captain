@@ -39,10 +39,10 @@ func offloadShips():
 		for ship in getShips():
 			if !ship.getRoster().is_empty() and ship.getTeam() == team:
 				for shuttle in ship.getShuttles():
-					shuttles.append(shuttle)
-					shuttle.fill()
-					shuttle.used = true
-					shuttleSum += shuttle.getWeight()
+					if !shuttle.used:
+						shuttles.append(shuttle)
+						shuttle.embark()
+						shuttleSum += shuttle.getWeight()
 		if balanceSum == 0:
 			break
 		var need: float = shuttleSum/balanceSum
@@ -76,12 +76,13 @@ func onloadShips():
 	for ship in getShips():
 		for planet in getPlanets():
 			for shuttle in ship.getShuttles():
-				if shuttle.used == false:
+				if !shuttle.used:
 					print(planet)
 					print(str(ship) + " | " + str(planet.getTeam()))
 					if planet.compliance() and planet.getTeam() == ship.getTeam():
 						print(planet.getTitle() + " is Embarking!")
 						shuttle.embark(planet)
+						shuttle.disembark()
 
 func transferShips():
 	pass
