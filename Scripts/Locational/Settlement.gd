@@ -145,8 +145,10 @@ func allButTwo() -> Array[Unit]:
 			ret.append(unit)
 	return ret
 
-## If threatening enemy connections outweigh this settlement, calls in
-## reinforcement convoys from all connected enemy settlements.
+## If threatening enemy connections outweigh this settlement, pools available
+## units from every such connection into a single combined convoy — so
+## several individually-weak neighbors attack together as one force instead
+## of arriving piecemeal and losing a series of outnumbered fights.
 func overwhelmCheck() -> void:
 	var weight: int = getWeight()
 	var theirWeight: int = 0
@@ -154,12 +156,39 @@ func overwhelmCheck() -> void:
 		if settlement.getTeam() != team:
 			theirWeight += settlement.getAttackWeight()
 		if theirWeight >= weight:
-			for connection in connections:
-				if connection.getTeam() != team:
-					var guy: Convoy = connection.spawnConvoy(self)
-					guy.source = "Overwhelm"
-			update()
+			_summonOverwhelmingForce()
 			break
+
+## Gathers every connected enemy settlement's available units (via
+## allButTwo()) into one convoy aimed at this settlement, departing from
+## whichever contributing settlement is closest.
+func _summonOverwhelmingForce() -> void:
+	var pooled: Array[Unit] = []
+	var rallyPoint: Settlement = null
+	var rallyDist: float = INF
+	for connection in connections:
+		if connection.getTeam() == team:
+			continue
+		var contribution: Array[Unit] = connection.allButTwo()
+		if contribution.is_empty():
+			continue
+		pooled.append_array(contribution)
+		for unit in contribution:
+			connection.getRoster().erase(unit)
+		connection.update()
+		var d: float = distance(connection, self)
+		if d < rallyDist:
+			rallyDist = d
+			rallyPoint = connection
+
+	if pooled.is_empty() or rallyPoint == null:
+		return
+
+	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
+	get_parent().get_node("Convoys").add_child(convoy)
+	convoy.source = "Overwhelm"
+	convoy.setConvoy(pooled, rallyPoint, self)
+	update()
 
 ## Resolves a fight for control of this settlement between the incoming
 ## `attackers` and whatever is currently garrisoned here.
