@@ -1,62 +1,62 @@
 extends Node
 class_name Entity
+## Base class for anything that can fight and be tracked in a Unit's roster
+## (soldiers, vehicles, etc). Subclasses provide their own `define()` and
+## `getActiveWeapons()`.
 
-var rand : RandomNumberGenerator = RandomNumberGenerator.new()
+var rand: RandomNumberGenerator = RandomNumberGenerator.new()
 
-#Informational
-var title : String
+## -- Informational --
+var title: String
 var faction: Faction
 var unit: Unit
 var weapons: Array[Weapon]
 var rank: String = "Base"
 var xp: int
 
-#Stats
-var ballisticSkill : int
-var weaponSkill : int
-var wounds : int
-var battlescars : int
-var maxBattlescars : int
-var maxWounds : int
+## -- Stats --
+var ballisticSkill: int
+var weaponSkill: int
+var wounds: int
+var maxWounds: int
+var battlescars: int
+var maxBattlescars: int
 
-#Checks for wounds above 0
+## True while the entity still has wounds remaining.
 func alive() -> bool:
-	if getWounds() <= 0:
-		return false
-	return true
+	return getWounds() > 0
 
-#Calls upon the faction to remove this model from any unit its in.
-func kill():
+## Removes this entity from its faction's roster entirely.
+func kill() -> void:
 	getFaction().removeEntity(self)
 
-#returns current combat line in combat
+## Returns the combat line (VBoxContainer) this entity's unit currently occupies.
 func findColumn() -> VBoxContainer:
 	return unit.get_parent()
 
-## Setters
-func setTitle(val : String):
+## -- Setters --
+func setTitle(val: String) -> void:
 	title = val
-func generateTitle(val : Array):
-	title = val[rand.randi_range(0, val.size()-1)]
+## Picks a random name from `val` and uses it as both title and node name.
+func generateTitle(val: Array) -> void:
+	title = val[rand.randi_range(0, val.size() - 1)]
 	name = title
-func setFaction(val : Faction):
+func setFaction(val: Faction) -> void:
 	faction = val
-
-func setBallisticSkill(val : int):
+func setBallisticSkill(val: int) -> void:
 	ballisticSkill = val
-func setWeaponSkill(val : int):
+func setWeaponSkill(val: int) -> void:
 	weaponSkill = val
-func setWounds(val : int):
+func setWounds(val: int) -> void:
 	wounds = val
-func setBattlescars(val : int):
+func setBattlescars(val: int) -> void:
 	battlescars = val
-func setMaxBattlescars(val : int):
-	maxBattlescars =val
-func setMaxWounds(val : int):
+func setMaxBattlescars(val: int) -> void:
+	maxBattlescars = val
+func setMaxWounds(val: int) -> void:
 	maxWounds = val
 
-
-## Getters
+## -- Getters --
 func getTitle() -> String:
 	return title
 func getFaction() -> Faction:
@@ -67,7 +67,6 @@ func getUnit() -> Unit:
 	return unit
 func getLocation() -> Location:
 	return getUnit().getLocation()
-
 func getBallisticSkill() -> int:
 	return ballisticSkill
 func getWeaponSkill() -> int:
@@ -80,10 +79,13 @@ func getBattlescars() -> int:
 	return battlescars
 func getMaxBattlescars() -> int:
 	return maxBattlescars
+## Weapons usable at the given distance. Base Entity has no weapon logic
+## of its own — overridden by Soldier/Vehicle.
 func getActiveWeapons(distance: int) -> Array[Weapon]:
 	return [null]
+## Carry weight. 0 by default; overridden by subclasses.
 func getWeight() -> int:
 	return 0
 
 func _to_string() -> String:
-	return getTitle() + " " + str(getWounds()) + "/" + str(getMaxWounds()) + " | " + str(getBattlescars()) + "/" + str(getMaxBattlescars())
+	return "%s %d/%d | %d/%d" % [getTitle(), getWounds(), getMaxWounds(), getBattlescars(), getMaxBattlescars()]

@@ -11,5 +11,5 @@ static var soldiers = {
 	"ChaosSpaceMarine" : 		[3, 3, 2, 1],
 }
 
-func getSoldiers() -> Array:
+func getSoldiers() -> Dictionary:
 	return soldiers

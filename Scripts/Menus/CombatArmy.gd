@@ -1,20 +1,18 @@
 extends HBoxContainer
 class_name CombatArmy
+## One side's army in combat — an HBoxContainer whose children are the
+## CombatLines (front line through rear).
 
 var team: String
 
 func getSize() -> int:
-	var n = 0
+	var n: int = 0
 	for node in get_children():
 		n += node.getRoster().size()
 	return n
 
 func _to_string() -> String:
-	var retstr = (str(name) + "\n"  +
-	str(get_child(0).name) + str(get_child(0).get_children()) + "\n" +
-	str(get_child(1).name) + str(get_child(1).get_children()) + "\n" +
-	str(get_child(2).name) + str(get_child(2).get_children()) + "\n" +
-	str(get_child(3).name) + str(get_child(3).get_children()) + "\n" +
-	str(get_child(4).name) + str(get_child(4).get_children()) + "\n" +
-	str(get_child(5).name) + str(get_child(5).get_children()) + "\n")
-	return retstr
+	var ret: String = str(name) + "\n"
+	for child in get_children():
+		ret += str(child.name) + str(child.get_children()) + "\n"
+	return ret

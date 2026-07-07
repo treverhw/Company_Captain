@@ -1,101 +1,103 @@
 extends Location
 class_name Planet
+## The game board: generates a field of settlements, links them into a
+## connected graph, and runs the per-turn simulation loop.
 
-var settlements: Array[Settlement]
-var exclude: Array[Settlement] = []
+var settlements: Array[Settlement] = []
 var compliant: bool = false
 
 func _ready() -> void:
-	global_position = Vector2((1920/2), (1080/2))
+	global_position = Vector2(1920 / 2, 1080 / 2)
 	get_parent().get_node("BottomBar/Turn").button_down.connect(turn)
 	generateTitle(Names.new().planetNames)
-	print(title)
 	get_node("Label").text = title
-	for n in range(0, randi_range(16,25)):
-		var newSettlement = load("res://Scenes/Locational/Settlement.tscn").instantiate()
-		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250,250))
-		var counter = 0
-		while !validateDistance(newSettlement) and counter != 100:
-			counter +=1
-			newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250,250))
-		if counter != 100:
-			add_child(newSettlement)
-			settlements.append(newSettlement)
-		else:
-			break
-	var guard = get_parent().get_node("Factions/Guard").start()
-	var guard1 = get_parent().get_node("Factions/Guard").start()
-	var guard2 = get_parent().get_node("Factions/Guard").start()
-	var guard3 = get_parent().get_node("Factions/Guard").start()
-	var guard4 = get_parent().get_node("Factions/Guard").start()
-	var guard5 = get_parent().get_node("Factions/Guard").start()
-	var chaos = get_parent().get_node("Factions/Chaos").start()
-	var chaos2 = get_parent().get_node("Factions/Chaos").start()
-	settlements[0].appendRoster(guard)
-	settlements[1].appendRoster(guard1)
-	settlements[2].appendRoster(guard2)
-	settlements[3].appendRoster(guard3)
-	settlements[4].appendRoster(guard4)
-	settlements[5].appendRoster(guard5)
-	settlements[settlements.size()-1].appendRoster(chaos)
-	settlements[settlements.size()-2].appendRoster(chaos2)
-	
+
+	_generateSettlements()
+	_spawnStartingForces()
 	await createConnections()
-	var temp: Array[Settlement]
-	var temp2: Array[Settlement]
-	while temp2.size() != settlements.size():
-		temp = []
-		temp2 = []
-		for item in settlements:
-			temp.append(item)
-		temp2.append(temp.pop_front())
-		for settlement in settlements:
-			for x in range(0,20):
-				for item in temp2:
-					for val in item.getConnections():
-						if val in temp:
-							temp.erase(val)
-							temp2.append(val)
-			#print(temp2.size())
-			if temp.size() > 1:
-				var distances: Dictionary = {}
-				for x in temp:
-					distances[x] = [x,4000]
-					for y in temp2:
-						var length: float = distance(x,y) 
-						if length < distances[x][1]:
-							distances[x] = [y, length]
-				var shortest: Array = [null, null, 4000]
-				for x in distances:
-					if distances[x][1] < shortest[2]:
-						shortest[0] = x
-						shortest[1] = distances[x][0]
-						shortest[2] = distances[x][1]
-				shortest[0].getConnections()[shortest[1]] = shortest[2]
-				shortest[1].getConnections()[shortest[0]] = shortest[2]
-				var newLine = Line2D.new()
-				newLine.width = 3
-				newLine.add_point(shortest[0].position)
-				newLine.add_point(shortest[1].position)
-				add_child(newLine)
-				#print("Connected " + str(shortest[0]) + " " + str(shortest[1]))
+	_connectRemainingSettlements()
 
+func _generateSettlements() -> void:
+	for n in range(randi_range(16, 25)):
+		var newSettlement = load("res://Scenes/Locational/Settlement.tscn").instantiate()
+		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250, 250))
+		var counter := 0
+		while !validateDistance(newSettlement) and counter != 100:
+			counter += 1
+			newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250, 250))
+		if counter == 100:
+			break
+		add_child(newSettlement)
+		settlements.append(newSettlement)
 
-func compliance():
-	var teams: Array[String]
+## Spawns starting Guard garrisons on the first 6 settlements, and Chaos
+## garrisons on the last 2 (assumes settlement generation produced at
+## least 8 settlements, which it always does — it requests 16-25).
+func _spawnStartingForces() -> void:
+	var guardFaction = get_parent().get_node("Factions/Guard")
+	var chaosFaction = get_parent().get_node("Factions/Chaos")
+	for i in 6:
+		settlements[i].appendRoster(guardFaction.start())
+	settlements[settlements.size() - 1].appendRoster(chaosFaction.start())
+	settlements[settlements.size() - 2].appendRoster(chaosFaction.start())
+
+## Ensures every settlement is reachable: repeatedly finds whichever
+## disconnected settlement is nearest to the already-connected group and
+## links it in, until the whole graph is connected.
+func _connectRemainingSettlements() -> void:
+	var unconnected: Array[Settlement] = []
+	var connected: Array[Settlement] = []
+	while connected.size() != settlements.size():
+		unconnected = settlements.duplicate()
+		connected = [unconnected.pop_front()]
+
+		# Flood-fill outward from `connected` along existing connections.
+		for i in 20:
+			for settlement in connected:
+				for neighbor in settlement.getConnections():
+					if neighbor in unconnected:
+						unconnected.erase(neighbor)
+						connected.append(neighbor)
+
+		if unconnected.size() > 1:
+			# Find the closest (unconnected, connected) settlement pair.
+			var nearestConnected: Dictionary = {}
+			for candidate in unconnected:
+				nearestConnected[candidate] = [candidate, 4000.0]
+				for target in connected:
+					var length: float = distance(candidate, target)
+					if length < nearestConnected[candidate][1]:
+						nearestConnected[candidate] = [target, length]
+
+			var bestLink: Array = [null, null, 4000.0]
+			for candidate in nearestConnected:
+				if nearestConnected[candidate][1] < bestLink[2]:
+					bestLink[0] = candidate
+					bestLink[1] = nearestConnected[candidate][0]
+					bestLink[2] = nearestConnected[candidate][1]
+
+			bestLink[0].getConnections()[bestLink[1]] = bestLink[2]
+			bestLink[1].getConnections()[bestLink[0]] = bestLink[2]
+
+			var newLine := Line2D.new()
+			newLine.width = 3
+			newLine.add_point(bestLink[0].position)
+			newLine.add_point(bestLink[1].position)
+			add_child(newLine)
+
+## True (and cached in `compliant`) when every settlement is owned by the same team.
+func compliance() -> bool:
+	var teams: Array[String] = []
 	for settlement in settlements:
 		if !teams.has(settlement.team):
 			teams.append(settlement.team)
-	if teams.size() > 1:
-		compliant = false
-	else:
-		compliant = true
+	compliant = teams.size() <= 1
 	return compliant
 
-func turn():
+func turn() -> void:
 	await cleanup()
 	compliance()
-	
+
 	for settlement in settlements:
 		await settlement.turn()
 		await cleanup()
@@ -103,46 +105,36 @@ func turn():
 	for convoy in convoys:
 		await convoy.move()
 		await cleanup()
-	
-	#Convoys fight if near eachother
+
+	# Convoys fight if they end up near each other.
 	convoys = get_node("Convoys").get_children()
 	var alreadyFought: Array[Convoy] = []
-	for convoy in range(convoys.size()-1,-1,-1):
-		var bodies: Array[Node2D] = convoys[convoy].get_node("VisionRange").get_overlapping_bodies()
-		if !bodies.is_empty():
-			for body in bodies:
-				var otherConvoy = body.get_parent()
-				if (!alreadyFought.has(convoys[convoy]) or !alreadyFought.has(otherConvoy)) and convoys[convoy] != otherConvoy:
-					await cleanup()
-					#print("Bodies Size: " + str(bodies.size()))
-					#print("Source: " + convoys[convoy].source + " | Home: " + str(convoys[convoy].getHome()) + " | Destination: " + str(convoys[convoy].getDestination()) + " | Team: " + convoys[convoy].getTeam() +  " | Size: " + str(convoys[convoy].getRoster().size()))
-					#print("Source: " + otherConvoy.source + " | Home: " + str(otherConvoy.getHome()) + " | Destination: " +  str(otherConvoy.getDestination()) + " | Team: " + otherConvoy.getTeam() + " | Size: " + str(otherConvoy.getRoster().size()))
-					if convoys[convoy].getTeam() != otherConvoy.getTeam() and convoys[convoy].getDestination() == otherConvoy.getHome() and !convoys[convoy].getRoster().is_empty() and !otherConvoy.getRoster().is_empty():
-						alreadyFought.append(convoys[convoy])
-						alreadyFought.append(otherConvoy)
-						await convoyFight(convoys[convoy], otherConvoy)
+	for convoy in convoys:
+		var bodies: Array[Node2D] = convoy.get_node("VisionRange").get_overlapping_bodies()
+		for body in bodies:
+			var otherConvoy = body.get_parent()
+			if convoy == otherConvoy or (alreadyFought.has(convoy) and alreadyFought.has(otherConvoy)):
+				continue
+			await cleanup()
+			var facingOff : bool = convoy.getTeam() != otherConvoy.getTeam() and convoy.getDestination() == otherConvoy.getHome()
+			if facingOff and !convoy.getRoster().is_empty() and !otherConvoy.getRoster().is_empty():
+				alreadyFought.append(convoy)
+				alreadyFought.append(otherConvoy)
+				await convoyFight(convoy, otherConvoy)
 	await cleanup()
 
-
-func convoyFight(val1: Convoy, val2: Convoy):
+func convoyFight(val1: Convoy, val2: Convoy) -> void:
 	await cleanup()
-	#print("[Convoy Fight] Start:")
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
 	get_node("/root/Main").add_child(combat)
-	
+
 	var newRosters = await combat.populate(val1.getRoster(), val2.getRoster())
-	for unit in range(newRosters[0].size()-1, -1, -1):
-		if !is_instance_valid(newRosters[0][unit]) or newRosters[0][unit].getRoster().size() <= 0:
-			newRosters[0][unit].queue_free()
-			newRosters[0].erase(newRosters[0][unit])
-	for unit in range(newRosters[1].size()-1, -1, -1):
-		if !is_instance_valid(newRosters[1][unit]) or newRosters[1][unit].getRoster().size() <= 0:
-			newRosters[1][unit].queue_free()
-			newRosters[1].erase(newRosters[1][unit])
-	
+	EntityUtils.pruneEmptyUnits(newRosters[0])
+	EntityUtils.pruneEmptyUnits(newRosters[1])
+
 	val1.source = "Convoy Fight Retreat"
 	val2.source = "Convoy Fight Retreat"
-	
+
 	if val1.getRoster().is_empty():
 		val1.kill()
 	else:
@@ -155,52 +147,35 @@ func convoyFight(val1: Convoy, val2: Convoy):
 
 func cleanup() -> bool:
 	for settlement in settlements:
-		var temp = settlement.getRoster()
-		for unit in range(temp.size()-1,-1,-1):
-			if !is_instance_valid(temp[unit]):
-				temp.erase(temp[unit])
+		settlement.getRoster()  # prunes freed units as a side effect
 	for convoy in get_node("Convoys").get_children():
-		var temp = convoy.getRoster()
-		for unit in range(temp.size()-1,-1,-1):
-			if !is_instance_valid(temp[unit]):
-				temp.erase(temp[unit])
 		if convoy.getRoster().is_empty():
 			await convoy.kill()
 	return true
 
-func createConnections():
+## Links any two settlements within 200px of each other, then removes any
+## settlement left with zero connections (too isolated to reach or defend).
+func createConnections() -> void:
 	for n in settlements:
 		for m in settlements:
-			var distance: int = n.position.distance_to(m.position)
-			if distance <= 200 and n!=m and !n.getConnections().has(m) and !m.getConnections().has(n):
-				n.getConnections()[m] = distance
-				m.getConnections()[n] = distance
-				var newLine = Line2D.new()
+			var dist: float = n.position.distance_to(m.position)
+			if dist <= 200 and n != m and !n.getConnections().has(m) and !m.getConnections().has(n):
+				n.getConnections()[m] = dist
+				m.getConnections()[n] = dist
+				var newLine := Line2D.new()
 				newLine.width = 3
 				newLine.add_point(n.position)
 				newLine.add_point(m.position)
 				add_child(newLine)
-	for n in settlements:
-		if n.getConnections().size() <= 0:
-			settlements.erase(n)
-			n.queue_free()
-	return
 
-func sortDictByValues(dict: Dictionary) -> Dictionary:
-			var temp = {}
-			while !dict.is_empty():
-				var smallestKey = ""
-				var smallestNum = 10000
-				for item in dict:
-					if dict[item] < smallestNum:
-						smallestKey = item
-						smallestNum = dict[item]
-				dict.erase(smallestKey)
-				temp[smallestKey] = smallestNum
-			return temp
+	for i in range(settlements.size() - 1, -1, -1):
+		if settlements[i].getConnections().is_empty():
+			var orphan := settlements[i]
+			settlements.remove_at(i)
+			orphan.queue_free()
 
 func validateDistance(val: Settlement) -> bool:
 	for n in settlements:
-		if val.position.distance_to(n.position) < 125 && n != val:
+		if val.position.distance_to(n.position) < 125 and n != val:
 			return false
 	return true
