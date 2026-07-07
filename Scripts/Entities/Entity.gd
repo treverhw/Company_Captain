@@ -66,7 +66,9 @@ func getTeam() -> String:
 	return getFaction().getTeam()
 func getUnit() -> Unit:
 	return unit
-func getLocation() -> Location:
+## Returns Node rather than Location, since a unit's (and so an entity's)
+## location can also be a Ship once it's embarked.
+func getLocation() -> Node:
 	return getUnit().getLocation()
 func getBallisticSkill() -> int:
 	return ballisticSkill

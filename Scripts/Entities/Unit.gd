@@ -83,7 +83,9 @@ func getTeam() -> String:
 	return getFaction().getTeam()
 func getLine() -> String:
 	return str(line)
-func getLocation() -> Location:
+## Returns Node rather than Location, since a unit's location can also be a
+## Ship (an Entity) once it's embarked.
+func getLocation() -> Node:
 	return location if is_instance_valid(location) else null
 func getWeight() -> int:
 	var n: int = 0
