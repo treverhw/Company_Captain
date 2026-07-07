@@ -23,6 +23,54 @@ func _ready() -> void:
 ## Finds the shortest path (measured in turns at the given speed) from
 ## `source` to the nearest settlement that isn't already ours, using
 ## Dijkstra's algorithm over the settlement connection graph.
+## Finds the shortest connection-graph route (in turns, at the given speed)
+## from `source` to a specific `target`, routing only through `source`'s
+## own friendly territory along the way -- the final hop onto `target`
+## itself is allowed even when `target` isn't ours, since that's often the
+## whole point (an attack, or claiming unowned land). Returns an empty
+## array if `target` isn't reachable that way.
+func pathTo(target: Settlement, allSettlements: Array[Settlement], speed: int = 50, source: Settlement = self) -> Array[Settlement]:
+	var dist: Dictionary = {}
+	var prev: Dictionary = {}
+	var queue: Array[Settlement] = []
+	for settlement in allSettlements:
+		dist[settlement] = 1000
+		prev[settlement] = null
+		queue.append(settlement)
+	dist[source] = 0
+
+	while !queue.is_empty():
+		var closestSettlement: Settlement = null
+		var shortest: int = 1001
+		for settlement in queue:
+			if dist[settlement] < shortest:
+				closestSettlement = settlement
+				shortest = dist[settlement]
+		if closestSettlement == null:
+			break
+		queue.erase(closestSettlement)
+		if closestSettlement == target:
+			break
+		# Only continue routing onward through our own territory -- the
+		# final hop onto `target` is still allowed even if it isn't ours.
+		if closestSettlement != source and closestSettlement.team != team:
+			continue
+		for settlement in closestSettlement.getConnections():
+			var stepCost: int = floor(distance(closestSettlement, settlement) / speed)
+			if dist[settlement] >= 1000 or dist[closestSettlement] + stepCost < dist[settlement]:
+				dist[settlement] = dist[closestSettlement] + stepCost
+				prev[settlement] = closestSettlement
+
+	if dist.get(target, 1000) >= 1000:
+		return []
+
+	var route: Array[Settlement] = []
+	var node: Settlement = target
+	while node != null:
+		route.push_front(node)
+		node = prev[node]
+	return route
+
 func shortestPath(settlements: Array[Settlement], speed: int = 50, source: Settlement = self) -> Array[Settlement]:
 	var dist: Dictionary = {}
 	var prev: Dictionary = {}
@@ -110,14 +158,21 @@ func spawnConvoy(destination: Settlement = null) -> Convoy:
 	# NOTE: there was previously a guard here returning early if toGo was
 	# empty; it's commented out as of SystemMap, so left disabled here too —
 	# flagged separately since a zero-unit convoy looks possible as a result.
+
+	# Convoys travel via the connection graph -- through our own territory
+	# on the way, for a directed destination -- rather than flying straight
+	# to wherever they're headed.
+	var route: Array[Settlement]
 	if destination != null:
-		# Directed movement: send the convoy to a specific settlement.
-		convoy.setConvoy(toGo, self, destination)
+		route = pathTo(destination, get_parent().get_parent().settlements, convoy.speed)
 	else:
 		# Automatic movement: send the convoy toward the nearest threat.
-		var tempPath: Array[Settlement] = shortestPath(get_parent().get_parent().settlements, convoy.speed)
-		var nextStop: Settlement = tempPath[1] if tempPath.size() >= 2 else self
-		convoy.setConvoy(toGo, self, nextStop)
+		route = shortestPath(get_parent().get_parent().settlements, convoy.speed)
+	if route.size() < 2:
+		convoy.kill()
+		return Convoy.new()
+
+	convoy.setConvoy(toGo, route)
 
 	for unit in toGo:
 		getRoster().erase(unit)
@@ -179,7 +234,7 @@ func _summonOverwhelmingForce() -> void:
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
 	convoy.source = "Overwhelm"
-	convoy.setConvoy(pooled, rallyPoint, self)
+	convoy.setConvoy(pooled, [rallyPoint, self])
 	update()
 
 ## Resolves a fight for control of this settlement between the incoming
@@ -203,7 +258,7 @@ func invade(attackers: Array[Unit]) -> void:
 				var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 				get_parent().get_node("Convoys").add_child(convoy)
 				convoy.source = "Invasion Retreat"
-				convoy.setConvoy(newRosters[1], self, settlement)
+				convoy.setConvoy(newRosters[1], [self, settlement])
 				convoy.move()
 				break
 

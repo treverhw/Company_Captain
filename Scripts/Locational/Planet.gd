@@ -144,6 +144,11 @@ func turn() -> void:
 ## Once every border settlement meets its target, masses any surplus
 ## toward whichever border settlement neighbors the enemy's weakest
 ## settlement, attacking once it can do so with overwhelming force.
+## Strategic AI for `team`, run independently per connected chunk of
+## territory -- two settlements only coordinate if a friendly-owned path
+## connects them (the same reachability a convoy can actually travel), so
+## separated pockets each defend their own border and push their own
+## weakest adjacent enemy without waiting on or reinforcing each other.
 func runStrategicAI(team: String) -> void:
 	var owned: Array[Settlement] = []
 	for settlement in settlements:
@@ -152,6 +157,30 @@ func runStrategicAI(team: String) -> void:
 	if owned.is_empty():
 		return
 
+	for territory in _splitIntoTerritories(owned):
+		_runStrategicAIForTerritory(team, territory)
+
+## Splits `owned` into independent connected chunks, using only
+## friendly-to-friendly connections as edges (matching what pathTo() can
+## actually route through). Two settlements land in the same chunk only
+## if a friendly-owned path connects them.
+func _splitIntoTerritories(owned: Array[Settlement]) -> Array:
+	var remaining: Array[Settlement] = owned.duplicate()
+	var territories: Array = []
+	while !remaining.is_empty():
+		var chunk: Array[Settlement] = [remaining.pop_front()]
+		var frontier: Array[Settlement] = [chunk[0]]
+		while !frontier.is_empty():
+			var current: Settlement = frontier.pop_back()
+			for neighbor in current.getConnections():
+				if neighbor in remaining:
+					remaining.erase(neighbor)
+					chunk.append(neighbor)
+					frontier.append(neighbor)
+		territories.append(chunk)
+	return territories
+
+func _runStrategicAIForTerritory(team: String, owned: Array[Settlement]) -> void:
 	# Classify: border settlements have at least one enemy-owned neighbor,
 	# and want enough weight to match that neighbor's combined weight.
 	# Interior settlements have no such need (target 0) and exist purely to
@@ -175,28 +204,36 @@ func runStrategicAI(team: String) -> void:
 		if settlement.getWeight() < targets[settlement]:
 			allSecure = false
 			_pullReinforcement(settlement, owned, targets)
+
+	# Aggressively capture adjacent unowned territory -- that's where new
+	# recruits come from -- using only genuine spare capacity (weight
+	# beyond this settlement's own defensive target, if it has one), so
+	# this never comes at the expense of an unmet defensive need. Runs
+	# regardless of overall defensive status; at most one attempt per
+	# settlement per turn.
+	for settlement in owned:
+		if settlement.getWeight() <= targets[settlement]:
+			continue
+		for neighbor in settlement.getConnections():
+			if neighbor.team == "Unowned":
+				settlement.spawnConvoy(neighbor)
+				break
+
 	if !allSecure:
 		return
 
-	# Defensively secure: mass toward whichever border settlement neighbors
-	# the enemy's weakest settlement, and attack once strong enough.
+	# Defensively secure: find the weakest enemy settlement adjacent to
+	# this territory's own border, mass toward whichever border settlement
+	# neighbors it, and attack once strong enough.
 	var weakestEnemy: Settlement = null
-	for settlement in settlements:
-		if settlement.team != team and settlement.team != "Unowned":
-			if weakestEnemy == null or settlement.getWeight() < weakestEnemy.getWeight():
-				weakestEnemy = settlement
-	if weakestEnemy == null:
-		return
-
 	var stagingPoint: Settlement = null
 	for settlement in border:
-		if settlement.getConnections().has(weakestEnemy):
-			stagingPoint = settlement
-			break
-	# NOTE: if the weakest enemy settlement doesn't border any of our
-	# current settlements, this does nothing until that changes -- attacks
-	# only ever launch from a settlement directly adjacent to the target.
-	if stagingPoint == null:
+		for neighbor in settlement.getConnections():
+			if neighbor.team != team and neighbor.team != "Unowned":
+				if weakestEnemy == null or neighbor.getWeight() < weakestEnemy.getWeight():
+					weakestEnemy = neighbor
+					stagingPoint = settlement
+	if weakestEnemy == null:
 		return
 
 	if stagingPoint.getAttackWeight() >= weakestEnemy.getWeight() * 1.5:

@@ -1,7 +1,9 @@
 extends Location
 class_name Convoy
-## A moving group of Units en route between two Settlements. Convoys are
-## transient nodes: they free themselves once they arrive or lose their roster.
+## A moving group of Units en route between two Settlements, hop-by-hop
+## along `path`. Convoys are transient nodes: they free themselves once
+## they arrive at their final destination, get diverted mid-route, or
+## lose their roster.
 
 var path: Array[Settlement]
 var home: Settlement
@@ -9,8 +11,8 @@ var destination: Settlement
 var source: String = ""
 var speed: int = 25
 
-## Advances the convoy toward its destination each tick, and resolves
-## arrival once it's within `speed` of the target.
+## Advances the convoy toward its current hop (`destination`) each tick,
+## and resolves arrival once it's within `speed` of it.
 func move() -> void:
 	if getRoster().is_empty():
 		kill()
@@ -28,9 +30,12 @@ func move() -> void:
 	if destination.distance(self, destination) < speed:
 		_resolveArrival()
 
-## Claims an unowned settlement, reinforces a friendly one, or invades an
-## enemy one — then frees the convoy.
+## Handles arrival at `destination`: continues on to the next hop if this
+## is an intermediate stop on a still-friendly route, otherwise
+## claims/reinforces/invades depending on ownership, then frees the convoy.
 func _resolveArrival() -> void:
+	if _advanceToNextHop():
+		return
 	match destination.team:
 		"Unowned":
 			destination.getRoster().append_array(getRoster())
@@ -45,34 +50,55 @@ func _resolveArrival() -> void:
 	queue_free()
 	destination.update()
 
+## If `destination` is an intermediate (not final) hop on `path` and is
+## still friendly, advances to the next hop instead of resolving here. If
+## it's no longer friendly (e.g. captured by the enemy since the route was
+## planned), resolves here instead of continuing blindly onward.
+func _advanceToNextHop() -> bool:
+	if path.is_empty() or destination == path.back():
+		return false
+	if destination.team != team:
+		return false
+	var hopIndex: int = path.find(destination)
+	if hopIndex == -1 or hopIndex + 1 >= path.size():
+		return false
+	setDestination(path[hopIndex + 1])
+	return true
+
 func kill() -> void:
 	if get_parent() != null:
 		get_parent().remove_child(self)
 	queue_free()
 
-## Turns the convoy around and sends it back to its home settlement.
+## Turns the convoy around and sends it directly back to its home
+## settlement (not re-routed hop-by-hop -- retreating is an emergency
+## maneuver, not a supply run).
 func retreatConvoy() -> void:
 	if getRoster().is_empty():
 		kill()
 		return
+	path = [home]
 	destination = home
 	look_at(destination.global_position)
 	for unit in getRoster():
 		unit.setLocation(self)
 	move()
 
-func setConvoy(army: Array[Unit] = roster, hm: Settlement = home, dst: Settlement = destination) -> void:
-	if army.is_empty():
+## Sets up this convoy to carry `army` along `route` (a sequence of
+## Settlements from home to final destination, inclusive), traveling
+## hop-by-hop through any intermediate settlements.
+func setConvoy(army: Array[Unit], route: Array[Settlement]) -> void:
+	if army.is_empty() or route.size() < 2:
 		kill()
 		return
-	home = hm
-	destination = dst
+	path = route
+	home = route[0]
 	roster = army
 	team = army.front().getTeam()
 	for unit in army:
 		unit.setLocation(self)
-	global_position = hm.global_position
-	look_at(destination.global_position)
+	global_position = home.global_position
+	setDestination(route[1])
 
 func cleanup() -> bool:
 	EntityUtils.pruneInvalid(roster)
@@ -82,10 +108,6 @@ func cleanup() -> bool:
 
 func setRoster(arr: Array[Unit]) -> void:
 	roster = arr
-func setPath(arr: Array[Settlement]) -> void:
-	path = arr
-	home = path[0]
-	setDestination(path[0] if path.size() <= 1 else path[1])
 func setDestination(dest: Settlement) -> void:
 	destination = dest
 	look_at(destination.global_position)
