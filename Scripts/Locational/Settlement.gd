@@ -83,29 +83,10 @@ func turn() -> void:
 		roster.append(spawn())
 		newUnitCounter = 0
 
-	# Teams running the centralized strategic AI (see Planet.runStrategicAI())
-	# handle defense and offense for the whole team at once each planet turn,
-	# so individual settlements skip their own local threat/movement logic.
-	if team == "Imperium":
-		update()
-		return
-
-	var threatWeight: int = 0
-	for settlement in connections:
-		if !settlement.getRoster().is_empty() and settlement.team != team:
-			threatWeight += settlement.getAttackWeight()
-	for convoy in get_parent().get_node("Convoys").get_children():
-		if convoy.getTeam() != team and (convoy.destination == self or connections.has(convoy.destination)):
-			threatWeight += convoy.getWeight()
-
-	if threatWeight * 1.2 >= getWeight():
-		threatened = true
-
-	if !threatened and !get_parent().get_parent().compliant and roster.size() > 2:
-		var guy: Convoy = spawnConvoy()
-		guy.source = "Normal Move"
-	if threatened:
-		overwhelmCheck()
+	# All teams now run the centralized strategic AI (see
+	# Planet.runStrategicAI()), which handles defense and offense for the
+	# whole team at once each planet turn, so settlements only handle their
+	# own reinforcement spawning here.
 	update()
 
 func spawnConvoy(destination: Settlement = null) -> Convoy:

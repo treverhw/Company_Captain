@@ -129,7 +129,13 @@ func turn() -> void:
 				await convoyFight(convoy, otherConvoy)
 	await cleanup()
 
-	runStrategicAI("Imperium")
+	# Run the strategic AI for every team that currently owns territory.
+	var activeTeams: Array[String] = []
+	for settlement in settlements:
+		if settlement.team != "Unowned" and !activeTeams.has(settlement.team):
+			activeTeams.append(settlement.team)
+	for team in activeTeams:
+		runStrategicAI(team)
 
 ## Strategic AI for `team`: first tries to bring every settlement bordering
 ## an enemy up to at least that enemy's combined adjacent weight (pulling
@@ -149,7 +155,8 @@ func runStrategicAI(team: String) -> void:
 	# Classify: border settlements have at least one enemy-owned neighbor,
 	# and want enough weight to match that neighbor's combined weight.
 	# Interior settlements have no such need (target 0) and exist purely to
-	# reinforce the border.
+	# reinforce the border. `threatened` (used elsewhere, e.g. by Shuttle's
+	# landing-site choice) marks border settlements currently under target.
 	var border: Array[Settlement] = []
 	var targets: Dictionary = {}
 	for settlement in owned:
@@ -160,6 +167,7 @@ func runStrategicAI(team: String) -> void:
 		targets[settlement] = need
 		if need > 0:
 			border.append(settlement)
+			settlement.threatened = settlement.getWeight() < need
 
 	# Defense first: reinforce any border settlement under its target.
 	var allSecure := true
