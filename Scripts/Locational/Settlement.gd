@@ -83,6 +83,13 @@ func turn() -> void:
 		roster.append(spawn())
 		newUnitCounter = 0
 
+	# Teams running the centralized strategic AI (see Planet.runStrategicAI())
+	# handle defense and offense for the whole team at once each planet turn,
+	# so individual settlements skip their own local threat/movement logic.
+	if team == "Imperium":
+		update()
+		return
+
 	var threatWeight: int = 0
 	for settlement in connections:
 		if !settlement.getRoster().is_empty() and settlement.team != team:
@@ -105,10 +112,12 @@ func spawnConvoy(destination: Settlement = null) -> Convoy:
 	if getRoster().size() <= 2:
 		return Convoy.new()
 
-	# Directed movement (e.g. from overwhelmCheck()) skips shortestPath(),
-	# so it needs its own copy of the "don't attack an overwhelming target"
-	# check that shortestPath() already applies to automatic movement.
-	if destination != null and destination.getWeight() >= getAttackWeight() * 1.5:
+	# Directed movement (e.g. from overwhelmCheck(), or Planet.runStrategicAI()
+	# reinforcing a friendly settlement) skips shortestPath(), so an attack
+	# on an enemy needs its own copy of the "don't attack an overwhelming
+	# target" check. Reinforcing a friendly destination is exempt -- that's
+	# not an attack.
+	if destination != null and destination.team != team and destination.getWeight() >= getAttackWeight() * 1.5:
 		return Convoy.new()
 
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
