@@ -175,6 +175,21 @@ func runStrategicAI(team: String) -> void:
 		if settlement.getWeight() < targets[settlement]:
 			allSecure = false
 			_pullReinforcement(settlement, owned, targets)
+
+	# Aggressively capture adjacent unowned territory -- that's where new
+	# recruits come from -- using only genuine spare capacity (weight
+	# beyond this settlement's own defensive target, if it has one), so
+	# this never comes at the expense of an unmet defensive need. Runs
+	# regardless of overall defensive status; at most one attempt per
+	# settlement per turn.
+	for settlement in owned:
+		if settlement.getWeight() <= targets[settlement]:
+			continue
+		for neighbor in settlement.getConnections():
+			if neighbor.team == "Unowned":
+				settlement.spawnConvoy(neighbor)
+				break
+
 	if !allSecure:
 		return
 
