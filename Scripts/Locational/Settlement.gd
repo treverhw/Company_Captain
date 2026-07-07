@@ -85,30 +85,24 @@ func turn() -> void:
 		roster.append(spawn())
 		newUnitCounter = 0
 
-	var threatWeight: int = 0
-	for settlement in connections:
-		if !settlement.getRoster().is_empty() and settlement.team != team:
-			threatWeight += settlement.getAttackWeight()
-	for convoy in get_parent().get_node("Convoys").get_children():
-		if convoy.getTeam() != team and (convoy.destination == self or connections.has(convoy.destination)):
-			threatWeight += convoy.getWeight()
-
-	if threatWeight * threatRatio >= getWeight():
-		threatened = true
-
-	if !threatened and !get_parent().get_parent().compliant and roster.size() > 2:
-		var guy: Convoy = spawnConvoy()
-		guy.source = "Normal Move"
-	if threatened:
-		overwhelmCheck()
+	# All teams now run the centralized strategic AI (see
+	# Planet.runStrategicAI()), which handles defense and offense for the
+	# whole team at once each planet turn, so settlements only handle their
+	# own reinforcement spawning here.
 	update()
 
 func spawnConvoy(destination: Settlement = null) -> Convoy:
 	if getRoster().size() <= 2:
 		return Convoy.new()
-	if destination != null and destination.getWeight() >= getAttackWeight() * overwhelmingRatio:
+
+	# Directed movement (e.g. from overwhelmCheck(), or Planet.runStrategicAI()
+	# reinforcing a friendly settlement) skips shortestPath(), so an attack
+	# on an enemy needs its own copy of the "don't attack an overwhelming
+	# target" check. Reinforcing a friendly destination is exempt -- that's
+	# not an attack.
+	if destination != null and destination.team != team and destination.getWeight() >= getAttackWeight() * 1.5:
 		return Convoy.new()
-		
+
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
 
@@ -143,8 +137,10 @@ func allButTwo() -> Array[Unit]:
 			ret.append(unit)
 	return ret
 
-## If threatening enemy connections outweigh this settlement, calls in
-## reinforcement convoys from all connected enemy settlements.
+## If threatening enemy connections outweigh this settlement, pools available
+## units from every such connection into a single combined convoy — so
+## several individually-weak neighbors attack together as one force instead
+## of arriving piecemeal and losing a series of outnumbered fights.
 func overwhelmCheck() -> void:
 	var weight: int = getWeight()
 	var theirWeight: int = 0
@@ -152,12 +148,39 @@ func overwhelmCheck() -> void:
 		if settlement.getTeam() != team:
 			theirWeight += settlement.getAttackWeight()
 		if theirWeight >= weight:
-			for connection in connections:
-				if connection.getTeam() != team:
-					var guy: Convoy = connection.spawnConvoy(self)
-					guy.source = "Overwhelm"
-			update()
+			_summonOverwhelmingForce()
 			break
+
+## Gathers every connected enemy settlement's available units (via
+## allButTwo()) into one convoy aimed at this settlement, departing from
+## whichever contributing settlement is closest.
+func _summonOverwhelmingForce() -> void:
+	var pooled: Array[Unit] = []
+	var rallyPoint: Settlement = null
+	var rallyDist: float = INF
+	for connection in connections:
+		if connection.getTeam() == team:
+			continue
+		var contribution: Array[Unit] = connection.allButTwo()
+		if contribution.is_empty():
+			continue
+		pooled.append_array(contribution)
+		for unit in contribution:
+			connection.getRoster().erase(unit)
+		connection.update()
+		var d: float = distance(connection, self)
+		if d < rallyDist:
+			rallyDist = d
+			rallyPoint = connection
+
+	if pooled.is_empty() or rallyPoint == null:
+		return
+
+	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
+	get_parent().get_node("Convoys").add_child(convoy)
+	convoy.source = "Overwhelm"
+	convoy.setConvoy(pooled, rallyPoint, self)
+	update()
 
 ## Resolves a fight for control of this settlement between the incoming
 ## `attackers` and whatever is currently garrisoned here.

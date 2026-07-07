@@ -11,7 +11,7 @@ script = ExtResource("1_ypynm")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1531096788]
 z_index = -5
-position = Vector2(585, 390)
+position = Vector2(960, 540)
 texture = ExtResource("2_cihwv")
 
 [node name="Attacker" type="HBoxContainer" parent="." unique_id=1207367734]

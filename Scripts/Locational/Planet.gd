@@ -129,6 +129,101 @@ func turn() -> void:
 				await convoyFight(convoy, otherConvoy)
 	await cleanup()
 
+	# Run the strategic AI for every team that currently owns territory.
+	var activeTeams: Array[String] = []
+	for settlement in settlements:
+		if settlement.team != "Unowned" and !activeTeams.has(settlement.team):
+			activeTeams.append(settlement.team)
+	for team in activeTeams:
+		runStrategicAI(team)
+
+## Strategic AI for `team`: first tries to bring every settlement bordering
+## an enemy up to at least that enemy's combined adjacent weight (pulling
+## reinforcements from interior settlements, which have no defensive need
+## of their own and so ship out everything beyond their base garrison).
+## Once every border settlement meets its target, masses any surplus
+## toward whichever border settlement neighbors the enemy's weakest
+## settlement, attacking once it can do so with overwhelming force.
+func runStrategicAI(team: String) -> void:
+	var owned: Array[Settlement] = []
+	for settlement in settlements:
+		if settlement.team == team:
+			owned.append(settlement)
+	if owned.is_empty():
+		return
+
+	# Classify: border settlements have at least one enemy-owned neighbor,
+	# and want enough weight to match that neighbor's combined weight.
+	# Interior settlements have no such need (target 0) and exist purely to
+	# reinforce the border. `threatened` (used elsewhere, e.g. by Shuttle's
+	# landing-site choice) marks border settlements currently under target.
+	var border: Array[Settlement] = []
+	var targets: Dictionary = {}
+	for settlement in owned:
+		var need: int = 0
+		for neighbor in settlement.getConnections():
+			if neighbor.team != team and neighbor.team != "Unowned":
+				need += neighbor.getWeight()
+		targets[settlement] = need
+		if need > 0:
+			border.append(settlement)
+			settlement.threatened = settlement.getWeight() < need
+
+	# Defense first: reinforce any border settlement under its target.
+	var allSecure := true
+	for settlement in border:
+		if settlement.getWeight() < targets[settlement]:
+			allSecure = false
+			_pullReinforcement(settlement, owned, targets)
+	if !allSecure:
+		return
+
+	# Defensively secure: mass toward whichever border settlement neighbors
+	# the enemy's weakest settlement, and attack once strong enough.
+	var weakestEnemy: Settlement = null
+	for settlement in settlements:
+		if settlement.team != team and settlement.team != "Unowned":
+			if weakestEnemy == null or settlement.getWeight() < weakestEnemy.getWeight():
+				weakestEnemy = settlement
+	if weakestEnemy == null:
+		return
+
+	var stagingPoint: Settlement = null
+	for settlement in border:
+		if settlement.getConnections().has(weakestEnemy):
+			stagingPoint = settlement
+			break
+	# NOTE: if the weakest enemy settlement doesn't border any of our
+	# current settlements, this does nothing until that changes -- attacks
+	# only ever launch from a settlement directly adjacent to the target.
+	if stagingPoint == null:
+		return
+
+	if stagingPoint.getAttackWeight() >= weakestEnemy.getWeight() * 1.5:
+		stagingPoint.spawnConvoy(weakestEnemy)
+	else:
+		_pullReinforcement(stagingPoint, owned, targets)
+
+## Sends a convoy from the nearest settlement in `candidates` (other than
+## `target`) with spare capacity -- weight beyond its own entry in
+## `targets`, plus at least one unit beyond the mandatory 2-unit garrison
+## -- toward `target`. Does nothing if no candidate has anything to spare.
+func _pullReinforcement(target: Settlement, candidates: Array[Settlement], targets: Dictionary) -> void:
+	var donor: Settlement = null
+	var donorDist: float = INF
+	for settlement in candidates:
+		if settlement == target:
+			continue
+		var need: int = targets.get(settlement, 0)
+		if settlement.getWeight() <= need or settlement.allButTwo().is_empty():
+			continue
+		var d: float = distance(settlement, target)
+		if d < donorDist:
+			donorDist = d
+			donor = settlement
+	if donor != null:
+		donor.spawnConvoy(target)
+
 func convoyFight(val1: Convoy, val2: Convoy) -> void:
 	await cleanup()
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
