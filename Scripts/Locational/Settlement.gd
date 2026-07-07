@@ -6,6 +6,8 @@ var type: String
 var newUnitCounter: int = 0
 var threatened: bool = false
 var shuttles: Array[Shuttle] = []
+var threatRatio: float = 1.2
+var overwhelmingRatio: float = 1.5
 
 func appendRoster(arr: Array[Unit]) -> void:
 	for unit in arr:
@@ -55,7 +57,7 @@ func shortestPath(settlements: Array[Settlement], speed: int = 50, source: Settl
 			target = settlement
 			bestDistance = dist[settlement]
 	# If the destination has too many enemies, rally at the node before it instead.
-	if target.getWeight() >= getAttackWeight() * 1.5:
+	if target.getWeight() >= getAttackWeight() * overwhelmingRatio:
 		target = prev[target]
 	while target != null:
 		path.push_front(target)
@@ -91,7 +93,7 @@ func turn() -> void:
 		if convoy.getTeam() != team and (convoy.destination == self or connections.has(convoy.destination)):
 			threatWeight += convoy.getWeight()
 
-	if threatWeight * 1.2 >= getWeight():
+	if threatWeight * threatRatio >= getWeight():
 		threatened = true
 
 	if !threatened and !get_parent().get_parent().compliant and roster.size() > 2:
@@ -104,7 +106,9 @@ func turn() -> void:
 func spawnConvoy(destination: Settlement = null) -> Convoy:
 	if getRoster().size() <= 2:
 		return Convoy.new()
-
+	if destination != null and destination.getWeight() >= getAttackWeight() * overwhelmingRatio:
+		return Convoy.new()
+		
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
 

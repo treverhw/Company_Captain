@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bgi7asbtsnte"]
+[gd_scene format=3 uid="uid://bgi7asbtsnte"]
 
 [ext_resource type="Script" uid="uid://wh17jgh0tqxf" path="res://Scripts/Locational/Location.gd" id="1_7wqg4"]
 
-[node name="Location" type="Control"]
+[node name="Location" type="Control" unique_id=1650767580]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

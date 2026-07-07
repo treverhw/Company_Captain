@@ -1,6 +1,6 @@
 ## Title, Speed, Toughness, Save, Weight, Wounds, Size, description
 
-static var astartesArmour = {#         name          Sp t  Sa We w  Si               desc
+static var astartesArmour = {#         name          Sp t  Sa We  w Si               desc
 	"Tacticus" : 				["Tacticus Pattern", 6, 4, 3, 12, 2, 2, "Found right past the rubicon."],
 	"Scout" : 					["Scout Pattern", 6, 4, 3, 10, 1, 1, "Daddy's hand me downs."],
 	"Gravis" : 					["Gravis Pattern", 5, 6, 3, 14, 3, 4, "BIG. MEATY. CLAWS!"],

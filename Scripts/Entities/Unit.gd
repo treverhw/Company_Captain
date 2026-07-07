@@ -83,7 +83,7 @@ func getTeam() -> String:
 	return getFaction().getTeam()
 func getLine() -> String:
 	return str(line)
-func getLocation() -> Location:
+func getLocation() -> Node:
 	return location if is_instance_valid(location) else null
 func getWeight() -> int:
 	var n: int = 0

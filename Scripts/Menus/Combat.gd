@@ -10,6 +10,7 @@ var auto: bool
 var end: Dictionary = {0: [], 1: []}
 
 func _ready() -> void:
+	pass
 	# Center the combat panel in a 1920x1080 viewport.
 	global_position = Vector2((1920 / 2) - (1170 / 2), (1080 / 2) - (780 / 2))
 
