@@ -105,6 +105,12 @@ func spawnConvoy(destination: Settlement = null) -> Convoy:
 	if getRoster().size() <= 2:
 		return Convoy.new()
 
+	# Directed movement (e.g. from overwhelmCheck()) skips shortestPath(),
+	# so it needs its own copy of the "don't attack an overwhelming target"
+	# check that shortestPath() already applies to automatic movement.
+	if destination != null and destination.getWeight() >= getAttackWeight() * 1.5:
+		return Convoy.new()
+
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
 
