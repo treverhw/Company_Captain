@@ -7,6 +7,13 @@ var newUnitCounter: int = 0
 var threatened: bool = false
 var shuttles: Array[Shuttle] = []
 
+## Strategic-AI staging commitment (see Planet._runStrategicAIForTerritory()):
+## once this settlement is chosen as a staging point against `committedTarget`,
+## it sticks with that target for `commitmentTurnsLeft` more turns rather than
+## re-evaluating the weakest-enemy search every turn.
+var committedTarget: Settlement = null
+var commitmentTurnsLeft: int = 0
+
 func appendRoster(arr: Array[Unit]) -> void:
 	for unit in arr:
 		if is_instance_valid(unit):
@@ -146,8 +153,14 @@ func spawnConvoy(destination: Settlement = null) -> Convoy:
 	# on an enemy needs its own copy of the "don't attack an overwhelming
 	# target" check. Reinforcing a friendly destination is exempt -- that's
 	# not an attack.
-	if destination != null and destination.team != team and destination.getWeight() >= getAttackWeight() * 1.5:
-		return Convoy.new()
+	if destination != null:
+		if destination.team != team and destination.getWeight() >= getAttackWeight() * 1.5:
+			return Convoy.new()
+		# Only one convoy at a time between this settlement and a given
+		# final destination, so reinforcement doesn't keep restacking a
+		# route before the last wave has even arrived.
+		if _hasActiveConvoyTo(destination):
+			return Convoy.new()
 
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
@@ -176,6 +189,17 @@ func spawnConvoy(destination: Settlement = null) -> Convoy:
 		getRoster().erase(unit)
 	update()
 	return convoy
+
+## True if there's already a friendly convoy from this settlement en route
+## to `dest` as its final destination (not just its current hop) -- used to
+## keep spawnConvoy() from stacking a second convoy on the same route
+## before the first one has arrived.
+func _hasActiveConvoyTo(dest: Settlement) -> bool:
+	for convoy in get_parent().get_node("Convoys").get_children():
+		var route: Array[Settlement] = convoy.getPath()
+		if convoy.getTeam() == team and convoy.getHome() == self and !route.is_empty() and route.back() == dest:
+			return true
+	return false
 
 ## Every roster unit except the first two "Base" rank units, which stay
 ## behind to hold the settlement. Shared by spawnConvoy() and

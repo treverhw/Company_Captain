@@ -222,19 +222,35 @@ func _runStrategicAIForTerritory(team: String, owned: Array[Settlement]) -> void
 	if !allSecure:
 		return
 
-	# Defensively secure: find the weakest enemy settlement adjacent to
-	# this territory's own border, mass toward whichever border settlement
-	# neighbors it, and attack once strong enough.
+	# Defensively secure: stick with an existing staging commitment if this
+	# territory still has one active and its target hasn't been resolved
+	# (captured or lost) since -- otherwise pick the weakest enemy
+	# settlement adjacent to this territory's own border and commit to it
+	# for a few turns, so reinforcement has time to actually accumulate
+	# there instead of re-targeting (and re-routing convoys) every turn.
 	var weakestEnemy: Settlement = null
 	var stagingPoint: Settlement = null
 	for settlement in border:
-		for neighbor in settlement.getConnections():
-			if neighbor.team != team and neighbor.team != "Unowned":
-				if weakestEnemy == null or neighbor.getWeight() < weakestEnemy.getWeight():
-					weakestEnemy = neighbor
-					stagingPoint = settlement
-	if weakestEnemy == null:
-		return
+		if settlement.commitmentTurnsLeft > 0:
+			var committed: Settlement = settlement.committedTarget
+			if is_instance_valid(committed) and committed.team != team and committed.team != "Unowned":
+				stagingPoint = settlement
+				weakestEnemy = committed
+				settlement.commitmentTurnsLeft -= 1
+				break
+			settlement.commitmentTurnsLeft = 0
+
+	if stagingPoint == null:
+		for settlement in border:
+			for neighbor in settlement.getConnections():
+				if neighbor.team != team and neighbor.team != "Unowned":
+					if weakestEnemy == null or neighbor.getWeight() < weakestEnemy.getWeight():
+						weakestEnemy = neighbor
+						stagingPoint = settlement
+		if weakestEnemy == null:
+			return
+		stagingPoint.committedTarget = weakestEnemy
+		stagingPoint.commitmentTurnsLeft = 5
 
 	if stagingPoint.getAttackWeight() >= weakestEnemy.getWeight() * 1.5:
 		stagingPoint.spawnConvoy(weakestEnemy)
