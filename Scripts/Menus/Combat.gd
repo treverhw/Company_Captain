@@ -10,8 +10,11 @@ var auto: bool
 var end: Dictionary = {0: [], 1: []}
 
 func _ready() -> void:
-	# Center the combat panel in a 1920x1080 viewport.
-	global_position = Vector2((1920 / 2) - (1170 / 2), (1080 / 2) - (780 / 2))
+	# Attacker/Defender are Control nodes under a Node2D parent, so their
+	# anchors already center them against the full viewport on their own.
+	# Combat itself must stay at the origin, or that centering gets shifted
+	# a second time. (Sprite2D's own position accounts for the panel instead.)
+	pass
 
 ## Deploys one side's units into the given combat-army node ("Attacker" or
 ## "Defender"), reparenting each unit into its assigned line.
