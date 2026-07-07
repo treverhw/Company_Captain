@@ -1,5 +1,7 @@
 extends Location
 class_name Convoy
+## A moving group of Units en route between two Settlements. Convoys are
+## transient nodes: they free themselves once they arrive or lose their roster.
 
 var path: Array[Settlement]
 var home: Settlement
@@ -7,90 +9,89 @@ var destination: Settlement
 var source: String = ""
 var speed: int = 25
 
-func move():
-	#print("Home: " + str(home) + " | Destination: " + str(destination) + " | Army: " + str(roster))
+## Advances the convoy toward its destination each tick, and resolves
+## arrival once it's within `speed` of the target.
+func move() -> void:
 	if getRoster().is_empty():
-		queue_free()
-		if get_parent() != null:
-			get_parent().remove_child(self)
+		kill()
 		return
-	else: team = roster.front().getTeam()
-	var direction = (destination.global_position - self.global_position).normalized()
+
+	team = roster.front().getTeam()
+	var direction: Vector2 = (destination.global_position - self.global_position).normalized()
 	global_position += direction * speed
-	
-	get_node("Node2D/Label").text = str(int(floor(distance(self, destination)/speed)))
+
+	get_node("Node2D/Label").text = str(int(floor(distance(self, destination) / speed)))
 	get_node("Node2D/Label2").text = team.split()[0]
 	get_node("Node2D/Label3").text = str(getRoster().size())
 	get_node("Node2D").global_rotation = 0.0
+
 	if destination.distance(self, destination) < speed:
-		match(destination.team):
-			"Unowned":
+		_resolveArrival()
+
+## Claims an unowned settlement, reinforces a friendly one, or invades an
+## enemy one — then frees the convoy.
+func _resolveArrival() -> void:
+	match destination.team:
+		"Unowned":
+			destination.getRoster().append_array(getRoster())
+			destination.setTeam(team)
+		team:
+			destination.getRoster().append_array(getRoster())
+		_:
+			if destination.getRoster().size() <= 0:
 				destination.getRoster().append_array(getRoster())
-				destination.setTeam(team)
-			team:
-				destination.getRoster().append_array(getRoster())
-			_:
-				if destination.getRoster().size() <= 0:
-					print("BLAM")
-					destination.getRoster().append_array(getRoster())
-				else:
-					destination.invade(getRoster())
-		queue_free()
-		destination.update()
+			else:
+				destination.invade(getRoster())
+	queue_free()
+	destination.update()
 
-func kill():
-		queue_free()
-		if get_parent() != null:
-			get_parent().remove_child(self)
+func kill() -> void:
+	if get_parent() != null:
+		get_parent().remove_child(self)
+	queue_free()
 
-func retreatConvoy():
-	if !getRoster().is_empty():
-		destination = home
-		look_at(destination.global_position)
-		for unit in getRoster():
-			unit.setLocation(self)
-		move()
-	else:
+## Turns the convoy around and sends it back to its home settlement.
+func retreatConvoy() -> void:
+	if getRoster().is_empty():
 		kill()
+		return
+	destination = home
+	look_at(destination.global_position)
+	for unit in getRoster():
+		unit.setLocation(self)
+	move()
 
-func setConvoy(army: Array[Unit] = roster, hm: Settlement = home, dst: Settlement = destination):
-	if !army.is_empty():
-		home = hm
-		destination = dst
-		roster = army
-		team = army.front().getTeam()
-		for unit in army:
-			unit.setLocation(self)
-		global_position = hm.global_position
-		look_at(destination.global_position)
-	else:
+func setConvoy(army: Array[Unit] = roster, hm: Settlement = home, dst: Settlement = destination) -> void:
+	if army.is_empty():
 		kill()
+		return
+	home = hm
+	destination = dst
+	roster = army
+	team = army.front().getTeam()
+	for unit in army:
+		unit.setLocation(self)
+	global_position = hm.global_position
+	look_at(destination.global_position)
 
 func cleanup() -> bool:
-	for unit in range(getRoster().size()-1, -1, -1):
-		if !is_instance_valid(getRoster()[unit]):
-			getRoster().erase(getRoster()[unit])
+	EntityUtils.pruneInvalid(roster)
 	if getRoster().is_empty():
 		kill()
 	return true
 
-func setRoster(arr: Array[Unit]):
+func setRoster(arr: Array[Unit]) -> void:
 	roster = arr
-func setPath(arr: Array[Settlement]):
+func setPath(arr: Array[Settlement]) -> void:
 	path = arr
 	home = path[0]
-	if path.size() <= 1:
-		setDestination(path[0])
-	else:
-		setDestination(path[1])
-func setDestination(dest: Settlement):
+	setDestination(path[0] if path.size() <= 1 else path[1])
+func setDestination(dest: Settlement) -> void:
 	destination = dest
 	look_at(destination.global_position)
 
 func getRoster() -> Array[Unit]:
-	for unit in range(roster.size()-1,-1,-1):
-		if !is_instance_valid(roster[unit]):
-			roster.erase(roster[unit])
+	EntityUtils.pruneInvalid(roster)
 	return roster
 func getPath() -> Array[Settlement]:
 	return path
@@ -103,6 +104,5 @@ func getTeam() -> String:
 func getWeight() -> int:
 	var n: int = 0
 	for unit in getRoster():
-		if is_instance_valid(unit):
-			n += unit.getWeight()
+		n += unit.getWeight()
 	return n

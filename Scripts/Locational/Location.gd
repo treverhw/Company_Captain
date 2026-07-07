@@ -1,40 +1,45 @@
 extends Node2D
 class_name Location
+## Base class for anything that holds a roster of Units at a fixed point
+## in the world (Settlements, and Convoy while it's in transit).
 
 var title: String
 var roster: Array[Unit]
 var team: String = "Unowned"
 var compliant: bool = false
 
-func distance(Node1: Node, Node2: Node) -> float:
-	return Node1.global_position.distance_to(Node2.global_position)
-func generateTitle(val : Array):
-	var new = val[randi_range(0, val.size()-1)]
-	title = new
-	name = new
-func appendRoster(val: Array[Unit]):
+func distance(node1: Node, node2: Node) -> float:
+	return node1.global_position.distance_to(node2.global_position)
+
+## Picks a random name from `val` and uses it as both title and node name.
+func generateTitle(val: Array) -> void:
+	var chosen = val[randi_range(0, val.size() - 1)]
+	title = chosen
+	name = chosen
+
+func appendRoster(val: Array[Unit]) -> void:
 	roster.append_array(val)
 
+## True if no other location in `arr` is within `range` of `val`. Used to
+## keep generated settlements/systems from overlapping.
 func validateDistance(val: Location, arr, range: int) -> bool:
 	for n in arr:
-		if val.position.distance_to(n.position) < range && n != val:
+		if val.position.distance_to(n.position) < range and n != val:
 			return false
 	return true
 
-#Setters and Getters
-func setTitle(Title: String):
+## -- Setters and Getters --
+func setTitle(Title: String) -> void:
 	title = Title
-func setRoster(val: Array[Unit]):
+func setRoster(val: Array[Unit]) -> void:
 	roster = val
-func setTeam(val: String):
+func setTeam(val: String) -> void:
 	team = val
 
 func getTitle() -> String:
 	return title
 func getRoster() -> Array[Unit]:
-	for unit in range(roster.size()-1,-1,-1):
-		if !is_instance_valid(roster[unit]):
-			roster.erase(roster[unit])
+	EntityUtils.pruneInvalid(roster)
 	return roster
 func getTeam() -> String:
 	return team

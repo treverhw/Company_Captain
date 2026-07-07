@@ -1,24 +1,25 @@
 extends Node
 class_name Weapon
+## Data-holder for a weapon's stats. Built from an array taken from
+## WeaponArrays.gd (see that file for the field order).
 
-var title : String
-var a : int
-var bs : int
-var s : int
-var ap : int
-var d : int
-var twoHands : bool
-var melee : bool
-var description : String
-var pistol : bool
+var title: String
+var attacks: int
+var strength: int
+var ap: int
+var damage: int
+var twoHands: bool
+var melee: bool
+var pistol: bool
+var description: String
 
-func _init(arr : Array):
+func _init(arr: Array) -> void:
 	name = arr[0]
 	title = arr[0]
-	a = arr[1]
-	s = arr[2]
+	attacks = arr[1]
+	strength = arr[2]
 	ap = arr[3]
-	d = arr[4]
+	damage = arr[4]
 	twoHands = arr[5]
 	melee = arr[6]
 	pistol = arr[7]
@@ -31,19 +32,17 @@ func isMelee() -> bool:
 func isPistol() -> bool:
 	return pistol
 
-#Getters
+## -- Getters --
 func getTitle() -> String:
 	return title
 func getAttacks() -> int:
-	return a
-func getBS() -> int:
-	return bs
+	return attacks
 func getStrength() -> int:
-	return s
+	return strength
 func getAP() -> int:
 	return ap
 func getDmg() -> int:
-	return d
+	return damage
 func getDescription() -> String:
 	return description
 

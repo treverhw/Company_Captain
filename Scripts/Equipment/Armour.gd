@@ -1,16 +1,18 @@
 extends Node
 class_name Armour
+## Data-holder for an armour set's stats. Built from an array taken from
+## ArmourArrays.gd (see that file for the field order).
 
-var title : String
-var speed : int
-var toughness : int
-var save : int
-var weight : int
-var wounds : int
-var description : String
+var title: String
+var speed: int
+var toughness: int
+var save: int
+var weight: int
+var wounds: int
+var description: String
 var size: int
 
-func _init(arr : Array):
+func _init(arr: Array) -> void:
 	name = arr[0]
 	title = arr[0]
 	speed = arr[1]
@@ -21,7 +23,7 @@ func _init(arr : Array):
 	size = arr[6]
 	description = arr[7]
 
-#Getters
+## -- Getters --
 func getTitle() -> String:
 	return title
 func getSpeed() -> int:
