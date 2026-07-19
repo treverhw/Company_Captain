@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ModelStats" load_steps=2 format=3 uid="uid://bic8bmh4v4fxa"]
+
+[ext_resource type="Script" uid="uid://dl8lns82dilkv" path="res://Scripts/Models/ModelStats.gd" id="1_ya0sb"]
+
+[resource]
+script = ExtResource("1_ya0sb")
+title = "Cultist"
+rank = "Cultist"
+ballisticSkill = 4
+weaponSkill = 4
+wounds = 1
+maxWounds = 1
+metadata/_custom_type_script = "uid://dl8lns82dilkv"

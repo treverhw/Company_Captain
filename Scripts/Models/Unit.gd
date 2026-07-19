@@ -4,30 +4,31 @@ class_name Unit
 ## Subclasses override `combatUpdate()` to refresh their own UI.
 
 var title: String
-var roster: Array[Entity] = []
+var roster: Array[Model] = []
 var rosterCap: int = 5
 var faction: Faction
 # NOTE: untyped because a Unit's location can be a Location (Settlement,
-# Planet, System, Sector, Convoy) OR a Ship (Entity) once it's embarked.
+# Planet, System, Sector, Convoy) OR a Ship (Model) once it's embarked.
 var location
 var line: int = 1
+var type: String
 
 func define(t: String, rC: int, f: Faction) -> void:
 	title = t
 	rosterCap = rC
 	faction = f
 
-## True if this unit still has at least one living entity.
+## True if this unit still has at least one living Model.
 func validate() -> bool:
 	return getAlive() > 0
 
-## Points every entity currently in the roster back at this unit.
+## Points every Model currently in the roster back at this unit.
 func assignModels() -> void:
 	for model in getRoster():
 		model.unit = self
 
-func removeEntity(model: Entity) -> void:
-	getFaction().removeEntity(model)
+func removeModel(model: Model) -> void:
+	getFaction().removeModel(model)
 
 ## Counts how many entities in the roster are still alive.
 func getAlive() -> int:
@@ -41,7 +42,7 @@ func getAlive() -> int:
 ## scars to take), then frees this unit entirely once its roster is empty.
 func clean() -> void:
 	for i in range(getRoster().size() - 1, -1, -1):
-		var model: Entity = getRoster()[i]
+		var model: Model = getRoster()[i]
 		if model.getWounds() <= 0:
 			model.battlescars += 1
 			if model.getBattlescars() > model.getMaxBattlescars():
@@ -54,6 +55,16 @@ func clean() -> void:
 			get_parent().remove_child(self)
 		getFaction().getRoster().erase(self)
 		queue_free()
+
+func addModel(model: Model) -> Model:
+	roster.append(model)
+	model.unit = self
+	return model
+
+func popModel() -> Model:
+	var model = roster.pop_back()
+	model.unit = null
+	return model
 
 ## Overridden by subclasses (e.g. Squad) to refresh their own combat UI.
 func combatUpdate() -> void:
@@ -72,8 +83,8 @@ func setLocation(val) -> void:
 ## -- Getters --
 func getTitle() -> String:
 	return title
-func getRoster() -> Array[Entity]:
-	EntityUtils.pruneInvalid(roster)
+func getRoster() -> Array[Model]:
+	ModelUtils.pruneInvalid(roster)
 	return roster
 func getRosterCap() -> int:
 	return rosterCap
@@ -95,6 +106,12 @@ func getSize() -> int:
 	for model in getRoster():
 		n += model.getSize()
 	return n
+
+func getRosterSize() -> int:
+	return getRoster().size()
+
+func getNeededModels() -> int:
+	return getRosterCap() - getRosterSize()
 
 func _to_string() -> String:
 	return str(getFaction().getTitle()) + " " + getTitle() + " - Size[" + str(getRoster().size()) + "]"

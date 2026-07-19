@@ -30,16 +30,17 @@ func _generateSettlements() -> void:
 			break
 		get_node("PlanetMenu").add_child(newSettlement)
 		settlements.append(newSettlement)
+		newSettlement.planet = self
 
-## Scatters starting Guard garrisons across 4-8 random settlements, and
-## Chaos garrisons across 4-5 random non-Imperium-owned settlements.
+## Scatters starting Guard garrisons across 3-7 random settlements, and
+## Chaos garrisons across 2-5 random non-Imperium-owned settlements.
 func _spawnStartingForces() -> void:
 	var main = get_node("/root/Main/")
-	for n in randi_range(4, 8):
+	for n in randi_range(3, 7):
 		var guardForce: Array[Unit] = main.getFaction("guard").start()
 		var settlement: Settlement = settlements[randi_range(0, settlements.size() - 1)]
 		settlement.appendRoster(guardForce)
-	for n in randi_range(4, 5):
+	for n in randi_range(2, 5):
 		var chaosForce: Array[Unit] = main.getFaction("chaos").start()
 		var num := randi_range(0, settlements.size() - 1)
 		while settlements[num].getTeam() == "Imperium":
@@ -250,7 +251,7 @@ func _runStrategicAIForTerritory(team: String, owned: Array[Settlement]) -> void
 		if weakestEnemy == null:
 			return
 		stagingPoint.committedTarget = weakestEnemy
-		stagingPoint.commitmentTurnsLeft = 5
+		stagingPoint.commitmentTurnsLeft = 20
 
 	if stagingPoint.getAttackWeight() >= weakestEnemy.getWeight() * 1.5:
 		stagingPoint.spawnConvoy(weakestEnemy)
@@ -283,8 +284,8 @@ func convoyFight(val1: Convoy, val2: Convoy) -> void:
 	get_node("/root/Main").add_child(combat)
 
 	var newRosters = await combat.populate(val1.getRoster(), val2.getRoster())
-	EntityUtils.pruneEmptyUnits(newRosters[0])
-	EntityUtils.pruneEmptyUnits(newRosters[1])
+	ModelUtils.pruneEmptyUnits(newRosters[0])
+	ModelUtils.pruneEmptyUnits(newRosters[1])
 
 	val1.source = "Convoy Fight Retreat"
 	val2.source = "Convoy Fight Retreat"
@@ -311,17 +312,31 @@ func cleanup() -> bool:
 ## difference across settlements and convoys, and drives both the team and
 ## the displayed icon (positive = Imperium, negative = hostile, 0 = unowned).
 func update() -> void:
+	var result = setControl()
 	setBalance("Imperium")
 	get_node("PlanetNode/Balance").text = str(balance)
-	if balance > 0:
-		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Imperium.png")
-		setTeam("Imperium")
-	elif balance < 0:
-		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Bad.png")
-		setTeam("Chaos")
-	else:
-		get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/unowned.png")
-		setTeam("Unowned")
+	
+	match result:
+		"Unowned":
+			get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/unowned.png")
+			setTeam("Unowned")
+		"Imperium":
+			get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Imperium.png")
+			setTeam("Imperium")
+		"Chaos":
+			get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Bad.png")
+			setTeam("Chaos")
+
+func setControl() -> String:
+	var teams: Array = []
+	
+	for settlement in settlements:
+		var currTeam = settlement.getTeam()
+		if currTeam not in teams:
+			teams.append(currTeam)
+		if teams.size() > 1:
+			return "Unowned"
+	return teams[0]
 
 func setBalance(team: String) -> int:
 	var total: int = 0

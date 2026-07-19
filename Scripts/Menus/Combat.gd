@@ -5,7 +5,7 @@ class_name Combat
 
 var attackerRoster: Array[Unit] = []
 var defenderRoster: Array[Unit] = []
-var fullRoster: Array[Entity] = []
+var fullRoster: Array[Model] = []
 var auto: bool
 var end: Dictionary = {0: [], 1: []}
 
@@ -48,7 +48,7 @@ func realFight() -> Dictionary:
 	var weapons: Array[Weapon]
 	visible = true
 
-	var queue: Array[Entity] = fullRoster.duplicate()
+	var queue: Array[Model] = fullRoster.duplicate()
 	while !endCheck():
 		# Drop anyone who's already dead before this round starts.
 		for i in range(queue.size() - 1, -1, -1):
@@ -70,13 +70,13 @@ func realFight() -> Dictionary:
 			weapons = model.getActiveWeapons(distance(model.getUnit().get_parent(), frontLine))
 
 			for weapon in weapons:
-				for attack in weapon.getAttacks():
+				for attack in range(1, weapon.getAttacks()):
 					# Pick a random model from the enemy's frontline to shoot at.
-					var target: Entity = frontLine.getRoster()[randi_range(0, frontLine.getRoster().size() - 1)]
+					var target: Model = frontLine.getRoster()[randi_range(0, frontLine.getRoster().size() - 1)]
 
-					if rolld6() >= model.getBallisticSkill():
-						if wound(weapon, target, rolld6()):
-							var save: int = rolld6()
+					if GlobalFunctions.rolld6() >= model.getBallisticSkill() or "Torrent" in weapon.getModifiers():
+						if wound(weapon, target, GlobalFunctions.rolld6()):
+							var save: int = GlobalFunctions.rolld6()
 							if save < target.getSave():
 								# Roll succeeded and the save failed: target takes damage.
 								# The shooter gains xp on a hit, and again if it's a kill.
@@ -126,11 +126,9 @@ func cleanup() -> bool:
 	return true
 
 ## -- Utilities --
-func rolld6() -> int:
-	return randi_range(1, 6)
 
 ## Standard wound-roll table: compares attacker strength to target toughness.
-func wound(s: Weapon, t: Entity, roll: int) -> bool:
+func wound(s: Weapon, t: Model, roll: int) -> bool:
 	if s.getStrength() >= 2 * t.getToughness() and roll >= 2:
 		return true
 	elif s.getStrength() > t.getToughness() and roll >= 3:
@@ -148,7 +146,7 @@ func distance(Node1: Node, Node2: Node) -> float:
 	return Node1.global_position.distance_to(Node2.global_position)
 
 ## Finds the nearest non-empty enemy combat line to shoot at.
-func targetColumn(model: Entity) -> VBoxContainer:
+func targetColumn(model: Model) -> VBoxContainer:
 	var friendlyArmy: HBoxContainer = model.getUnit().get_parent().get_parent()
 	var enemyArmy: HBoxContainer = get_node("Defender") if friendlyArmy.name == "Attacker" else get_node("Attacker")
 

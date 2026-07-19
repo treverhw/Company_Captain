@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WeaponStats" load_steps=2 format=3 uid="uid://03oxvj8e52n6"]
+
+[ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_2cgly"]
+
+[resource]
+script = ExtResource("1_2cgly")
+title = "Bolt Pistol"
+attacks = "1"
+strength = 4
+damage = "1"
+pistol = true
+description = "Wrist Snapper 9000."
+metadata/_custom_type_script = "uid://c00dklgveh5ca"

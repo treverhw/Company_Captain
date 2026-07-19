@@ -1,5 +1,5 @@
 extends Node
-class_name Entity
+class_name Model
 ## Base class for anything that can fight and be tracked in a Unit's roster
 ## (soldiers, vehicles, etc). Subclasses provide their own `define()` and
 ## `getActiveWeapons()`.
@@ -13,6 +13,7 @@ var unit: Unit
 var location
 var weapons: Array[Weapon]
 var rank: String = "Base"
+var role: String = "Battleline"
 var xp: int
 
 ## -- Stats --
@@ -23,15 +24,15 @@ var maxWounds: int
 var battlescars: int
 var maxBattlescars: int
 
-## True while the entity still has wounds remaining.
+## True while the Model still has wounds remaining.
 func alive() -> bool:
 	return getWounds() > 0
 
-## Removes this entity from its faction's roster entirely.
+## Removes this Model from its faction's roster entirely.
 func kill() -> void:
-	getFaction().removeEntity(self)
+	getFaction().removeModel(self)
 
-## Returns the combat line (VBoxContainer) this entity's unit currently occupies.
+## Returns the combat line (VBoxContainer) this Model's unit currently occupies.
 func findColumn() -> VBoxContainer:
 	return unit.get_parent()
 
@@ -68,6 +69,10 @@ func getUnit() -> Unit:
 	return unit
 func getLocation() -> Node:
 	return getUnit().getLocation()
+func getRank() -> String:
+	return rank
+func getXP() -> int:
+	return xp
 func getBallisticSkill() -> int:
 	return ballisticSkill
 func getWeaponSkill() -> int:
@@ -80,7 +85,7 @@ func getBattlescars() -> int:
 	return battlescars
 func getMaxBattlescars() -> int:
 	return maxBattlescars
-## Weapons usable at the given distance. Base Entity has no weapon logic
+## Weapons usable at the given distance. Base Model has no weapon logic
 ## of its own — overridden by Soldier/Vehicle.
 func getActiveWeapons(distance: int) -> Array[Weapon]:
 	return [null]
@@ -89,4 +94,5 @@ func getWeight() -> int:
 	return 0
 
 func _to_string() -> String:
-	return "%s %d/%d | %d/%d" % [getTitle(), getWounds(), getMaxWounds(), getBattlescars(), getMaxBattlescars()]
+	
+	return "%s %s %d/%d | %d/%d" % [getRank(), getTitle(), getWounds(), getMaxWounds(), getBattlescars(), getMaxBattlescars()]

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ModelStats" load_steps=2 format=3 uid="uid://cxc2tdf3o7fj4"]
+
+[ext_resource type="Script" uid="uid://dl8lns82dilkv" path="res://Scripts/Models/ModelStats.gd" id="1_x60k2"]
+
+[resource]
+script = ExtResource("1_x60k2")
+title = "Guardsman"
+rank = "Guardsman"
+ballisticSkill = 4
+weaponSkill = 4
+wounds = 1
+maxWounds = 1
+metadata/_custom_type_script = "uid://dl8lns82dilkv"

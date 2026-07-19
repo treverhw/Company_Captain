@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ArmourStats" load_steps=2 format=3 uid="uid://dr5cqgm70x2wr"]
+
+[ext_resource type="Script" uid="uid://cftx6oo8we07o" path="res://Scripts/Equipment/ArmourStats.gd" id="1_6xini"]
+
+[resource]
+script = ExtResource("1_6xini")
+title = "Cultist Rags"
+Speed = "3"
+Toughness = 3
+Save = 6
+Weight = 6
+Wounds = 1
+Size = 1
+description = "The worst the 20th century has to offer."
+metadata/_custom_type_script = "uid://cftx6oo8we07o"

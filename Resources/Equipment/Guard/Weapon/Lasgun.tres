@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="WeaponStats" load_steps=2 format=3 uid="uid://drqdb3by1eqdi"]
+
+[ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_dhp13"]
+
+[resource]
+script = ExtResource("1_dhp13")
+title = "Lasgun"
+attacks = "2"
+strength = 3
+damage = "1"
+twoHands = true
+modifiers = Array[String](["Rapid Fire 1"])
+description = "Go towards the Light."
+metadata/_custom_type_script = "uid://c00dklgveh5ca"

@@ -4,9 +4,9 @@ class_name CombatLine
 ## occupying that line/rank during combat.
 
 var team: String
-var roster: Array[Entity]
+var roster: Array[Model]
 
-func setRoster(val: Array[Entity]) -> void:
+func setRoster(val: Array[Model]) -> void:
 	roster = val
-func getRoster() -> Array[Entity]:
+func getRoster() -> Array[Model]:
 	return roster

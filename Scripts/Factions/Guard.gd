@@ -9,31 +9,29 @@ func _init() -> void:
 func start() -> Array[Unit]:
 	return [spawnBase(), spawnBase(), spawnBase(), spawnBase()]
 
-## Builds a custom Guardsman from named loadout pieces.
-func customGuard(armourKey: String, mainWeaponKey: String, offWeaponKey: String) -> Entity:
-	var arm: Armour = Armour.new(armour.guardArmour[armourKey])
-	var wpn1: Weapon = Weapon.new(weapons.guardWeapons[mainWeaponKey])
-	var wpn2: Weapon = Weapon.new(weapons.guardWeapons[offWeaponKey])
-	var guy = load("res://Scenes/Entities/Soldier.tscn").instantiate()
-	guy.define(soldiers.soldiers["Guardsman"], arm, wpn1, wpn2, self)
-	return guy
-
 ## Spawns a basic Guardsman, kitted with a lasgun and close combat weapon.
-func spawnModel() -> Entity:
-	var arm: Armour = Armour.new(armour.guardArmour["Flak"])
-	var wpn1: Weapon = Weapon.new(weapons.guardWeapons["Lasgun"])
-	var wpn2: Weapon = Weapon.new(weapons.guardWeapons["Close Combat Weapon"])
-	var guy = load("res://Scenes/Entities/Soldier.tscn").instantiate()
-	guy.define(soldiers.soldiers["Guardsman"], arm, wpn1, wpn2, self)
-	return guy
+func spawnGuardsmen() -> Model:
+	var loadout = loadouts["Base"]
+	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	
+func spawnHeavyGuardsmen() -> Model:
+	var loadout = loadouts["Heavy"]
+	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	
+func spawnSergeant() -> Model:
+	var loadout = loadouts["Sergeant"]
+	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
 
 ## Spawns a 10-model Guard squad and adds it to this faction's roster.
 func spawnSquad() -> Squad:
 	var newSquad: Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
 	newSquad.define(str(roster.size()), 10, self)
-	var models: Array[Entity] = []
-	for i in 10:
-		models.append(spawnModel())
+	var models: Array[Model] = []
+	models.append(spawnSergeant())
+	for i in 2:
+		models.append(spawnHeavyGuardsmen())
+	for i in 7:
+		models.append(spawnGuardsmen())
 	newSquad.roster = models
 	roster.append(newSquad)
 	newSquad.assignModels()
@@ -42,3 +40,25 @@ func spawnSquad() -> Squad:
 
 func spawnBase() -> Unit:
 	return spawnSquad()
+
+var loadouts: Dictionary = {
+	#stats, arm, wpn1, wpn2
+	"Base" = [
+		"res://Resources/Models/Guard/Guardsman.tres",
+		"res://Resources/Equipment/Guard/Armour/Flak.tres",
+		"res://Resources/Equipment/Guard/Weapon/Lasgun.tres",
+		"res://Resources/Equipment/Guard/Weapon/CCW.tres"
+	],
+	"Heavy" = [
+		"res://Resources/Models/Guard/Guardsman.tres",
+		"res://Resources/Equipment/Guard/Armour/Flak.tres",
+		"res://Resources/Equipment/Guard/Weapon/Meltagun.tres",
+		"res://Resources/Equipment/Guard/Weapon/CCW.tres"
+	],
+	"Sergeant" = [
+		"res://Resources/Models/Guard/Guardsman.tres",
+		"res://Resources/Equipment/Guard/Armour/Flak.tres",
+		"res://Resources/Equipment/Guard/Weapon/Laspistol.tres",
+		"res://Resources/Equipment/Guard/Weapon/Chainsword.tres"
+	]
+}

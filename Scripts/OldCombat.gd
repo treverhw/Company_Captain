@@ -1,9 +1,9 @@
 extends Node
 
 var rand : RandomNumberGenerator = RandomNumberGenerator.new()
-var fRoster : Array[Entity] = []
-var eRoster : Array[Entity] = []
-var wholeRoster : Array[Entity] = [] 
+var fRoster : Array[Model] = []
+var eRoster : Array[Model] = []
+var wholeRoster : Array[Model] = [] 
 var queue
 
 # Called when the node enters the scene tree for the first time.
@@ -17,7 +17,7 @@ func _process(delta: float) -> void:
 func rolld6() -> int:
 	return randi_range(1,6)
 
-func wound(s : Weapon, t : Entity, roll : int):
+func wound(s : Weapon, t : Model, roll : int):
 	if s.getStrength() >= 2*t.getToughness() and roll >= 2:
 		return true
 	elif s.getStrength() > t.getToughness() and roll >= 3:
@@ -30,10 +30,10 @@ func wound(s : Weapon, t : Entity, roll : int):
 		return true
 	else: return false
 
-func shoot(entity, target, friendly):
-	var wpn = entity.main
+func shoot(Model, target, friendly):
+	var wpn = Model.main
 	for i in range(wpn.getAttacks()):
-		if rolld6() >= entity.getBallisticSkill():
+		if rolld6() >= Model.getBallisticSkill():
 			if wound(wpn, target, rolld6()):
 				if rolld6() < target.getSave():
 					target.wounds -= wpn.getDmg()
@@ -62,20 +62,20 @@ func startCombat(friendly : Array[Unit], enemy : Array[Unit], attacker : bool):
 			queue = (fRoster + eRoster)
 			print(str(fRoster.size()) + " vs " + str(eRoster.size()))
 			queue.sort_custom(func(a,b): return a.getSpeed() > b.getSpeed())
-			for entity in queue:
+			for Model in queue:
 				queue.pop_front()
-				var target : Entity 
+				var target : Model 
 				
-				if entity.team == "Imperium":
+				if Model.team == "Imperium":
 					target = eRoster[rand.randi_range(0, eRoster.size()-1)]
-					shoot(entity, target, true)
+					shoot(Model, target, true)
 				
 				else:
 					target = eRoster[rand.randi_range(0, eRoster.size()-1)]
-					shoot(entity, target, false)
+					shoot(Model, target, false)
 	
-	for entity in wholeRoster:
-		if entity.battlescars <= 0:
-			wholeRoster.erase(entity)
-			entity.queue_free()
+	for Model in wholeRoster:
+		if Model.battlescars <= 0:
+			wholeRoster.erase(Model)
+			Model.queue_free()
 	

@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Company_Captain"
 run/main_scene="res://Scenes/Main.tscn"
-config/features=PackedStringArray("4.7", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]
@@ -30,6 +30,7 @@ window/size/mode=3
 folder_colors={
 "res://Assets/": "red",
 "res://DesignDocuments/": "gray",
+"res://Resources/": "orange",
 "res://Scenes/": "green",
 "res://Scripts/": "blue"
 }

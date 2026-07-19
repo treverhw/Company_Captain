@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ArmourStats" load_steps=2 format=3 uid="uid://cw2atvavuwgiu"]
+
+[ext_resource type="Script" uid="uid://cftx6oo8we07o" path="res://Scripts/Equipment/ArmourStats.gd" id="1_7admi"]
+
+[resource]
+script = ExtResource("1_7admi")
+title = "Flak Armour"
+Speed = "4"
+Toughness = 3
+Save = 5
+Weight = 8
+Wounds = 1
+Size = 1
+description = "The best the 20th century has to offer."
+metadata/_custom_type_script = "uid://cftx6oo8we07o"

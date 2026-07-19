@@ -1,7 +1,6 @@
 extends Control
-const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
-const armour = preload("res://Scripts/Equipment/ArmourArrays.gd")
-const soldiers = preload("res://Scripts/Entities/Foot/SoldierArrays.gd")
+#const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
+#const armour = preload("res://Scripts/Equipment/ArmourArrays.gd")
 var playerFaction
 var guard
 var chaos
@@ -16,6 +15,7 @@ func _input(event: InputEvent) -> void:
 		get_tree().quit()
 
 func _ready() -> void:
+	
 	temp = load("res://Scenes/Menus/MainMenu.tscn").instantiate()
 	temp.get_node("VBoxContainer/Play").pressed.connect(play)
 	add_child(temp)
@@ -89,14 +89,14 @@ func getFaction(faction: String) -> Faction:
 
 func _on_planet_test_pressed() -> void:
 	testing = !testing
-	var counter = 1
-	while(counter < 100 and testing):
-		await get_tree().create_timer(.15).timeout
+	#var counter = 1
+	while(testing):
+		await get_tree().create_timer(1).timeout
 		_on_turn_pressed()
 		var system = sector.getSystems().front()
 		sector.turn()
 		if system.getCompliance():
-			counter += 1
+			#counter += 1
 			await resetFactions()
 			remove_child(system)
 			system.queue_free()

@@ -8,6 +8,7 @@ var threatened: bool = false
 var shuttles: Array[Shuttle] = []
 var threatRatio: float = 1.2
 var overwhelmingRatio: float = 1.5
+var planet: Planet
 
 ## Strategic-AI staging commitment (see Planet._runStrategicAIForTerritory()):
 ## once this settlement is chosen as a staging point against `committedTarget`,
@@ -135,6 +136,8 @@ func turn() -> void:
 	if team == "Unowned" or getRoster().is_empty():
 		return
 
+	ModelUtils.mergeUnits(getRoster())
+
 	newUnitCounter += 1
 	if newUnitCounter >= 10:
 		roster.append(spawn())
@@ -166,8 +169,7 @@ func spawnConvoy(destination: Settlement = null) -> Convoy:
 
 	var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
 	get_parent().get_node("Convoys").add_child(convoy)
-
-	var toGo: Array[Unit] = allButTwo()
+	var toGo: Array[Unit] = defenseForce()
 	# NOTE: there was previously a guard here returning early if toGo was
 	# empty; it's commented out as of SystemMap, so left disabled here too —
 	# flagged separately since a zero-unit convoy looks possible as a result.
@@ -186,6 +188,8 @@ func spawnConvoy(destination: Settlement = null) -> Convoy:
 		return Convoy.new()
 
 	convoy.setConvoy(toGo, route)
+	
+	convoy.add_to_group(get_parent().get_parent().title + "_convoy")
 
 	for unit in toGo:
 		getRoster().erase(unit)
@@ -202,6 +206,19 @@ func _hasActiveConvoyTo(dest: Settlement) -> bool:
 		if convoy.getTeam() == team and convoy.getHome() == self and !route.is_empty() and route.back() == dest:
 			return true
 	return false
+	
+func defenseForce() -> Array[Unit]:
+	var toGo: Array[Unit] = []
+	var threatWeight = getThreatWeight()
+	if threatWeight == 0:
+		toGo = allButTwo()
+	else:
+		var defenseWeight = 0
+		for unit in roster:
+			if defenseWeight < threatWeight:
+				defenseWeight += unit.getWeight()
+			else: toGo.append(unit)
+	return toGo
 
 ## Every roster unit except the first two "Base" rank units, which stay
 ## behind to hold the settlement. Shared by spawnConvoy() and
@@ -210,7 +227,7 @@ func allButTwo() -> Array[Unit]:
 	var counter: int = 0
 	var ret: Array[Unit] = []
 	for unit in getRoster():
-		if unit.getRoster().front().rank == "Base" and counter < 2:
+		if unit.getRoster().front().role == "Battleline" and counter < 2:
 			counter += 1
 		else:
 			ret.append(unit)
@@ -271,12 +288,15 @@ func invade(attackers: Array[Unit]) -> void:
 	get_node("/root/Main").add_child(combat)
 	var newRosters = await combat.populate(attackers, defenders)
 
-	EntityUtils.pruneEmptyUnits(newRosters[0])
-	EntityUtils.pruneEmptyUnits(newRosters[1])
+	#0 is always the winner of the fight, 1 is always the loser.
+	ModelUtils.pruneEmptyUnits(newRosters[0])
+	ModelUtils.pruneEmptyUnits(newRosters[1])
+	ModelUtils.mergeUnits(newRosters[0])
 
 	# Any surviving losers retreat to a connected friendly settlement, if one exists.
 	# (If not, they've been cornered and destroyed — nothing further to do.)
 	if !newRosters[1].is_empty():
+		ModelUtils.mergeUnits(newRosters[1])
 		for settlement in getConnections():
 			if settlement.getTeam() == newRosters[1].front().getTeam():
 				var convoy: Convoy = load("res://Scenes/Entities/Convoy.tscn").instantiate()
@@ -292,7 +312,7 @@ func invade(attackers: Array[Unit]) -> void:
 
 ## Strips any freed unit references from this settlement's roster.
 func cleanup() -> void:
-	EntityUtils.pruneInvalid(roster)
+	ModelUtils.pruneInvalid(roster)
 
 ## Refreshes this settlement's owning team and visuals based on its
 ## current roster.
@@ -311,12 +331,13 @@ func update() -> void:
 		get_node("TextureRect").set_texture(load(texturePath))
 
 ## -- Getters and Setters --
+func setType(val: String) -> void:
+	type = val
+	
 func getConnections() -> Dictionary:
 	return connections
 func getType() -> String:
 	return type
-func setType(val: String) -> void:
-	type = val
 
 func getWeight() -> int:
 	var n: int = 0
@@ -332,6 +353,26 @@ func getAttackWeight() -> int:
 	for i in range(2, units.size()):
 		n += units[i].getWeight()
 	return n
+	
+func getThreatWeight() -> int:
+	var n = 0
+	for settlment in getConnections():
+		if settlment.getTeam() != getTeam():
+			n += settlment.getWeight()
+	return n
 
 func _to_string() -> String:
 	return title
+
+
+func _on_texture_rect_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var units = "["
+		for unit in getRoster():
+			units += "\n" + unit.title + "\n"
+			for model in unit.getRoster():
+				units += model.to_string() + "\n	"
+				var weapons = model.getActiveWeapons(-1)
+				units += model.getActiveWeapons(-1)[0].title + " | " + model.getActiveWeapons(-1)[1].title + "\n"
+		units += "]"
+		print(units)

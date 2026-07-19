@@ -16,27 +16,22 @@ func _scoutSquadTitle() -> String:
 
 ## Chaos scouts carry a close combat weapon instead of the bolt pistol
 ## AstartesFaction's default scout loadout uses.
-func spawnScout() -> Entity:
-	var arm: Armour = Armour.new(armour.astartesArmour["Scout"])
-	var wpn1: Weapon = Weapon.new(weapons.astartesWeapons["Boltgun"])
-	var wpn2: Weapon = Weapon.new(weapons.astartesWeapons["Close Combat Weapon"])
-	var guy = load("res://Scenes/Entities/Soldier.tscn").instantiate()
-	guy.define(soldiers.soldiers["SpaceMarine"], arm, wpn1, wpn2, self)
-	return guy
+func spawnCultist() -> Model:
+	var loadout = loadouts["Base"]
+	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
 
-func spawnCultist() -> Entity:
-	var arm: Armour = Armour.new(armour.chaosArmour["Rags"])
-	var wpn1: Weapon = Weapon.new(weapons.chaosWeapons["Autopistol"])
-	var wpn2: Weapon = Weapon.new(weapons.chaosWeapons["Brutal Assault Weapon"])
-	var guy = load("res://Scenes/Entities/Soldier.tscn").instantiate()
-	guy.define(soldiers.soldiers["Cultist"], arm, wpn1, wpn2, self)
-	return guy
+func spawnDemagogue() -> Model:
+	var loadout = loadouts["Demagogue"]
+	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
 
 func spawnCultistSquad() -> Squad:
 	var newSquad: Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
-	newSquad.define("Squad: " + str(roster.size()), 5, self)
-	for x in range(0, 20):
-		newSquad.roster.append(spawnCultist())
+	newSquad.define(str(roster.size()), 10, self)
+	var models: Array[Model] = []
+	models.append(spawnDemagogue())
+	for i in 9:
+		models.append(spawnCultist())
+	newSquad.roster = models
 	roster.append(newSquad)
 	newSquad.assignModels()
 	add_child(newSquad)
@@ -46,3 +41,26 @@ func spawnCultistSquad() -> Squad:
 ## default scout squad.
 func spawnBase() -> Unit:
 	return spawnCultistSquad()
+
+func _ready():
+	
+	loadouts = {
+		"Base" = [
+			"res://Resources/Models/Chaos/Cultist.tres",
+			"res://Resources/Equipment/Chaos/Armour/Rags.tres",
+			"res://Resources/Equipment/Chaos/Weapon/Autopistol.tres",
+			"res://Resources/Equipment/Chaos/Weapon/BCW.tres"
+		],
+		"Demagogue" = [
+			"res://Resources/Models/Chaos/CultDemagogue.tres",
+			"res://Resources/Equipment/Chaos/Armour/Rags.tres",
+			"res://Resources/Equipment/Chaos/Weapon/BoltPistol.tres",
+			"res://Resources/Equipment/Chaos/Weapon/BCW.tres"
+		],
+		"Scout" = [
+			"res://Resources/Models/Artartes/Scout.tres",
+			"res://Resources/Equipment/Astartes/Armour/Scout.tres",
+			"res://Resources/Equipment/Astartes/Weapon/Boltgun.tres",
+			"res://Resources/Equipment/Astartes/Weapon/ScoutCCW.tres"
+		],
+	}

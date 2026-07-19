@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ArmourStats" load_steps=2 format=3 uid="uid://3wln78lg5hpr"]
+
+[ext_resource type="Script" uid="uid://cftx6oo8we07o" path="res://Scripts/Equipment/ArmourStats.gd" id="1_0dehm"]
+
+[resource]
+script = ExtResource("1_0dehm")
+title = "Scout Armour"
+Speed = "6"
+Toughness = 4
+Save = 3
+Weight = 10
+Wounds = 1
+Size = 1
+description = "Daddy's hand me downs."
+metadata/_custom_type_script = "uid://cftx6oo8we07o"

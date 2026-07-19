@@ -1,15 +1,18 @@
 extends Node
 class_name Faction
 
-const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
-const armour = preload("res://Scripts/Equipment/ArmourArrays.gd")
-const soldiers = preload("res://Scripts/Entities/Foot/SoldierArrays.gd")
+#const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
+#const armour = preload("res://Scripts/Equipment/ArmourArrays.gd")
 
 var title: String
 var team: String
 var roster: Array[Unit] = []
 var ships: Array[Ship] = []
 var id: int
+
+const soldier = preload("res://Scenes/Entities/Soldier.tscn")
+const armour = preload("res://Scenes/Equipment/Armour.tscn")
+const weapon = preload("res://Scenes/Equipment/Weapon.tscn")
 
 #region Ships
 
@@ -60,6 +63,19 @@ func spawnShuttles(n: int, ship: Ship):
 
 #region Units & Entities
 
+func generateSoldier(stats: ModelStats, arm: ArmourStats, wpn1: WeaponStats, wpn2: WeaponStats) -> Model:
+	var model: Soldier = soldier.instantiate()
+	var slot1: Armour = armour.instantiate()
+	slot1.define(arm)
+	var slot2: Weapon = weapon.instantiate()
+	slot2.define(wpn1)
+	var slot3: Weapon = weapon.instantiate()
+	slot3.define(wpn2)
+	add_to_group(title + "_models")
+	model.define(stats, slot1, slot2, slot3, self)
+	print(str(model) + " " + str(slot1) + " " + str(slot2) + " " + str(slot3))
+	return model
+
 ## Spawns a starting unit at the given location. All factions currently spawn
 ## the same base unit regardless of location; override in a subclass if a
 ## faction should vary its spawn based on where it's spawning.
@@ -70,9 +86,9 @@ func spawnLocational(location: Location) -> Unit:
 func spawnBase() -> Unit:
 	return null
 
-## Removes an entity from play: pulls it out of its unit, and if that empties
+## Removes an Model from play: pulls it out of its unit, and if that empties
 ## the unit, pulls the unit out of its location and this faction's roster too.
-func removeEntity(model: Entity) -> void:
+func removeModel(model: Model) -> void:
 	var unit: Unit = model.getUnit()
 	unit.getRoster().erase(model)
 	if unit.getRoster().size() <= 0:
@@ -84,7 +100,7 @@ func removeEntity(model: Entity) -> void:
 
 func removeUnit(unit: Unit):
 	for model in unit.getRoster():
-		removeEntity(model)
+		removeModel(model)
 
 #endregion
 
@@ -100,7 +116,7 @@ func getTitle() -> String:
 func getTeam() -> String:
 	return team
 func getRoster() -> Array[Unit]:
-	EntityUtils.pruneInvalid(roster)
+	ModelUtils.pruneInvalid(roster)
 	return roster
 
 #endregion

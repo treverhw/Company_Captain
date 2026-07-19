@@ -45,7 +45,7 @@ func offloadShips():
 						shuttleSum += shuttle.getWeight()
 		if balanceSum == 0:
 			break
-		var need: float = shuttleSum/balanceSum
+		var need: int = floor(shuttleSum/balanceSum)
 		var planetShuttles = {}
 		for planet in getPlanets():
 			requests[planet] = requests[planet]*need
@@ -115,7 +115,7 @@ func getBalanceSum(team: String) -> int:
 	var balanceSum: int = 0
 	for planet in getPlanets():
 		balanceSum += planet.getBalance(team)
-	return 0
+	return balanceSum
 
 func getShips() -> Array[Ship]:
 	return ships

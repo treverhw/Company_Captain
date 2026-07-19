@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ModelStats" load_steps=2 format=3 uid="uid://p1hflsdx4ij7"]
+
+[ext_resource type="Script" uid="uid://dl8lns82dilkv" path="res://Scripts/Models/ModelStats.gd" id="1_uslcl"]
+
+[resource]
+script = ExtResource("1_uslcl")
+rank = "Scout"
+role = "N/A"
+ballisticSkill = 3
+weaponSkill = 3
+wounds = 2
+maxWounds = 2
+maxBattlescars = 1
+metadata/_custom_type_script = "uid://dl8lns82dilkv"

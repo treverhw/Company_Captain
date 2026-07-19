@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeaponStats" load_steps=2 format=3 uid="uid://b2rfif0vgma53"]
+
+[ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_i7meu"]
+
+[resource]
+script = ExtResource("1_i7meu")
+title = "Meltagun"
+attacks = "1"
+strength = 9
+ap = 4
+damage = "d6"
+twoHands = true
+modifiers = Array[String](["Melta 2"])
+description = "[TBD]"
+metadata/_custom_type_script = "uid://c00dklgveh5ca"

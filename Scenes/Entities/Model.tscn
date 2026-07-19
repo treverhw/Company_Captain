@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bet7jhovxkbll"]
+
+[ext_resource type="Script" uid="uid://c0khp6mrhsnh" path="res://Scripts/Models/Model.gd" id="1_jrnc1"]
+
+[node name="Model" type="Node"]
+script = ExtResource("1_jrnc1")
+metadata/_custom_type_script = "uid://c0khp6mrhsnh"

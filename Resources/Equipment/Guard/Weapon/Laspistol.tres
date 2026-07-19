@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WeaponStats" load_steps=2 format=3 uid="uid://1bfm5n2j2hai"]
+
+[ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_51ebt"]
+
+[resource]
+script = ExtResource("1_51ebt")
+title = "Laspistol"
+attacks = "1"
+strength = 3
+damage = "1"
+pistol = true
+description = "Smaller light."
+metadata/_custom_type_script = "uid://c00dklgveh5ca"

@@ -1,4 +1,4 @@
-extends Entity
+extends Model
 class_name Soldier
 
 ## -- Equipment --
@@ -13,9 +13,9 @@ var bonusToughness: int = 0
 var bonusSave: int = 0
 
 ## Constructor that builds a soldier's stat profile from an info array.
-func define(arr: Array, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Faction, bw: int = 0, bs: int = 0, bt: int = 0, bS: int = 0) -> void:
-	ballisticSkill = arr[0]
-	weaponSkill = arr[1]
+func define(res: ModelStats, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Faction) -> void:
+	ballisticSkill = res.ballisticSkill
+	weaponSkill = res.weaponSkill
 	armour = arm
 	main = wpn1
 	off = wpn2
@@ -24,12 +24,9 @@ func define(arr: Array, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Faction, b
 	maxWounds = armour.getWounds()
 	wounds = maxWounds
 	battlescars = 0
-	maxBattlescars = arr[3]
-	
-	bonusWounds = bw
-	bonusSpeed = bs
-	bonusToughness = bt
-	bonusSave = bS
+	maxBattlescars = res.maxBattlescars
+	rank = res.rank
+	role = res.role
 
 	var names = Names.new().marineNames
 	generateTitle(names)
@@ -38,6 +35,10 @@ func define(arr: Array, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Faction, b
 ## ranged at mid distance, no melee/pistol at long range — two-handers lock
 ## the loadout to just that weapon).
 func getActiveWeapons(distance: int) -> Array[Weapon]:
+	
+	if (distance < 0):
+		return weapons
+	
 	var ret: Array[Weapon]
 	for item in weapons:
 		ret.append(item)

@@ -1,29 +1,29 @@
 extends Node
 class_name Weapon
-## Data-holder for a weapon's stats. Built from an array taken from
-## WeaponArrays.gd (see that file for the field order).
+## Data-holder for a weapon's stats
 
 var title: String
-var attacks: int
+var attacks: String
 var strength: int
 var ap: int
-var damage: int
+var damage: String
 var twoHands: bool
 var melee: bool
 var pistol: bool
+var modifiers: Array[String]
 var description: String
 
-func _init(arr: Array) -> void:
-	name = arr[0]
-	title = arr[0]
-	attacks = arr[1]
-	strength = arr[2]
-	ap = arr[3]
-	damage = arr[4]
-	twoHands = arr[5]
-	melee = arr[6]
-	pistol = arr[7]
-	description = arr[8]
+func define(res: WeaponStats) -> void:
+	title = res.title
+	attacks = res.attacks
+	strength = res.strength
+	ap = res.ap
+	damage = res.damage
+	twoHands = res.twoHands
+	melee = res.melee
+	pistol = res.pistol
+	modifiers = res.modifiers
+	description = res.description
 
 func isTwoHander() -> bool:
 	return twoHands
@@ -36,13 +36,19 @@ func isPistol() -> bool:
 func getTitle() -> String:
 	return title
 func getAttacks() -> int:
-	return attacks
+	if "d" in attacks:
+		return GlobalFunctions.rollStringd6(attacks)
+	else: return int(attacks)
 func getStrength() -> int:
 	return strength
 func getAP() -> int:
 	return ap
 func getDmg() -> int:
-	return damage
+	if "d" in damage:
+		return GlobalFunctions.rollStringd6(damage)
+	else: return int(damage)
+func getModifiers() -> Array[String]:
+	return modifiers
 func getDescription() -> String:
 	return description
 

@@ -1,4 +1,4 @@
-extends Entity
+extends Model
 class_name Ship
 
 var roster: Array[Unit] = []

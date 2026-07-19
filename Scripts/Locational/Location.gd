@@ -39,7 +39,7 @@ func setTeam(val: String) -> void:
 func getTitle() -> String:
 	return title
 func getRoster() -> Array[Unit]:
-	EntityUtils.pruneInvalid(roster)
+	ModelUtils.pruneInvalid(roster)
 	return roster
 func getTeam() -> String:
 	return team

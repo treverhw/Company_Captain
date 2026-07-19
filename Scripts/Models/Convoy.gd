@@ -34,8 +34,6 @@ func move() -> void:
 ## is an intermediate stop on a still-friendly route, otherwise
 ## claims/reinforces/invades depending on ownership, then frees the convoy.
 func _resolveArrival() -> void:
-	if _advanceToNextHop():
-		return
 	match destination.team:
 		"Unowned":
 			destination.getRoster().append_array(getRoster())
@@ -101,7 +99,7 @@ func setConvoy(army: Array[Unit], route: Array[Settlement]) -> void:
 	setDestination(route[1])
 
 func cleanup() -> bool:
-	EntityUtils.pruneInvalid(roster)
+	ModelUtils.pruneInvalid(roster)
 	if getRoster().is_empty():
 		kill()
 	return true
@@ -111,9 +109,10 @@ func setRoster(arr: Array[Unit]) -> void:
 func setDestination(dest: Settlement) -> void:
 	destination = dest
 	look_at(destination.global_position)
+	move()
 
 func getRoster() -> Array[Unit]:
-	EntityUtils.pruneInvalid(roster)
+	ModelUtils.pruneInvalid(roster)
 	return roster
 func getPath() -> Array[Settlement]:
 	return path
