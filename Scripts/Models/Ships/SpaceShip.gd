@@ -15,7 +15,7 @@ func embark(shuttle: Shuttle):
 func disembark(units: Array[Unit], destiantion: Planet, port: Settlement = null):
 	var available = getShuttles()
 	if available.is_empty():
-		return
+		pass
 	var shuttle = available.front()
 
 func getShuttles() -> Array[Shuttle]:
@@ -23,6 +23,15 @@ func getShuttles() -> Array[Shuttle]:
 		if !is_instance_valid(shuttles[shuttle]):
 			shuttles.erase(shuttles[shuttle])
 	return shuttles
+
+func getCapacity() -> int:
+	return capacity
+
+func getRemainingCapacity() -> int:
+	var total: int = 0
+	for unit in getRoster():
+		total += unit.getSize()
+	return capacity - total
 
 func _ready() -> void:
 	var names = Names.new().shipNames

@@ -13,14 +13,10 @@ func spawnScout() -> Model:
 ## Subclasses can override `_scoutSquadTitle()` to customize naming.
 func spawnScoutSquad() -> Squad:
 	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
-	newSquad.define(_scoutSquadTitle(), 5, self)
 	var models: Array[Model] = []
 	for i in 5:
 		models.append(spawnScout())
-	newSquad.roster = models
-	roster.append(newSquad)
-	newSquad.assignModels()
-	add_child(newSquad)
+	generateSquad(models, _scoutSquadTitle(), 5)
 	return newSquad
 
 func spawnBase() -> Unit:

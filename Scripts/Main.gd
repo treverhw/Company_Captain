@@ -97,7 +97,7 @@ func _on_planet_test_pressed() -> void:
 		sector.turn()
 		if system.getCompliance():
 			#counter += 1
-			await resetFactions()
+			resetFactions()
 			remove_child(system)
 			system.queue_free()
 			system = load("res://Scenes/Locational/System.tscn").instantiate()
@@ -105,7 +105,7 @@ func _on_planet_test_pressed() -> void:
 	print("It works!")
 
 func _on_new_system_pressed() -> void:
-	await resetFactions()
+	resetFactions()
 	remove_child(sector.getSystems().front())
 	sector.getSystems().front().queue_free()
 	sector.getSystems().append(load("res://Scenes/Locational/System.tscn").instantiate())

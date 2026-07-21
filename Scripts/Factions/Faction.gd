@@ -21,8 +21,7 @@ func spawnShip(shipClass: String, system: Location):
 	var ship = load("res://Scenes/Models/Ships/SpaceShip.tscn").instantiate()
 	add_child(ship)
 	ships.append(ship)
-	system.ships.append(ship)
-	ship.location = system
+	ship.setLocation(system)
 	ship.setFaction(self)
 	match shipClass:
 		"Bigun":
@@ -73,8 +72,28 @@ func generateSoldier(stats: ModelStats, arm: ArmourStats, wpn1: WeaponStats, wpn
 	slot3.define(wpn2)
 	add_to_group(title + "_models")
 	model.define(stats, slot1, slot2, slot3, self)
-	print(str(model) + " " + str(slot1) + " " + str(slot2) + " " + str(slot3))
+	#print(str(model) + " " + str(slot1) + " " + str(slot2) + " " + str(slot3))
 	return model
+
+func refitSoldier(model: Soldier, arm: ArmourStats, wpn1: WeaponStats, wpn2: WeaponStats) -> Model:
+	var slot1: Armour = armour.instantiate()
+	slot1.define(arm)
+	var slot2: Weapon = weapon.instantiate()
+	slot2.define(wpn1)
+	var slot3: Weapon = weapon.instantiate()
+	slot3.define(wpn2)
+	add_to_group(title + "_models")
+	model.define(model.stats, slot1, slot2, slot3, self)
+	#print(str(model) + " " + str(slot1) + " " + str(slot2) + " " + str(slot3))
+	return model
+
+func generateSquad(models: Array[Model], STitle: String, size: int) -> Squad:
+	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
+	newSquad.define(STitle, size, self, models)
+	roster.append(newSquad)
+	newSquad.assignModels()
+	add_child(newSquad)
+	return newSquad
 
 ## Spawns a starting unit at the given location. All factions currently spawn
 ## the same base unit regardless of location; override in a subclass if a

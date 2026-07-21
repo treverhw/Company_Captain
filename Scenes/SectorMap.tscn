@@ -1,25 +1,25 @@
-[gd_scene load_steps=5 format=3 uid="uid://cr6q11xptk7k1"]
+[gd_scene format=3 uid="uid://cr6q11xptk7k1"]
 
 [ext_resource type="Script" uid="uid://di6vyailmkw1k" path="res://Scripts/Main.gd" id="1_qkt80"]
 [ext_resource type="PackedScene" uid="uid://3y8j8sjlpbqn" path="res://Scenes/Menus/MainMenu.tscn" id="2_pjauw"]
 [ext_resource type="PackedScene" uid="uid://10mgibtq28ok" path="res://Scenes/Menus/UnitMenu.tscn" id="2_rh1sl"]
 [ext_resource type="Texture2D" uid="uid://53123a0ts7hh" path="res://Assets/locational/SpaceBackground.png" id="3_pd4iy"]
 
-[node name="SectorMap" type="Control"]
+[node name="SectorMap" type="Control" unique_id=237841467]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_qkt80")
 
-[node name="UnitMenu" parent="." instance=ExtResource("2_rh1sl")]
+[node name="UnitMenu" parent="." unique_id=39588386 instance=ExtResource("2_rh1sl")]
 layout_mode = 1
 
-[node name="MainMenu" parent="." instance=ExtResource("2_pjauw")]
-layout_mode = 2
+[node name="MainMenu" parent="." unique_id=627497277 instance=ExtResource("2_pjauw")]
+layout_mode = 0
 anchors_preset = 0
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=263267342]
 
-[node name="GridContainer" type="GridContainer" parent="."]
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1237003489]
 z_index = -25
 layout_mode = 1
 anchors_preset = 8
@@ -39,25 +39,25 @@ theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 2
 
-[node name="TextureRect" type="TextureRect" parent="GridContainer"]
+[node name="TextureRect" type="TextureRect" parent="GridContainer" unique_id=551154225]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_pd4iy")
 stretch_mode = 3
 
-[node name="TextureRect2" type="TextureRect" parent="GridContainer"]
+[node name="TextureRect2" type="TextureRect" parent="GridContainer" unique_id=1847934602]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_pd4iy")
 stretch_mode = 3
 
-[node name="TextureRect3" type="TextureRect" parent="GridContainer"]
+[node name="TextureRect3" type="TextureRect" parent="GridContainer" unique_id=247791478]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_pd4iy")
 stretch_mode = 3
 
-[node name="TextureRect4" type="TextureRect" parent="GridContainer"]
+[node name="TextureRect4" type="TextureRect" parent="GridContainer" unique_id=2108364517]
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_pd4iy")

@@ -15,8 +15,6 @@ func embark(source = mothership):
 		army = source.getRoster()
 	for unit in army:
 		if unit.getSize() <= currentSpace:
-			unit.getLocation().getRoster().erase(unit)
-			roster.append(unit)
 			unit.setLocation(self)
 			currentSpace -= unit.getSize()
 		if currentSpace <= 0:
@@ -40,8 +38,11 @@ func disembark(destination = mothership):
 	else:
 		destination.getRoster().append_array(roster)
 	for unit in roster:
-		unit.setLocation(destination)
-	getRoster().clear()
+		if destination as Ship:
+			if destination.getCapacity() < destination.getRemainingCapacity() + unit.getSize():
+				unit.setLocation(destination)
+			else: break
+		else: unit.setLocation(destination)
 	currentSpace = capacity
 	#print("[" + getTitle() + " Disembarked]To: " + destination.getTitle() + ": " + str(destination.getRoster()))
 	used = true

@@ -86,7 +86,7 @@ text = "New System"
 
 [node name="PlanetTest" type="Button" parent="BottomBar" unique_id=1917229322]
 layout_mode = 2
-text = "Planet Test"
+text = "War Test"
 
 [node name="Button" type="Button" parent="BottomBar" unique_id=1298775934]
 layout_mode = 2

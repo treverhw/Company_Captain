@@ -5,21 +5,21 @@ var ships: Array[Ship] = []
 var planets: Array[Planet] = []
 var priority: Array[Planet] = []
 
-func turn():
+func turn(exploreRoutes: Dictionary = {}) -> void:
 	for ship in getShips():
 		ship.turn()
 	getCompliance()
 	for planet in planets:
-		await planet.turn()
-	if !compliant:
-		offloadShips()
-	onloadShips()
-	if compliant:
-		transferShips()
-	var text = "Ships: " + str(ships.size())
-	for ship in ships:
-		text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
-	get_node("ShipCount").text = text
+		await planet.turn(exploreRoutes)
+	#if !compliant:
+	#	offloadShips()
+	#onloadShips()
+	#if compliant:
+	#	transferShips()
+	#var text = "Ships: " + str(ships.size())
+	#for ship in ships:
+	#	text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
+	#get_node("ShipCount").text = text
 
 func offloadShips():
 	print("Offloading!")

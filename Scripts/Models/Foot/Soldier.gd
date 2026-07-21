@@ -68,22 +68,29 @@ func getActiveWeapons(distance: int) -> Array[Weapon]:
 	#print("Selected Weapons: " + str(ret))
 	return ret
 
+func refit(r: String, equipment: Array) -> Soldier:
+	role = r
+	setArmour(equipment[0])
+	setMain(equipment[1])
+	setOff(equipment[2])
+	return self
+
 ## -- Setters --
 func setArmour(val: Armour) -> void:
 	if val:
 		#Return armour to armoury
-		pass
-	armour = val
+		armour.queue_free()
+		armour = val
 func setMain(val: Weapon) -> void:
 	if val:
 		#Return weapon to armoury
-		pass
-	main = val
+		main.queue_free()
+		main = val
 func setOff(val: Weapon) -> void:
 	if val:
 		#Return weapon to armoury
-		pass
-	off = val
+		off.queue_free()
+		off = val
 
 func setBonuses(a: int = bonusWounds, b: int = bonusSpeed, c: int = bonusToughness, d: int = bonusSave) -> void:
 	bonusWounds = a

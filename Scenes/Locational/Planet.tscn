@@ -1,24 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://dhpueejtv00ie"]
+[gd_scene format=3 uid="uid://dhpueejtv00ie"]
 
 [ext_resource type="Script" uid="uid://0mi13o1g622h" path="res://Scripts/Locational/Planet.gd" id="1_kmmuo"]
 [ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="2_261pm"]
 [ext_resource type="Texture2D" uid="uid://bxm1r1mcs1ykb" path="res://Assets/locational/unowned.png" id="3_c75rd"]
 
-[node name="Planet" type="Node2D"]
+[node name="Planet" type="Node2D" unique_id=1470894420]
 z_index = -1
 script = ExtResource("1_kmmuo")
 
-[node name="PlanetMenu" type="Node2D" parent="."]
+[node name="PlanetMenu" type="Node2D" parent="." unique_id=40105796]
 visible = false
 z_index = 1
 
-[node name="Convoys" type="Control" parent="PlanetMenu"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="TextureRect" type="TextureRect" parent="PlanetMenu"]
+[node name="TextureRect" type="TextureRect" parent="PlanetMenu" unique_id=1363404252]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -32,23 +26,37 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_261pm")
 
-[node name="Label" type="Label" parent="PlanetMenu"]
+[node name="Label" type="Label" parent="PlanetMenu" unique_id=2054722478]
 offset_left = -494.0
 offset_top = -316.0
 offset_right = -447.0
 offset_bottom = -293.0
 text = "Name"
 
-[node name="Button" type="Button" parent="PlanetMenu"]
+[node name="Button" type="Button" parent="PlanetMenu" unique_id=879050063]
 offset_left = 440.0
 offset_top = -313.0
 offset_right = 490.0
 offset_bottom = -282.0
 text = "Close"
 
-[node name="PlanetNode" type="Node2D" parent="."]
+[node name="Settlements" type="Control" parent="PlanetMenu" unique_id=1211565929]
+z_index = 2
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="PlanetSprite" type="TextureButton" parent="PlanetNode"]
+[node name="Convoys" type="Control" parent="PlanetMenu" unique_id=1192373255]
+z_index = 3
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PlanetNode" type="Node2D" parent="." unique_id=864414410]
+
+[node name="PlanetSprite" type="TextureButton" parent="PlanetNode" unique_id=236234703]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -63,14 +71,14 @@ grow_vertical = 2
 scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("3_c75rd")
 
-[node name="Label" type="Label" parent="PlanetNode"]
+[node name="Label" type="Label" parent="PlanetNode" unique_id=1871225695]
 offset_left = 27.0
 offset_top = -46.0
 offset_right = 74.0
 offset_bottom = -23.0
 text = "Name"
 
-[node name="Balance" type="Label" parent="PlanetNode"]
+[node name="Balance" type="Label" parent="PlanetNode" unique_id=544974126]
 offset_left = -30.0
 offset_top = -13.0
 offset_right = 31.0

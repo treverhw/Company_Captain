@@ -5,4 +5,4 @@ func turn():
 	for shuttle in getShuttles():
 		shuttle.used = false
 	for planet in location.getPlanets():
-		if planet.
+		pass

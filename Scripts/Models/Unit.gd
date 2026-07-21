@@ -12,23 +12,18 @@ var faction: Faction
 var location
 var line: int = 1
 var type: String
+var role: String
+var leader: Model
 
-func define(t: String, rC: int, f: Faction) -> void:
-	title = t
-	rosterCap = rC
-	faction = f
+func define(t: String, rC: int, f: Faction, m: Array[Model]) -> void:
+	setTitle(t)
+	setRosterCap(rC)
+	setFaction(f)
+	addModels(m)
 
 ## True if this unit still has at least one living Model.
 func validate() -> bool:
 	return getAlive() > 0
-
-## Points every Model currently in the roster back at this unit.
-func assignModels() -> void:
-	for model in getRoster():
-		model.unit = self
-
-func removeModel(model: Model) -> void:
-	getFaction().removeModel(model)
 
 ## Counts how many Models in the roster are still alive.
 func getAlive() -> int:
@@ -56,15 +51,31 @@ func clean() -> void:
 		getFaction().getRoster().erase(self)
 		queue_free()
 
-func addModel(model: Model) -> Model:
-	roster.append(model)
-	model.unit = self
-	return model
+## Adds models to a unit, returns the excess if the unit fills up.
+func addModels(models: Array[Model]) -> Array[Model]:
+	while getRoster().size() < getRosterCap() and !models.is_empty():
+		var model = models.pop_back()
+		roster.append(model)
+		model.unit = self
+	role = getRoster()[0].getRole()
+	return models
+
+func removeModel(model: Model) -> void:
+	getFaction().removeModel(model)
 
 func popModel() -> Model:
 	var model = roster.pop_back()
 	model.unit = null
 	return model
+
+## Points every Model currently in the roster back at this unit.
+func assignModels() -> void:
+	for model in getRoster():
+		model.unit = self
+		if model.get_parent():
+			model.reparent(self)
+		else:
+			add_child(model)
 
 ## Overridden by subclasses (e.g. Squad) to refresh their own combat UI.
 func combatUpdate() -> void:
@@ -78,6 +89,9 @@ func setRosterCap(val: int) -> void:
 func setFaction(val: Faction) -> void:
 	faction = val
 func setLocation(val) -> void:
+	if location:
+		location.getRoster().erase(self)
+	val.getRoster().append(self)
 	location = val
 
 ## -- Getters --
@@ -106,6 +120,9 @@ func getSize() -> int:
 	for model in getRoster():
 		n += model.getSize()
 	return n
+
+func getRole() -> String:
+	return role
 
 func getRosterSize() -> int:
 	return getRoster().size()

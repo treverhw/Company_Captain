@@ -22,24 +22,22 @@ func spawnSergeant() -> Model:
 	var loadout = loadouts["Sergeant"]
 	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
 
+func assignSergeant() -> Model:
+	return Model.new()
+
 ## Spawns a 10-model Guard squad and adds it to this faction's roster.
-func spawnSquad() -> Squad:
-	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
-	newSquad.define(str(roster.size()), 10, self)
+func spawnGuardsmanSquad() -> Squad:
 	var models: Array[Model] = []
 	models.append(spawnSergeant())
 	for i in 2:
 		models.append(spawnHeavyGuardsmen())
 	for i in 7:
 		models.append(spawnGuardsmen())
-	newSquad.roster = models
-	roster.append(newSquad)
-	newSquad.assignModels()
-	add_child(newSquad)
+	var newSquad = generateSquad(models, "Guardsmen", 20)
 	return newSquad
 
 func spawnBase() -> Unit:
-	return spawnSquad()
+	return spawnGuardsmanSquad()
 
 var loadouts: Dictionary = {
 	#stats, arm, wpn1, wpn2

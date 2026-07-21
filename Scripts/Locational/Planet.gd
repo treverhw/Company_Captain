@@ -16,12 +16,12 @@ func _ready() -> void:
 
 	_generateSettlements()
 	_spawnStartingForces()
-	await createConnections()
+	createConnections()
 	_connectRemainingSettlements()
 	update()
 
 func _generateSettlements() -> void:
-	for n in range(randi_range(16, 25)):
+	for n in randi_range(16, 25):
 		var newSettlement = load("res://Scenes/Locational/Settlement.tscn").instantiate()
 		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250, 250))
 		var counter := 0
@@ -30,7 +30,7 @@ func _generateSettlements() -> void:
 			newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250, 250))
 		if counter == 100:
 			break
-		get_node("PlanetMenu").add_child(newSettlement)
+		get_node("PlanetMenu/Settlements").add_child(newSettlement)
 		settlements.append(newSettlement)
 		newSettlement.planet = self
 
@@ -96,12 +96,7 @@ func _connectRemainingSettlements() -> void:
 
 func generateBubbles() -> void:
 	for settlement in settlements:
-		var neighbors: Array[Settlement] = settlement.getNeighbors()
-		var bubble: Array[Settlement] = neighbors
-		for cousin in neighbors:
-			bubble += cousin.getNeighbors()
-		settlement.bubble = bubble
-		 
+		settlement.setBubble()
 
 ## True (and cached in `compliant`) when every settlement is owned by the same team.
 func compliance() -> bool:
@@ -112,14 +107,14 @@ func compliance() -> bool:
 	compliant = teams.size() <= 1
 	return compliant
 
-func turn() -> void:
+func turn(exploreRoutes: Dictionary = {}) -> void:
 	await cleanup()
 	update()
 	compliance()
 
 	for settlement in settlements:
 		PlanetUtils.checkInner(settlement)
-		await settlement.turn()
+		settlement.turn(exploreRoutes.get(settlement, [] as Array[Settlement]))
 		await cleanup()
 	var convoys = get_node("PlanetMenu/Convoys").get_children()
 	for convoy in convoys:
@@ -143,153 +138,6 @@ func turn() -> void:
 				await convoyFight(convoy, otherConvoy)
 	await cleanup()
 
-	# Run the strategic AI for every team that currently owns territory.
-	var activeTeams: Array[String] = []
-	for settlement in settlements:
-		if settlement.team != "Unowned" and !activeTeams.has(settlement.team):
-			activeTeams.append(settlement.team)
-	for team in activeTeams:
-		runStrategicAI(team)
-
-## Strategic AI for `team`: first tries to bring every settlement bordering
-## an enemy up to at least that enemy's combined adjacent weight (pulling
-## reinforcements from interior settlements, which have no defensive need
-## of their own and so ship out everything beyond their base garrison).
-## Once every border settlement meets its target, masses any surplus
-## toward whichever border settlement neighbors the enemy's weakest
-## settlement, attacking once it can do so with overwhelming force.
-## Strategic AI for `team`, run independently per connected chunk of
-## territory -- two settlements only coordinate if a friendly-owned path
-## connects them (the same reachability a convoy can actually travel), so
-## separated pockets each defend their own border and push their own
-## weakest adjacent enemy without waiting on or reinforcing each other.
-func runStrategicAI(team: String) -> void:
-	var owned: Array[Settlement] = []
-	for settlement in settlements:
-		if settlement.team == team:
-			owned.append(settlement)
-	if owned.is_empty():
-		return
-
-	for territory in _splitIntoTerritories(owned):
-		_runStrategicAIForTerritory(team, territory)
-
-## Splits `owned` into independent connected chunks, using only
-## friendly-to-friendly connections as edges (matching what pathTo() can
-## actually route through). Two settlements land in the same chunk only
-## if a friendly-owned path connects them.
-func _splitIntoTerritories(owned: Array[Settlement]) -> Array:
-	var remaining: Array[Settlement] = owned.duplicate()
-	var territories: Array = []
-	while !remaining.is_empty():
-		var chunk: Array[Settlement] = [remaining.pop_front()]
-		var frontier: Array[Settlement] = [chunk[0]]
-		while !frontier.is_empty():
-			var current: Settlement = frontier.pop_back()
-			for neighbor in current.getConnections():
-				if neighbor in remaining:
-					remaining.erase(neighbor)
-					chunk.append(neighbor)
-					frontier.append(neighbor)
-		territories.append(chunk)
-	return territories
-
-func _runStrategicAIForTerritory(team: String, owned: Array[Settlement]) -> void:
-	# Classify: border settlements have at least one enemy-owned neighbor,
-	# and want enough weight to match that neighbor's combined weight.
-	# Interior settlements have no such need (target 0) and exist purely to
-	# reinforce the border. `threatened` (used elsewhere, e.g. by Shuttle's
-	# landing-site choice) marks border settlements currently under target.
-	var border: Array[Settlement] = []
-	var targets: Dictionary = {}
-	for settlement in owned:
-		var need: int = 0
-		for neighbor in settlement.getConnections():
-			if neighbor.team != team and neighbor.team != "Unowned":
-				need += neighbor.getWeight()
-		targets[settlement] = need
-		if need > 0:
-			border.append(settlement)
-			settlement.threatened = settlement.getWeight() < need
-
-	# Defense first: reinforce any border settlement under its target.
-	var allSecure := true
-	for settlement in border:
-		if settlement.getWeight() < targets[settlement]:
-			allSecure = false
-			_pullReinforcement(settlement, owned, targets)
-
-	# Aggressively capture adjacent unowned territory -- that's where new
-	# recruits come from -- using only genuine spare capacity (weight
-	# beyond this settlement's own defensive target, if it has one), so
-	# this never comes at the expense of an unmet defensive need. Runs
-	# regardless of overall defensive status; at most one attempt per
-	# settlement per turn.
-	for settlement in owned:
-		if settlement.getWeight() <= targets[settlement]:
-			continue
-		for neighbor in settlement.getConnections():
-			if neighbor.team == "Unowned":
-				settlement.spawnConvoy(neighbor)
-				break
-
-	if !allSecure:
-		return
-
-	# Defensively secure: stick with an existing staging commitment if this
-	# territory still has one active and its target hasn't been resolved
-	# (captured or lost) since -- otherwise pick the weakest enemy
-	# settlement adjacent to this territory's own border and commit to it
-	# for a few turns, so reinforcement has time to actually accumulate
-	# there instead of re-targeting (and re-routing convoys) every turn.
-	var weakestEnemy: Settlement = null
-	var stagingPoint: Settlement = null
-	for settlement in border:
-		if settlement.commitmentTurnsLeft > 0:
-			var committed: Settlement = settlement.committedTarget
-			if is_instance_valid(committed) and committed.team != team and committed.team != "Unowned":
-				stagingPoint = settlement
-				weakestEnemy = committed
-				settlement.commitmentTurnsLeft -= 1
-				break
-			settlement.commitmentTurnsLeft = 0
-
-	if stagingPoint == null:
-		for settlement in border:
-			for neighbor in settlement.getConnections():
-				if neighbor.team != team and neighbor.team != "Unowned":
-					if weakestEnemy == null or neighbor.getWeight() < weakestEnemy.getWeight():
-						weakestEnemy = neighbor
-						stagingPoint = settlement
-		if weakestEnemy == null:
-			return
-		stagingPoint.committedTarget = weakestEnemy
-		stagingPoint.commitmentTurnsLeft = 20
-
-	if stagingPoint.getAttackWeight() >= weakestEnemy.getWeight() * 1.5:
-		stagingPoint.spawnConvoy(weakestEnemy)
-	else:
-		_pullReinforcement(stagingPoint, owned, targets)
-
-## Sends a convoy from the nearest settlement in `candidates` (other than
-## `target`) with spare capacity -- weight beyond its own entry in
-## `targets`, plus at least one unit beyond the mandatory 2-unit garrison
-## -- toward `target`. Does nothing if no candidate has anything to spare.
-func _pullReinforcement(target: Settlement, candidates: Array[Settlement], targets: Dictionary) -> void:
-	var donor: Settlement = null
-	var donorDist: float = INF
-	for settlement in candidates:
-		if settlement == target:
-			continue
-		var need: int = targets.get(settlement, 0)
-		if settlement.getWeight() <= need or settlement.allButTwo().is_empty():
-			continue
-		var d: float = distance(settlement, target)
-		if d < donorDist:
-			donorDist = d
-			donor = settlement
-	if donor != null:
-		donor.spawnConvoy(target)
 
 func convoyFight(val1: Convoy, val2: Convoy) -> void:
 	await cleanup()
@@ -306,11 +154,11 @@ func convoyFight(val1: Convoy, val2: Convoy) -> void:
 	if val1.getRoster().is_empty():
 		val1.kill()
 	else:
-		await val1.retreatConvoy()
+		val1.retreatConvoy()
 	if val2.getRoster().is_empty():
 		val2.kill()
 	else:
-		await val2.retreatConvoy()
+		val2.retreatConvoy()
 	combat.queue_free()
 
 func cleanup() -> bool:
@@ -326,14 +174,7 @@ func cleanup() -> bool:
 ## the displayed icon (positive = Imperium, negative = hostile, 0 = unowned).
 func update() -> void:
 	#Reset the teams on the planet
-	presentTeams.clear()
-	for settlement in settlements:
-		var currTeam = settlement.getRoster()[0].getTeam()
-		if currTeam not in presentTeams:
-			presentTeams.append(currTeam)
-	weakest = PlanetUtils.generateWeakestSettlements(self)
-	for team in presentTeams:
-		PlanetUtils.getWeakestOuter(team, settlements, true)
+	PlanetUtils.updateSettlementTargets(self)
 		
 	var result = setControl()
 	setBalance("Imperium")
@@ -402,6 +243,9 @@ func getExcess(tempTeam: String) -> Array[Unit]:
 
 func getBalance(team: String) -> int:
 	return setBalance(team)
+
+func getSettlements() -> Array[Settlement]:
+	return settlements
 
 func _on_sprite_2d_pressed() -> void:
 	get_node("PlanetMenu").visible = !get_node("PlanetMenu").visible

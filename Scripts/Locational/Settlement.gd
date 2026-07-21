@@ -10,7 +10,7 @@ var threatRatio: float = 1.2
 var overwhelmingRatio: float = 1.5
 var planet: Planet
 var inner: bool
-var bubble = Array[Settlement]
+var bubble: Array[Settlement]
 
 ## Strategic-AI staging commitment (see Planet._runStrategicAIForTerritory()):
 ## once this settlement is chosen as a staging point against `committedTarget`,
@@ -22,7 +22,6 @@ var commitmentTurnsLeft: int = 0
 func appendRoster(arr: Array[Unit]) -> void:
 	for unit in arr:
 		if is_instance_valid(unit):
-			getRoster().append(unit)
 			unit.setLocation(self)
 	update()
 
@@ -36,26 +35,25 @@ func spawn() -> Unit:
 	for unit in roster:
 		var owner: Faction = unit.getRoster().front().getFaction()
 		if owner is not PlayerFaction:
-			return owner.spawnLocational(self)
+			return owner.spawnBase()
 	return null
 
 ## Per-turn upkeep: reinforcements, threat assessment, and automatic
-## convoy dispatch when this settlement isn't under threat.
-func turn() -> void:
-	
+## convoy dispatch when this settlement isn't under threat
+func turn(precomputedExploreRoute: Array[Settlement] = []) -> void:
 	if team != "Unowned":
 		newUnitCounter += 1
 		if newUnitCounter >= 10:
 			roster.append(spawn())
 			newUnitCounter = 0
-		
+
 		ModelUtils.mergeUnits(getRoster())
-		
+
 		if getRoster().size() > 2:
 			if planet.compliant: exportState()
-			elif inner: exploreState()
+			elif inner: exploreState(precomputedExploreRoute)
 			else: combatState()
-	
+
 	update()
 
 ## TODO: Reformat the "Overwhelm check, so that its run before state-setting 
@@ -67,25 +65,26 @@ func turn() -> void:
 ## When there are no enemy settlements in the settlements bubble, they're in explore mode.
 ## In this state, they prioritize populating unowned settlements.
 ## When this primary function is fulfilled, they then proceed to the combat state.
-func exploreState():
+func exploreState(precomputedRoute: Array[Settlement] = []) -> void:
 	var options: Array[Settlement] = []
 	var excess: Array[Unit] = PlanetUtils.getSettlementExcess(self)
 	for settlement in getConnections():
-		if settlement.getFaction() == "Unowned":
+		if settlement.getTeam() == "Unowned":
 			options.append(settlement)
-			
+
 	if options.size() > 1:
 		var split = floor(excess.size() / options.size())
 		for settlement in options:
 			var force: Array[Unit] = []
 			for i in range(split):
 				force.append(excess.pop_back())
-			PlanetUtils.generateConvoy(excess, settlement, [settlement])
-	elif options.size() == 1: 
-		PlanetUtils.generateConvoy(excess, options[0], [options[0]])
+			PlanetUtils.generateConvoy(force, settlement, [self, settlement])
+	elif options.size() == 1:
+		PlanetUtils.generateConvoy(excess, options[0], [self, options[0]])
 	else:
-		var route = PlanetUtils.shortestPath(self, get_parent().getSettlements(), 50)
-		PlanetUtils.generateConvoy(excess, route[route.size()-1], route)
+		var route: Array[Settlement] = precomputedRoute if !precomputedRoute.is_empty() else PlanetUtils.shortestPath(self, planet.getSettlements(), 50)
+		if !route.is_empty():
+			PlanetUtils.generateConvoy(excess, route[route.size() - 1], route)
 	if getRoster().size() > 2:
 		combatState()
 
@@ -93,30 +92,30 @@ func exploreState():
 ## In this state, they prioritize fortifying the frontline and then rallying to attack.
 func combatState(options: Array[Settlement] = []):
 	
-	if planet.target in getConnections() and planet.target.getWeight() * 1.5 < getAttackWeight():
-		PlanetUtils.generateConvoy(allButTwo(), planet.target, [planet.target])
+	if planet.targets[team] in getConnections() and planet.targets[team].getWeight() * 1.5 < getAttackWeight():
+		PlanetUtils.generateConvoy(allButTwo(), planet.targets[team], [self, planet.targets[team]])
 	
 	## Find the weakest outer settlement
 	var weakest: Settlement = planet.weakest[getTeam()]
 	var excess = PlanetUtils.getSettlementExcess(self)
 	if weakest:
-		var route = PlanetUtils.pathTo(self, weakest, get_parent().getSettlements(), 50)
-		var convoy = PlanetUtils.generateConvoy(excess, weakest)
+		var route = PlanetUtils.pathTo(self, weakest, planet.settlements, 50)
+		PlanetUtils.generateConvoy(excess, weakest, route)
 		return
 	
 	## Check for adjacent unowned settlements
 	for settlement in getConnections():
-		if settlement.getFaction() == "Unowned":
+		if settlement.getTeam() == "Unowned":
 			options.append(settlement)
 	if options.size() > 0:
 		options.sort_custom(func(a,b): return a.getThreatWeight() < b.getThreatWeight())
-		var route = PlanetUtils.pathTo(self, options[0], get_parent().getSettlements(), 50)
-		var convoy = PlanetUtils.generateConvoy(excess, options[0])
+		var route = PlanetUtils.pathTo(self, options[0], planet.getSettlements(), 50)
+		PlanetUtils.generateConvoy(excess, options[0], route)
 	else: #Rally instead 
 		var target = planet.targets[getTeam()]
 		if target:
 			var route = PlanetUtils.shortestPath(self, planet.settlements, 50)
-			var convoy = PlanetUtils.generateConvoy(excess, route)
+			PlanetUtils.generateConvoy(excess, target, route)
 		#enemyOuterSettlements = {}
 	update()
 
@@ -192,7 +191,7 @@ func _summonOverwhelmingForce() -> void:
 		return
 
 	var convoy: Convoy = load("res://Scenes/Models/Convoy.tscn").instantiate()
-	get_parent().get_node("Convoys").add_child(convoy)
+	get_parent().get_parent().get_node("Convoys").add_child(convoy)
 	convoy.source = "Overwhelm"
 	convoy.setConvoy(pooled, [rallyPoint, self])
 	update()
@@ -219,7 +218,7 @@ func invade(attackers: Array[Unit]) -> void:
 		for settlement in getConnections():
 			if settlement.getTeam() == newRosters[1].front().getTeam():
 				var convoy: Convoy = load("res://Scenes/Models/Convoy.tscn").instantiate()
-				get_parent().get_node("Convoys").add_child(convoy)
+				get_parent().get_parent().get_node("Convoys").add_child(convoy)
 				convoy.source = "Invasion Retreat"
 				convoy.setConvoy(newRosters[1], [self, settlement])
 				convoy.move()
@@ -236,8 +235,6 @@ func cleanup() -> void:
 ## Refreshes this settlement's owning team and visuals based on its
 ## current roster.
 func update() -> void:
-	for unit in getRoster():
-		unit.setLocation(self)
 	get_node("Label").text = str(roster.size())
 
 	if getRoster().is_empty():
@@ -252,7 +249,14 @@ func update() -> void:
 ## -- Getters and Setters --
 func setType(val: String) -> void:
 	type = val
-	
+
+func setBubble():
+	for settlement in getConnections():
+		bubble.append(settlement)
+		for cousin in settlement.getConnections():
+			if !bubble.has(cousin):
+				bubble.append(cousin)
+
 func getConnections() -> Dictionary:
 	return connections
 func getType() -> String:
@@ -291,6 +295,6 @@ func _on_texture_rect_gui_input(event: InputEvent) -> void:
 			for model in unit.getRoster():
 				units += model.to_string() + "\n	"
 				var weapons = model.getActiveWeapons(-1)
-				units += model.getActiveWeapons(-1)[0].title + " | " + model.getActiveWeapons(-1)[1].title + "\n"
+				units += weapons[0].title + " | " + weapons[1].title + "\n"
 		units += "]"
 		print(units)

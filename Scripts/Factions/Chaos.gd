@@ -12,7 +12,7 @@ func start() -> Array[Unit]:
 ## Chaos scout squads get a "Squad: N" title instead of the plain numeric
 ## title AstartesFaction uses by default.
 func _scoutSquadTitle() -> String:
-	return "Squad: " + str(roster.size())
+	return "Cultist Squad: " + str(roster.size())
 
 ## Chaos scouts carry a close combat weapon instead of the bolt pistol
 ## AstartesFaction's default scout loadout uses.
@@ -26,15 +26,11 @@ func spawnDemagogue() -> Model:
 
 func spawnCultistSquad() -> Squad:
 	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
-	newSquad.define(str(roster.size()), 10, self)
 	var models: Array[Model] = []
 	models.append(spawnDemagogue())
 	for i in 9:
 		models.append(spawnCultist())
-	newSquad.roster = models
-	roster.append(newSquad)
-	newSquad.assignModels()
-	add_child(newSquad)
+	newSquad = generateSquad(models, "Cultist Squad", 20)
 	return newSquad
 
 ## Chaos's default spawn is a cultist squad rather than AstartesFaction's

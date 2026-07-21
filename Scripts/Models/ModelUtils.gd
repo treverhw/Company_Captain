@@ -30,12 +30,12 @@ static func mergeUnits(units: Array[Unit]) -> void:
 	if !units:
 		return
 	units.sort_custom(func(a, b): return a.getRoster().size() > b.getRoster().size())
+	var sucker = units[units.size()-1]
 	for unit in units:
-		var sucker = units[units.size()-1]
 		if unit == sucker:
 			return
 		while(unit.getNeededModels() != 0):
-			unit.addModel(sucker.popModel())
+			unit.addModels([sucker.popModel()])
 			if sucker.getRoster().size() <= 0:
 				sucker.clean()
 				units.erase(sucker)

@@ -10,9 +10,9 @@ static func rolld6(n: int = 1) -> int:
 		result += randi_range(1,6)
 	return result
 	
-static func rollStringd6(str: String) -> int:
+static func rollStringd6(roll: String) -> int:
 	
-	var val = str.split("d")
+	var val = roll.split("d")
 	if !val[0] or val[0] == "":
 		val[0] = "1"
 	

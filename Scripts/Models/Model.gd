@@ -15,6 +15,7 @@ var weapons: Array[Weapon]
 var rank: String = "Base"
 var role: String = "Battleline"
 var xp: int
+var leader: bool
 
 ## -- Stats --
 var ballisticSkill: int
@@ -36,6 +37,11 @@ func kill() -> void:
 func findColumn() -> VBoxContainer:
 	return unit.get_parent()
 
+func increaseXP(val: int) -> int:
+	xp += val
+	#promote
+	return xp
+
 ## -- Setters --
 func setTitle(val: String) -> void:
 	title = val
@@ -45,6 +51,11 @@ func generateTitle(val: Array) -> void:
 	name = title
 func setFaction(val: Faction) -> void:
 	faction = val
+func setLocation(val) -> void:
+	if location:
+		location.getRoster().erase(self)
+	val.getRoster().append(self)
+	location = val
 func setBallisticSkill(val: int) -> void:
 	ballisticSkill = val
 func setWeaponSkill(val: int) -> void:
@@ -73,6 +84,8 @@ func getRank() -> String:
 	return rank
 func getXP() -> int:
 	return xp
+func getRole() -> String:
+	return role
 func getBallisticSkill() -> int:
 	return ballisticSkill
 func getWeaponSkill() -> int:

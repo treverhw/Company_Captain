@@ -28,40 +28,29 @@ func move() -> void:
 	get_node("Node2D").global_rotation = 0.0
 
 	if destination.distance(self, destination) < speed:
-		_resolveArrival()
+		resolveArrival()
 
 ## Handles arrival at `destination`: continues on to the next hop if this
 ## is an intermediate stop on a still-friendly route, otherwise
 ## claims/reinforces/invades depending on ownership, then frees the convoy.
-func _resolveArrival() -> void:
+func resolveArrival() -> void:
 	match destination.team:
 		"Unowned":
-			destination.getRoster().append_array(getRoster())
-			destination.setTeam(team)
+			unload(destination)
 		team:
-			destination.getRoster().append_array(getRoster())
+			unload(destination)
 		_:
 			if destination.getRoster().size() <= 0:
-				destination.getRoster().append_array(getRoster())
+				unload(destination)
 			else:
 				destination.invade(getRoster())
 	queue_free()
 	destination.update()
 
-## If `destination` is an intermediate (not final) hop on `path` and is
-## still friendly, advances to the next hop instead of resolving here. If
-## it's no longer friendly (e.g. captured by the enemy since the route was
-## planned), resolves here instead of continuing blindly onward.
-func _advanceToNextHop() -> bool:
-	if path.is_empty() or destination == path.back():
-		return false
-	if destination.team != team:
-		return false
-	var hopIndex: int = path.find(destination)
-	if hopIndex == -1 or hopIndex + 1 >= path.size():
-		return false
-	setDestination(path[hopIndex + 1])
-	return true
+func unload(location: Settlement) -> void:
+	for unit in getRoster():
+		unit.setLocation(location)
+		destination.setTeam(team)
 
 func kill() -> void:
 	if get_parent() != null:

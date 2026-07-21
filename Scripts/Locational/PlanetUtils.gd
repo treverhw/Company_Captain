@@ -5,7 +5,7 @@ class_name PlanetUtils
 static func checkInner(val: Settlement) -> bool:
 	var check: bool = true
 	for settlement in val.bubble:
-		if settlement.faction != val.faction:
+		if settlement.team != val.team:
 			check = false 
 	val.inner = check
 	return check
@@ -17,7 +17,7 @@ static func getSettlementExcess(val: Settlement) -> Array[Unit]:
 		return excess
 	
 	for unit in val.getRoster():
-		if unit.role == "Battleline" and reserve.size() < 2:
+		if unit.getRole() == "Battleline" and reserve.size() < 2:
 			reserve.append(unit)
 		else: excess.append(unit)
 	if reserve.size() < 2:
@@ -27,23 +27,24 @@ static func getSettlementExcess(val: Settlement) -> Array[Unit]:
 	
 static func generateConvoy(force: Array[Unit] = [], destination: Settlement = null, route: Array[Settlement] = []) -> Convoy:
 	if force.size() <= 0 or route == []:
-		return Convoy.new()
+		return null
 	var exampleUnit: Unit = force[0]
 	
 	if destination != null:
 		if destination.team != exampleUnit.getTeam() and destination.getWeight() >= exampleUnit.getLocation().getAttackWeight() * 1.5:
-			return Convoy.new()
+			return null
 			
 		if hasActiveConvoyTo(exampleUnit.getLocation(), destination):
-			return Convoy.new()
+			return null
 
-	var convoy: Convoy = load("res://Scenes/Models/Convoy.tscn").instantiate()
-	destination.getParent().get_node("Convoys").add_child(convoy)
-	convoy.setConvoy(force, route)
-	return convoy
+		var convoy: Convoy = load("res://Scenes/Models/Convoy.tscn").instantiate()
+		destination.planet.get_node("PlanetMenu/Convoys").add_child(convoy)
+		convoy.setConvoy(force, route)
+		return convoy
+	return null
 
 static func hasActiveConvoyTo(from: Settlement, dest: Settlement) -> bool:
-	for convoy in dest.get_parent().get_node("Convoys").get_children():
+	for convoy in dest.get_parent().get_parent().get_node("Convoys").get_children():
 		var route: Array[Settlement] = convoy.getPath()
 		if convoy.getTeam() == from.getTeam() and convoy.getHome() == from and !route.is_empty() and route.back() == dest:
 			return true
@@ -53,7 +54,8 @@ static func hasActiveConvoyTo(from: Settlement, dest: Settlement) -> bool:
 #region Finding Weakest Settlements
 ## Finds the weakest settlements for every team present on a planet. 
 ## Returns A dictionary of [Team: Settlement]
-static func generateWeakestSettlements(planet: Planet = null):
+static func updateSettlementTargets(planet: Planet = null):
+	updateTeams(planet)
 	var weakestSettlements: Dictionary[String, Settlement] = {}
 	var weakestEnemies: Dictionary[String, Settlement] = {}
 	if planet:
@@ -101,9 +103,17 @@ static func getEnemyOuterSettlements(team: String, settlements: Array[Settlement
 			ret.append(settlement)
 	return ret
 
+static func updateTeams(planet: Planet) -> void:
+	planet.presentTeams.clear()
+	for settlement in planet.settlements:
+		var currTeam = settlement.getTeam()
+		if currTeam not in planet.presentTeams and currTeam != "Unowned":
+			planet.presentTeams.append(currTeam)
+
 #region end
 
 #region Pathfinding
+
 ## Finds the shortest path (measured in turns at the given speed) from
 ## `source` to the nearest settlement that isn't already ours, using
 ## Dijkstra's algorithm over the settlement connection graph.
@@ -116,40 +126,42 @@ static func getEnemyOuterSettlements(team: String, settlements: Array[Settlement
 static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[Settlement], speed: int = 50) -> Array[Settlement]:
 	var dist: Dictionary = {}
 	var prev: Dictionary = {}
-	var queue: Array[Settlement] = []
+	var visited: Dictionary = {}
 	for settlement in allSettlements:
 		dist[settlement] = 1000
 		prev[settlement] = null
-		queue.append(settlement)
 	dist[source] = 0
 
-	while !queue.is_empty():
-		var closestSettlement: Settlement = null
-		var shortest: int = 1001
-		for settlement in queue:
-			if dist[settlement] < shortest:
-				closestSettlement = settlement
-				shortest = dist[settlement]
-		if closestSettlement == null:
-			break
-		queue.erase(closestSettlement)
+	var heap := MinHeap.new()
+	heap.push(0, source)
+
+	while !heap.isEmpty():
+		var closestSettlement: Settlement = heap.pop()
+		if visited.get(closestSettlement, false):
+			continue # stale entry from an earlier relaxation
+		visited[closestSettlement] = true
+
 		if closestSettlement == dest:
 			break
+
 		# Only continue routing onward through our own territory -- the
 		# final hop onto `target` is still allowed even if it isn't ours.
 		if closestSettlement != source and closestSettlement.team != source.getTeam():
 			continue
+
 		for settlement in closestSettlement.getConnections():
 			var stepCost: int = floor(settlement.distance(closestSettlement, settlement) / speed)
-			if dist[settlement] >= 1000 or dist[closestSettlement] + stepCost < dist[settlement]:
-				dist[settlement] = dist[closestSettlement] + stepCost
+			var newDist: int = dist[closestSettlement] + stepCost
+			if newDist < dist.get(settlement, 1000):
+				dist[settlement] = newDist
 				prev[settlement] = closestSettlement
+				heap.push(newDist, settlement)
 
 	if dist.get(source, 1000) >= 1000:
 		return []
 
 	var route: Array[Settlement] = []
-	var node: Settlement = source
+	var node: Settlement = dest
 	while node != null:
 		route.push_front(node)
 		node = prev[node]
@@ -158,27 +170,28 @@ static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[S
 static func shortestPath(source: Settlement, settlements: Array[Settlement], speed: int = 50) -> Array[Settlement]:
 	var dist: Dictionary = {}
 	var prev: Dictionary = {}
-	var queue: Array[Settlement] = []
+	var visited: Dictionary = {}
 	for settlement in settlements:
 		dist[settlement] = 1000
 		prev[settlement] = null
-		queue.append(settlement)
 	dist[source] = 0
 
-	while !queue.is_empty():
-		var closestSettlement: Settlement = null
-		var shortest: int = 1001
-		for settlement in queue:
-			if dist[settlement] < shortest:
-				closestSettlement = settlement
-				shortest = dist[settlement]
-		queue.erase(closestSettlement)
+	var heap := MinHeap.new()
+	heap.push(0, source)
+
+	while !heap.isEmpty():
+		var closestSettlement: Settlement = heap.pop()
+		if visited.get(closestSettlement, false):
+			continue
+		visited[closestSettlement] = true
+
 		for settlement in closestSettlement.getConnections():
-			# Convoys move `speed` px per turn.
 			var stepCost: int = floor(settlement.distance(closestSettlement, settlement) / speed)
-			if dist[settlement] >= 1000 or dist[closestSettlement] + stepCost < dist[settlement]:
-				dist[settlement] = dist[closestSettlement] + stepCost
+			var newDist: int = dist[closestSettlement] + stepCost
+			if newDist < dist.get(settlement, 1000):
+				dist[settlement] = newDist
 				prev[settlement] = closestSettlement
+				heap.push(newDist, settlement)
 
 	# Find the nearest settlement that isn't already ours.
 	var path: Array[Settlement] = []
@@ -188,7 +201,7 @@ static func shortestPath(source: Settlement, settlements: Array[Settlement], spe
 		if dist[settlement] < bestDistance and settlement.team == "Unowned":
 			target = settlement
 			bestDistance = dist[settlement]
-	
+
 	while target != null:
 		path.push_front(target)
 		target = prev[target]
