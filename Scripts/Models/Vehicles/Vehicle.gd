@@ -1,4 +1,4 @@
-extends Entity
+extends Model
 
 var speed: int
 var toughness : int

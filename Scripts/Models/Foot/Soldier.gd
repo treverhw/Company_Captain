@@ -35,29 +35,37 @@ func define(res: ModelStats, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Facti
 ## ranged at mid distance, no melee/pistol at long range — two-handers lock
 ## the loadout to just that weapon).
 func getActiveWeapons(distance: int) -> Array[Weapon]:
+	#print(rank + " " + title + " attacking from a distance of " + str(distance))
 	
 	if (distance < 0):
 		return weapons
+		
+	var exclude: Array[Weapon]
+	#print("Available Weapons: " + str(weapons))
+	
+	if range(0, 65).has(distance):
+		print(str(distance) + " in 0 - 65")
+		for item in weapons:
+			if !item.isMelee() and !item.isPistol():
+				exclude.append(item)
+	elif range(66, 130).has(distance):
+		for item in weapons:
+			if item.isMelee():
+				exclude.append(item)
+	else:
+		for item in weapons:
+			if item.isMelee() or item.isPistol():
+				exclude.append(item)
 	
 	var ret: Array[Weapon]
 	for item in weapons:
-		ret.append(item)
-
-	if range(0, 65).has(distance):
-		for item in ret:
-			if !item.isMelee() and !item.isPistol():
-				ret.erase(item)
-	elif range(66, 130).has(distance):
-		for item in ret:
-			if item.isMelee():
-				ret.erase(item)
-	else:
-		for item in ret:
-			if item.isMelee() or item.isPistol():
-				ret.erase(item)
-	for item in ret:
+		if item not in exclude:
+			ret.append(item)
 		if item.isTwoHander():
 			ret = [item]
+			break
+	
+	#print("Selected Weapons: " + str(ret))
 	return ret
 
 ## -- Setters --
@@ -91,13 +99,13 @@ func getMain() -> Weapon:
 func getOff() -> Weapon:
 	return off
 func getMaxWounds() -> int:
-	return armour.getWounds() + bonusWounds
+	return getArmour().getWounds() + bonusWounds
 func getSpeed() -> int:
-	return armour.getSpeed() + bonusSpeed
+	return getArmour().getSpeed() + bonusSpeed
 func getToughness() -> int:
-	return armour.getToughness() + bonusToughness
+	return getArmour().getToughness() + bonusToughness
 func getSave() -> int:
-	return armour.getSave() + bonusSave
+	return getArmour().getSave() + bonusSave
 func getWeight() -> int:
 	return getArmour().getWeight()
 func getSize() -> int:

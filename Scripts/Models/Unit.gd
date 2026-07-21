@@ -1,6 +1,6 @@
 extends TextureRect
 class_name Unit
-## Base "container" class for a group of Entities (e.g. a Squad of Soldiers).
+## Base "container" class for a group of Models (e.g. a Squad of Soldiers).
 ## Subclasses override `combatUpdate()` to refresh their own UI.
 
 var title: String
@@ -30,7 +30,7 @@ func assignModels() -> void:
 func removeModel(model: Model) -> void:
 	getFaction().removeModel(model)
 
-## Counts how many entities in the roster are still alive.
+## Counts how many Models in the roster are still alive.
 func getAlive() -> int:
 	var counter: int = 0
 	for model in getRoster():
@@ -38,7 +38,7 @@ func getAlive() -> int:
 			counter += 1
 	return counter
 
-## Turns fallen entities into battlescars (or kills them once they're out of
+## Turns fallen Models into battlescars (or kills them once they're out of
 ## scars to take), then frees this unit entirely once its roster is empty.
 func clean() -> void:
 	for i in range(getRoster().size() - 1, -1, -1):

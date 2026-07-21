@@ -77,8 +77,8 @@ func onloadShips():
 		for planet in getPlanets():
 			for shuttle in ship.getShuttles():
 				if !shuttle.used:
-					print(planet)
-					print(str(ship) + " | " + str(planet.getTeam()))
+					#print(planet)
+					#print(str(ship) + " | " + str(planet.getTeam()))
 					if planet.compliance() and planet.getTeam() == ship.getTeam():
 						print(planet.getTitle() + " is Embarking!")
 						shuttle.embark(planet)
@@ -143,7 +143,7 @@ func _ready() -> void:
 	guard.spawnShip("Bigun", self)
 	chaos.spawnShip("Bigun", self)
 	chaos.spawnShip("Bigun", self)
-	print(ships)
+	#print(ships)
 	var text = "Ships: " + str(ships.size())
 	for ship in ships:
 		text += " | " + str(ship) + " - " + ship.getFaction().getTitle()

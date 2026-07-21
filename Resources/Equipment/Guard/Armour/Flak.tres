@@ -4,12 +4,12 @@
 
 [resource]
 script = ExtResource("1_7admi")
-title = "Flak Armour"
-Speed = "4"
-Toughness = 3
-Save = 5
-Weight = 8
-Wounds = 1
-Size = 1
+title = "Flak Vest"
+speed = 4
+toughness = 3
+save = 5
+weight = 8
+wounds = 1
+size = 1
 description = "The best the 20th century has to offer."
 metadata/_custom_type_script = "uid://cftx6oo8we07o"

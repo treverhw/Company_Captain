@@ -25,7 +25,7 @@ func spawnDemagogue() -> Model:
 	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
 
 func spawnCultistSquad() -> Squad:
-	var newSquad: Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
+	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
 	newSquad.define(str(roster.size()), 10, self)
 	var models: Array[Model] = []
 	models.append(spawnDemagogue())

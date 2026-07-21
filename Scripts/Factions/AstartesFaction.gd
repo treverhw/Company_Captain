@@ -12,7 +12,7 @@ func spawnScout() -> Model:
 ## Spawns a 5-model scout squad and adds it to this faction's roster.
 ## Subclasses can override `_scoutSquadTitle()` to customize naming.
 func spawnScoutSquad() -> Squad:
-	var newSquad: Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
+	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
 	newSquad.define(_scoutSquadTitle(), 5, self)
 	var models: Array[Model] = []
 	for i in 5:
@@ -33,7 +33,7 @@ func _scoutSquadTitle() -> String:
 
 var loadouts: Dictionary = {
 	"Scout" = [
-		"res://Resources/Models/Artartes/Scout.tres",
+		"res://Resources/Models/Astartes/Scout.tres",
 		"res://Resources/Equipment/Astartes/Armour/Scout.tres",
 		"res://Resources/Equipment/Astartes/Weapon/Boltgun.tres",
 		"res://Resources/Equipment/Astartes/Weapon/ScoutCCW.tres"

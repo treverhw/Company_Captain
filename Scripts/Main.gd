@@ -91,7 +91,7 @@ func _on_planet_test_pressed() -> void:
 	testing = !testing
 	#var counter = 1
 	while(testing):
-		await get_tree().create_timer(1).timeout
+		await get_tree().create_timer(.5).timeout
 		_on_turn_pressed()
 		var system = sector.getSystems().front()
 		sector.turn()

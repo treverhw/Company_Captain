@@ -95,4 +95,4 @@ func getWeight() -> int:
 
 func _to_string() -> String:
 	
-	return "%s %s %d/%d | %d/%d" % [getRank(), getTitle(), getWounds(), getMaxWounds(), getBattlescars(), getMaxBattlescars()]
+	return "%s %s		%d/%d | %d/%d" % [getRank(), getTitle(), getWounds(), getMaxWounds(), getBattlescars(), getMaxBattlescars()]

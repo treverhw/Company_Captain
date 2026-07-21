@@ -21,10 +21,10 @@ func embark(source = mothership):
 			currentSpace -= unit.getSize()
 		if currentSpace <= 0:
 			break
-	print("[" + getTitle() + " Filled]From: " + source.getTitle() + ": " + str(roster))
+	#print("[" + getTitle() + " Filled]From: " + source.getTitle() + ": " + str(roster))
 
 func disembark(destination = mothership):
-	print("[" + getTitle() + " Disembarking]To: " + destination.getTitle() + ": " + str(roster))
+	#print("[" + getTitle() + " Disembarking]To: " + destination.getTitle() + ": " + str(roster))
 	if destination is Planet:
 		destination.settlements.shuffle()
 		var empty = false
@@ -43,5 +43,5 @@ func disembark(destination = mothership):
 		unit.setLocation(destination)
 	getRoster().clear()
 	currentSpace = capacity
-	print("[" + getTitle() + " Disembarked]To: " + destination.getTitle() + ": " + str(destination.getRoster()))
+	#print("[" + getTitle() + " Disembarked]To: " + destination.getTitle() + ": " + str(destination.getRoster()))
 	used = true

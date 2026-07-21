@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cciqy824robgm"]
+
+[ext_resource type="Script" uid="uid://0j0joteewc1t" path="res://Scripts/Models/Foot/Soldier.gd" id="1_av0cm"]
+
+[node name="Soldier" type="Node"]
+script = ExtResource("1_av0cm")

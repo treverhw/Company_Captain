@@ -1,6 +1,6 @@
 extends VBoxContainer
 class_name CombatLine
-## A single line within a CombatArmy — holds the Entities currently
+## A single line within a CombatArmy — holds the Models currently
 ## occupying that line/rank during combat.
 
 var team: String

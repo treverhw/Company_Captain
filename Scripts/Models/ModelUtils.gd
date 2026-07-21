@@ -1,7 +1,7 @@
 extends RefCounted
 class_name ModelUtils
 
-const soldier = preload("res://Scenes/Entities/Soldier.tscn")
+const soldier = preload("res://Scenes/Models/Soldier.tscn")
 
 static func generateSoldier(res: Resource) -> Model:
 	var model: Soldier = soldier.instantiate()

@@ -5,11 +5,10 @@
 [resource]
 script = ExtResource("1_0dehm")
 title = "Scout Armour"
-Speed = "6"
-Toughness = 4
-Save = 3
-Weight = 10
-Wounds = 1
-Size = 1
+speed = 6
+toughness = 4
+save = 3
+weight = 10
+wounds = 1
 description = "Daddy's hand me downs."
 metadata/_custom_type_script = "uid://cftx6oo8we07o"

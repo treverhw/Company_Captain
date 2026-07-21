@@ -5,6 +5,8 @@ class_name Planet
 
 var settlements: Array[Settlement]
 var balance: int
+var weakest: Dictionary[String, Settlement] = {} # Team -> Weakest Settlement
+var targets: Dictionary[String, Settlement] = {} # Team -> Weakest Enemy Settlement
 
 func _ready() -> void:
 	global_position = Vector2((1920 / 2), (1080 / 2))
@@ -90,6 +92,16 @@ func _connectRemainingSettlements() -> void:
 			newLine.add_point(bestLink[0].position)
 			newLine.add_point(bestLink[1].position)
 			get_node("PlanetMenu").add_child(newLine)
+			generateBubbles()
+
+func generateBubbles() -> void:
+	for settlement in settlements:
+		var neighbors: Array[Settlement] = settlement.getNeighbors()
+		var bubble: Array[Settlement] = neighbors
+		for cousin in neighbors:
+			bubble += cousin.getNeighbors()
+		settlement.bubble = bubble
+		 
 
 ## True (and cached in `compliant`) when every settlement is owned by the same team.
 func compliance() -> bool:
@@ -106,6 +118,7 @@ func turn() -> void:
 	compliance()
 
 	for settlement in settlements:
+		PlanetUtils.checkInner(settlement)
 		await settlement.turn()
 		await cleanup()
 	var convoys = get_node("PlanetMenu/Convoys").get_children()
@@ -312,6 +325,16 @@ func cleanup() -> bool:
 ## difference across settlements and convoys, and drives both the team and
 ## the displayed icon (positive = Imperium, negative = hostile, 0 = unowned).
 func update() -> void:
+	#Reset the teams on the planet
+	presentTeams.clear()
+	for settlement in settlements:
+		var currTeam = settlement.getRoster()[0].getTeam()
+		if currTeam not in presentTeams:
+			presentTeams.append(currTeam)
+	weakest = PlanetUtils.generateWeakestSettlements(self)
+	for team in presentTeams:
+		PlanetUtils.getWeakestOuter(team, settlements, true)
+		
 	var result = setControl()
 	setBalance("Imperium")
 	get_node("PlanetNode/Balance").text = str(balance)

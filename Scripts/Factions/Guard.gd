@@ -24,7 +24,7 @@ func spawnSergeant() -> Model:
 
 ## Spawns a 10-model Guard squad and adds it to this faction's roster.
 func spawnSquad() -> Squad:
-	var newSquad: Squad = load("res://Scenes/Entities/Squad.tscn").instantiate()
+	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
 	newSquad.define(str(roster.size()), 10, self)
 	var models: Array[Model] = []
 	models.append(spawnSergeant())
@@ -56,7 +56,7 @@ var loadouts: Dictionary = {
 		"res://Resources/Equipment/Guard/Weapon/CCW.tres"
 	],
 	"Sergeant" = [
-		"res://Resources/Models/Guard/Guardsman.tres",
+		"res://Resources/Models/Guard/Sergeant.tres",
 		"res://Resources/Equipment/Guard/Armour/Flak.tres",
 		"res://Resources/Equipment/Guard/Weapon/Laspistol.tres",
 		"res://Resources/Equipment/Guard/Weapon/Chainsword.tres"

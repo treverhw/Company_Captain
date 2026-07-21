@@ -10,9 +10,9 @@ var auto: bool
 var end: Dictionary = {0: [], 1: []}
 
 func _ready() -> void:
-	pass
 	# Center the combat panel in a 1920x1080 viewport.
-	global_position = Vector2((1920 / 2) - (1170 / 2), (1080 / 2) - (780 / 2))
+	pass
+	#global_position = Vector2((1920 / 2) - (1170 / 2), (1080 / 2) - (780 / 2))
 
 ## Deploys one side's units into the given combat-army node ("Attacker" or
 ## "Defender"), reparenting each unit into its assigned line.
@@ -73,7 +73,7 @@ func realFight() -> Dictionary:
 				for attack in range(1, weapon.getAttacks()):
 					# Pick a random model from the enemy's frontline to shoot at.
 					var target: Model = frontLine.getRoster()[randi_range(0, frontLine.getRoster().size() - 1)]
-
+					#print(model.rank + " " + model.title + " attacking " + target.title + " with a " + weapon.title + "\n")
 					if GlobalFunctions.rolld6() >= model.getBallisticSkill() or "Torrent" in weapon.getModifiers():
 						if wound(weapon, target, GlobalFunctions.rolld6()):
 							var save: int = GlobalFunctions.rolld6()
@@ -95,6 +95,7 @@ func realFight() -> Dictionary:
 		# Move the attacking army forward once the armies are close enough.
 		# TODO: this always compares Attacker's line 6 against Defender's
 		# line 1, rather than the armies' actual current front lines.
+		print(str(attackerRoster.size()) + " vs " + str(defenderRoster.size()))
 		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
 			get_node("Attacker").global_position.x += 65
 	cleanup()

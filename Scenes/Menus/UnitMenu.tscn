@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://10mgibtq28ok"]
 
 [ext_resource type="Script" uid="uid://8rf041w12a0q" path="res://Scripts/Menus/UnitMenu.gd" id="1_k8hua"]
-[ext_resource type="PackedScene" uid="uid://cbtaewt20l2b" path="res://Scenes/Entities/Soldier.tscn" id="2_pd2pl"]
+[ext_resource type="PackedScene" uid="uid://cbtaewt20l2b" path="res://Scenes/Models/Soldier.tscn" id="2_pd2pl"]
 [ext_resource type="Texture2D" uid="uid://w2m8w7nvvk43" path="res://Assets/ui/uiback.png" id="3_lku6l"]
 
 [node name="UnitMenu" type="CenterContainer"]

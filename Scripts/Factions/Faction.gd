@@ -10,7 +10,7 @@ var roster: Array[Unit] = []
 var ships: Array[Ship] = []
 var id: int
 
-const soldier = preload("res://Scenes/Entities/Soldier.tscn")
+const soldier = preload("res://Scenes/Models/Soldier.tscn")
 const armour = preload("res://Scenes/Equipment/Armour.tscn")
 const weapon = preload("res://Scenes/Equipment/Weapon.tscn")
 
@@ -18,7 +18,7 @@ const weapon = preload("res://Scenes/Equipment/Weapon.tscn")
 
 #add ship classes later
 func spawnShip(shipClass: String, system: Location):
-	var ship = load("res://Scenes/Entities/Ships/SpaceShip.tscn").instantiate()
+	var ship = load("res://Scenes/Models/Ships/SpaceShip.tscn").instantiate()
 	add_child(ship)
 	ships.append(ship)
 	system.ships.append(ship)
@@ -53,7 +53,7 @@ func transferShip(ship: Ship, faction: Faction, tempRoster: Array[Unit] = []):
 
 func spawnShuttles(n: int, ship: Ship):
 	for i in range(0, n):
-		var shuttle = load("res://Scenes/Entities/Ships/Shuttle.tscn").instantiate()
+		var shuttle = load("res://Scenes/Models/Ships/Shuttle.tscn").instantiate()
 		ship.shuttles.append(shuttle)
 		shuttle.setFaction(self)
 		shuttle.mothership = ship
@@ -61,7 +61,7 @@ func spawnShuttles(n: int, ship: Ship):
 
 #endregion
 
-#region Units & Entities
+#region Units & Models
 
 func generateSoldier(stats: ModelStats, arm: ArmourStats, wpn1: WeaponStats, wpn2: WeaponStats) -> Model:
 	var model: Soldier = soldier.instantiate()

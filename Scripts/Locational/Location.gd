@@ -6,6 +6,7 @@ class_name Location
 var title: String
 var roster: Array[Unit]
 var team: String = "Unowned"
+var presentTeams: Array[String] = []
 var compliant: bool = false
 
 func distance(node1: Node, node2: Node) -> float:
@@ -14,6 +15,7 @@ func distance(node1: Node, node2: Node) -> float:
 ## Picks a random name from `val` and uses it as both title and node name.
 func generateTitle(val: Array) -> void:
 	var chosen = val[randi_range(0, val.size() - 1)]
+	val.erase(chosen)
 	title = chosen
 	name = chosen
 
