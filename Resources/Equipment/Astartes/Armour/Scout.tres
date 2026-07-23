@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ArmourStats" load_steps=2 format=3 uid="uid://3wln78lg5hpr"]
+[gd_resource type="Resource" script_class="ArmourStats" format=3 uid="uid://3wln78lg5hpr"]
 
 [ext_resource type="Script" uid="uid://cftx6oo8we07o" path="res://Scripts/Equipment/ArmourStats.gd" id="1_0dehm"]
 
@@ -9,6 +9,5 @@ speed = 6
 toughness = 4
 save = 3
 weight = 10
-wounds = 1
 description = "Daddy's hand me downs."
 metadata/_custom_type_script = "uid://cftx6oo8we07o"

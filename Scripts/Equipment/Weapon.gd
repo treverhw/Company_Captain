@@ -12,6 +12,7 @@ var melee: bool
 var pistol: bool
 var modifiers: Array[String]
 var description: String
+var bsMod: int
 
 func define(res: WeaponStats) -> void:
 	title = res.title
@@ -23,6 +24,7 @@ func define(res: WeaponStats) -> void:
 	melee = res.melee
 	pistol = res.pistol
 	modifiers = res.modifiers
+	bsMod = res.bsMod
 	description = res.description
 
 func isTwoHander() -> bool:
@@ -49,6 +51,8 @@ func getDmg() -> int:
 	else: return int(damage)
 func getModifiers() -> Array[String]:
 	return modifiers
+func getBSMod() -> int:
+	return bsMod
 func getDescription() -> String:
 	return description
 

@@ -124,9 +124,10 @@ func getPlanets() -> Array[Planet]:
 	return planets
 
 func _ready() -> void:
-	var positions = [Vector2(478, 813), Vector2(762, 724), Vector2(1079, 704), Vector2(1567, 897), 
-					 Vector2(233, 716), Vector2(478, 616), Vector2(998, 551),  Vector2(1404, 605),
-					 Vector2(218, 550), Vector2(597, 443), Vector2(937, 412),  Vector2(1385, 446),  Vector2(1706, 545)]
+	var positions = [Vector2(478, 863), Vector2(762, 774), Vector2(1079, 754), Vector2(1567, 947), 
+					 Vector2(233, 766), Vector2(478, 666), Vector2(998, 601),  Vector2(1404, 655),
+					 Vector2(218, 600), Vector2(597, 493), Vector2(937, 462),  Vector2(1385, 496),  
+					 Vector2(1706, 595)]
 	for x in range(0,randi_range(2,5)):
 		var planet = load("res://Scenes/Locational/Planet.tscn").instantiate()
 		var val = positions[randi_range(0,positions.size()-1)]

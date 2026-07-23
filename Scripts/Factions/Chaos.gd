@@ -7,7 +7,7 @@ func _init() -> void:
 	id = 2
 
 func start() -> Array[Unit]:
-	return [spawnBase()]
+	return [spawnBase(), spawnBase()]
 
 ## Chaos scout squads get a "Squad: N" title instead of the plain numeric
 ## title AstartesFaction uses by default.

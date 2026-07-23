@@ -1,18 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://cbglye2514s5t"]
+[gd_scene format=3 uid="uid://cbglye2514s5t"]
 
 [ext_resource type="Script" uid="uid://dc41kdomhc618" path="res://Scripts/Locational/System.gd" id="1_1dbq3"]
 [ext_resource type="Texture2D" uid="uid://tu01mtqfi6e6" path="res://Assets/locational/System.png" id="2_t85eh"]
 
-[node name="System" type="Node2D"]
+[node name="System" type="Node2D" unique_id=951289280]
 script = ExtResource("1_1dbq3")
 metadata/_custom_type_script = "uid://dc41kdomhc618"
 
-[node name="SystemSprite" type="Sprite2D" parent="."]
+[node name="SystemSprite" type="Sprite2D" parent="." unique_id=1059938037]
 z_index = -1
 position = Vector2(960, 540)
 texture = ExtResource("2_t85eh")
 
-[node name="ShipCount" type="Label" parent="."]
+[node name="ShipCount" type="Label" parent="." unique_id=2124618979]
 z_index = 7
 anchors_preset = 8
 anchor_left = 0.5
@@ -28,7 +28,7 @@ grow_vertical = 2
 size_flags_horizontal = 4
 text = "Ships: #"
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="." unique_id=1259929776]
 offset_left = 1750.0
 offset_top = 78.0
 offset_right = 1872.0

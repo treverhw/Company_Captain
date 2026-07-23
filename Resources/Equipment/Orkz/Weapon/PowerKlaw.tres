@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://dk46mt0c4eiqe"]
+
+[ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_6so0h"]
+
+[resource]
+script = ExtResource("1_6so0h")
+title = "Power Klaw"
+attacks = "3"
+strength = 9
+ap = 2
+damage = "2"
+melee = true
+bsMod = -1
+description = "Standard melee weapon."
+metadata/_custom_type_script = "uid://c00dklgveh5ca"

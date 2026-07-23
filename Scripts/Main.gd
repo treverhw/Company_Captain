@@ -15,6 +15,13 @@ func _input(event: InputEvent) -> void:
 		get_tree().quit()
 
 func _ready() -> void:
+	var counter = 0
+	for node in get_node("GridContainer").get_children():
+		counter+=1
+		if counter % 3 == 0:
+			node.flip_v = true
+		if counter % 4 == 0:
+			node.flip_h = true
 	
 	temp = load("res://Scenes/Menus/MainMenu.tscn").instantiate()
 	temp.get_node("VBoxContainer/Play").pressed.connect(play)

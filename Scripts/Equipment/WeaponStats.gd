@@ -20,4 +20,6 @@ class_name WeaponStats
 ##Going to be used for abilities like Dev Wounds and Heavy.
 @export var modifiers: Array[String]
 ##Fluff description
+@export var bsMod: int
+##Fluff description
 @export var description: String

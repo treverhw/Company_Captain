@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://c4xxjj4s3etoa"]
+
+[ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_cfjsu"]
+
+[resource]
+script = ExtResource("1_cfjsu")
+title = "Close Combat Weapon"
+attacks = "2"
+strength = 4
+damage = "1"
+melee = true
+description = "Standard melee weapon."
+metadata/_custom_type_script = "uid://c00dklgveh5ca"

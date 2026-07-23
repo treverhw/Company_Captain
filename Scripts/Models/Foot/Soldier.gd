@@ -14,17 +14,17 @@ var bonusSave: int = 0
 
 ## Constructor that builds a soldier's stat profile from an info array.
 func define(res: ModelStats, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Faction) -> void:
-	ballisticSkill = res.ballisticSkill
-	weaponSkill = res.weaponSkill
 	armour = arm
 	main = wpn1
 	off = wpn2
 	weapons = [main, off]
-	faction = fac
-	maxWounds = armour.getWounds()
+	ballisticSkill = res.ballisticSkill + main.getBSMod()
+	weaponSkill = res.weaponSkill
+	maxWounds = res.wounds + armour.getWounds()
 	wounds = maxWounds
 	battlescars = 0
 	maxBattlescars = res.maxBattlescars
+	faction = fac
 	rank = res.rank
 	role = res.role
 

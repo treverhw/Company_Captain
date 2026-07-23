@@ -17,56 +17,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_c0oe7")
 
-[node name="GridContainer" type="GridContainer" parent="." unique_id=654884625]
-z_index = -25
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -1344.0
-offset_top = -756.0
-offset_right = 2496.0
-offset_bottom = 1404.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.7, 0.7)
-mouse_filter = 2
-theme_override_constants/h_separation = 0
-theme_override_constants/v_separation = 0
-columns = 2
-
-[node name="TextureRect" type="TextureRect" parent="GridContainer" unique_id=1924979927]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2_0pm7d")
-stretch_mode = 3
-
-[node name="TextureRect2" type="TextureRect" parent="GridContainer" unique_id=1030254358]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2_0pm7d")
-stretch_mode = 3
-
-[node name="TextureRect3" type="TextureRect" parent="GridContainer" unique_id=429812647]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2_0pm7d")
-stretch_mode = 3
-
-[node name="TextureRect4" type="TextureRect" parent="GridContainer" unique_id=580789354]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2_0pm7d")
-stretch_mode = 3
-
 [node name="BottomBarBack" type="Sprite2D" parent="." unique_id=1115475896]
+visible = false
 position = Vector2(951.5, 1469)
 scale = Vector2(3.79444, 1.64815)
 texture = ExtResource("3_kln2b")
 
 [node name="TopBarBack" type="Sprite2D" parent="." unique_id=459866737]
+visible = false
 position = Vector2(963, -406)
 scale = Vector2(5.63333, 1.66296)
 texture = ExtResource("3_kln2b")
@@ -123,6 +81,624 @@ offset_bottom = 40.0
 [node name="Guard" parent="Factions" unique_id=904325759 instance=ExtResource("5_jw32o")]
 
 [node name="Chaos" parent="Factions" unique_id=278154307 instance=ExtResource("4_v1gob")]
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=654884625]
+z_index = -25
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -500.0
+offset_top = -250.0
+offset_right = 9060.0
+offset_bottom = 5110.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.3, 0.3)
+mouse_filter = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 10
+
+[node name="TextureRect" type="TextureRect" parent="GridContainer" unique_id=1924979927]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect2" type="TextureRect" parent="GridContainer" unique_id=1030254358]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect3" type="TextureRect" parent="GridContainer" unique_id=429812647]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect4" type="TextureRect" parent="GridContainer" unique_id=580789354]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect97" type="TextureRect" parent="GridContainer" unique_id=386280656]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect98" type="TextureRect" parent="GridContainer" unique_id=2140042931]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect99" type="TextureRect" parent="GridContainer" unique_id=981521917]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect100" type="TextureRect" parent="GridContainer" unique_id=340328312]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect5" type="TextureRect" parent="GridContainer" unique_id=678892682]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect6" type="TextureRect" parent="GridContainer" unique_id=774225377]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect7" type="TextureRect" parent="GridContainer" unique_id=1592909685]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect8" type="TextureRect" parent="GridContainer" unique_id=828677443]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect9" type="TextureRect" parent="GridContainer" unique_id=1720480890]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect10" type="TextureRect" parent="GridContainer" unique_id=250441609]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect11" type="TextureRect" parent="GridContainer" unique_id=458748018]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect12" type="TextureRect" parent="GridContainer" unique_id=1007858813]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect13" type="TextureRect" parent="GridContainer" unique_id=835766191]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect14" type="TextureRect" parent="GridContainer" unique_id=1543430071]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect15" type="TextureRect" parent="GridContainer" unique_id=2088838322]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect16" type="TextureRect" parent="GridContainer" unique_id=1757761118]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect17" type="TextureRect" parent="GridContainer" unique_id=848547405]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect18" type="TextureRect" parent="GridContainer" unique_id=331723712]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect19" type="TextureRect" parent="GridContainer" unique_id=102052199]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect20" type="TextureRect" parent="GridContainer" unique_id=1426080228]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect21" type="TextureRect" parent="GridContainer" unique_id=2060129367]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect22" type="TextureRect" parent="GridContainer" unique_id=387895288]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect23" type="TextureRect" parent="GridContainer" unique_id=46708188]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect24" type="TextureRect" parent="GridContainer" unique_id=2145495213]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect25" type="TextureRect" parent="GridContainer" unique_id=1214578465]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect26" type="TextureRect" parent="GridContainer" unique_id=1113345321]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect27" type="TextureRect" parent="GridContainer" unique_id=928262906]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect28" type="TextureRect" parent="GridContainer" unique_id=1617302826]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect29" type="TextureRect" parent="GridContainer" unique_id=1103715245]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect30" type="TextureRect" parent="GridContainer" unique_id=740672759]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect31" type="TextureRect" parent="GridContainer" unique_id=1229209138]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect32" type="TextureRect" parent="GridContainer" unique_id=1312644892]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect33" type="TextureRect" parent="GridContainer" unique_id=775683623]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect34" type="TextureRect" parent="GridContainer" unique_id=1535073489]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect35" type="TextureRect" parent="GridContainer" unique_id=390620250]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect36" type="TextureRect" parent="GridContainer" unique_id=908519600]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect37" type="TextureRect" parent="GridContainer" unique_id=788510976]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect38" type="TextureRect" parent="GridContainer" unique_id=1640287582]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect39" type="TextureRect" parent="GridContainer" unique_id=1607765229]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect40" type="TextureRect" parent="GridContainer" unique_id=16124416]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect41" type="TextureRect" parent="GridContainer" unique_id=1476816334]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect42" type="TextureRect" parent="GridContainer" unique_id=2056996672]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect43" type="TextureRect" parent="GridContainer" unique_id=1810283679]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect44" type="TextureRect" parent="GridContainer" unique_id=1290825027]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect45" type="TextureRect" parent="GridContainer" unique_id=1356323982]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect46" type="TextureRect" parent="GridContainer" unique_id=1281107277]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect47" type="TextureRect" parent="GridContainer" unique_id=1213122298]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect48" type="TextureRect" parent="GridContainer" unique_id=939888229]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect49" type="TextureRect" parent="GridContainer" unique_id=466994075]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect50" type="TextureRect" parent="GridContainer" unique_id=1213041034]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect51" type="TextureRect" parent="GridContainer" unique_id=18186611]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect52" type="TextureRect" parent="GridContainer" unique_id=239683104]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect53" type="TextureRect" parent="GridContainer" unique_id=971754240]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect54" type="TextureRect" parent="GridContainer" unique_id=1355142781]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect55" type="TextureRect" parent="GridContainer" unique_id=657379150]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect56" type="TextureRect" parent="GridContainer" unique_id=1204225776]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect57" type="TextureRect" parent="GridContainer" unique_id=1000789402]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect58" type="TextureRect" parent="GridContainer" unique_id=1894658678]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect59" type="TextureRect" parent="GridContainer" unique_id=1347402530]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect60" type="TextureRect" parent="GridContainer" unique_id=14001630]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect61" type="TextureRect" parent="GridContainer" unique_id=802732637]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect62" type="TextureRect" parent="GridContainer" unique_id=561709622]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect63" type="TextureRect" parent="GridContainer" unique_id=2113572793]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect64" type="TextureRect" parent="GridContainer" unique_id=1946335181]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect65" type="TextureRect" parent="GridContainer" unique_id=516878278]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect66" type="TextureRect" parent="GridContainer" unique_id=835937266]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect67" type="TextureRect" parent="GridContainer" unique_id=1385725186]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect68" type="TextureRect" parent="GridContainer" unique_id=116967789]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect69" type="TextureRect" parent="GridContainer" unique_id=550926070]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect70" type="TextureRect" parent="GridContainer" unique_id=438107017]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect71" type="TextureRect" parent="GridContainer" unique_id=1058019064]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect72" type="TextureRect" parent="GridContainer" unique_id=801860311]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect73" type="TextureRect" parent="GridContainer" unique_id=1854031102]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect74" type="TextureRect" parent="GridContainer" unique_id=29523563]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect75" type="TextureRect" parent="GridContainer" unique_id=750237578]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect76" type="TextureRect" parent="GridContainer" unique_id=1276019010]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect77" type="TextureRect" parent="GridContainer" unique_id=864721060]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect78" type="TextureRect" parent="GridContainer" unique_id=1328166129]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect79" type="TextureRect" parent="GridContainer" unique_id=369532144]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect80" type="TextureRect" parent="GridContainer" unique_id=476020622]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect81" type="TextureRect" parent="GridContainer" unique_id=540139920]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect82" type="TextureRect" parent="GridContainer" unique_id=333577172]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect83" type="TextureRect" parent="GridContainer" unique_id=1423089435]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect84" type="TextureRect" parent="GridContainer" unique_id=1249580811]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect85" type="TextureRect" parent="GridContainer" unique_id=1317561817]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect86" type="TextureRect" parent="GridContainer" unique_id=1337892445]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect87" type="TextureRect" parent="GridContainer" unique_id=67723471]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect88" type="TextureRect" parent="GridContainer" unique_id=2094525415]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect89" type="TextureRect" parent="GridContainer" unique_id=333171786]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect90" type="TextureRect" parent="GridContainer" unique_id=1740768933]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect91" type="TextureRect" parent="GridContainer" unique_id=296528792]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect92" type="TextureRect" parent="GridContainer" unique_id=1299148473]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect93" type="TextureRect" parent="GridContainer" unique_id=1588953652]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect94" type="TextureRect" parent="GridContainer" unique_id=184729915]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect95" type="TextureRect" parent="GridContainer" unique_id=278484702]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
+
+[node name="TextureRect96" type="TextureRect" parent="GridContainer" unique_id=759426935]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_0pm7d")
+stretch_mode = 3
 
 [connection signal="pressed" from="BottomBar/NewSystem" to="." method="_on_new_system_pressed"]
 [connection signal="pressed" from="BottomBar/PlanetTest" to="." method="_on_planet_test_pressed"]

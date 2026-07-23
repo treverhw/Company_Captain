@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://c2fh6rpg27abm"]
+
+[ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_aot43"]
+
+[resource]
+script = ExtResource("1_aot43")
+title = "Big Choppa"
+attacks = "3"
+strength = 7
+ap = 1
+damage = "2"
+melee = true
+description = "Standard melee weapon."
+metadata/_custom_type_script = "uid://c00dklgveh5ca"
