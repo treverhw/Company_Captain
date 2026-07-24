@@ -5,7 +5,7 @@ class_name PlanetUtils
 static func checkInner(val: Settlement) -> bool:
 	var check: bool = true
 	for settlement in val.bubble:
-		if settlement.team != val.team:
+		if settlement.team != val.team and settlement.team != "Unowned":
 			check = false 
 	val.inner = check
 	return check
@@ -26,15 +26,21 @@ static func getSettlementExcess(val: Settlement) -> Array[Unit]:
 	return excess
 	
 static func generateConvoy(force: Array[Unit] = [], destination: Settlement = null, route: Array[Settlement] = []) -> Convoy:
-	if force.size() <= 0 or route == []:
+	if force.size() <= 0 or route.size() <= 1:
 		return null
 	var exampleUnit: Unit = force[0]
+	
+	if exampleUnit.getLocation() is Convoy:
+		var convoy: Convoy = load("res://Scenes/Models/Convoy.tscn").instantiate()
+		destination.planet.get_node("PlanetMenu/Convoys").add_child(convoy)
+		convoy.setConvoy(force, route)
+		return convoy
 	
 	if destination != null:
 		if destination.team != exampleUnit.getTeam() and destination.getWeight() >= exampleUnit.getLocation().getAttackWeight() * 1.5:
 			return null
 			
-		if hasActiveConvoyTo(exampleUnit.getLocation(), destination):
+		if hasActiveConvoyTo(exampleUnit.getLocation(), route[1]):
 			return null
 
 		var convoy: Convoy = load("res://Scenes/Models/Convoy.tscn").instantiate()
@@ -43,10 +49,10 @@ static func generateConvoy(force: Array[Unit] = [], destination: Settlement = nu
 		return convoy
 	return null
 
-static func hasActiveConvoyTo(from: Settlement, dest: Settlement) -> bool:
-	for convoy in dest.get_parent().get_parent().get_node("Convoys").get_children():
+static func hasActiveConvoyTo(home: Settlement, dest: Settlement) -> bool:
+	for convoy in dest.planet.getConvoys():
 		var route: Array[Settlement] = convoy.getPath()
-		if convoy.getTeam() == from.getTeam() and convoy.getHome() == from and !route.is_empty() and route.back() == dest:
+		if (convoy.destination == home and convoy.home == dest) or (convoy.destination == dest and convoy.home == home):
 			return true
 	return false
 
@@ -60,9 +66,9 @@ static func updateSettlementTargets(planet: Planet = null):
 	var weakestEnemies: Dictionary[String, Settlement] = {}
 	if planet:
 		for team in planet.presentTeams:
-			weakestSettlements[team] = getWeakestOuter(team, planet.settlements)
+			#weakestSettlements[team] = getWeakestOuter(team, planet.settlements)
 			weakestEnemies[team] = getWeakestOuter(team, planet.settlements, true)
-	planet.weakest = weakestSettlements
+	#planet.weakest = weakestSettlements
 	planet.targets = weakestEnemies
 
 ## Please finish me
@@ -94,12 +100,14 @@ static func getEnemyOuterSettlements(team: String, settlements: Array[Settlement
 	var ret: Array[Settlement] = []
 	for settlement in settlements:
 		var enemyValid: bool = false
+		if settlement.getTeam() == "Unowned":
+			continue
 		#Check if the enemy outer settlement actually has a neighbor to us.
 		for neighbor in settlement.getConnections():
 			if settlement.getTeam() != team and neighbor.getTeam() == team:
 				enemyValid = true
 				break
-		if !settlement.inner and settlement.getConnections() and enemyValid: 
+		if !settlement.inner and enemyValid: 
 			ret.append(settlement)
 	return ret
 
@@ -123,7 +131,7 @@ static func updateTeams(planet: Planet) -> void:
 ## itself is allowed even when `target` isn't ours, since that's often the
 ## whole point (an attack, or claiming unowned land). Returns an empty
 ## array if `target` isn't reachable that way.
-static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[Settlement], speed: int = 50) -> Array[Settlement]:
+static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[Settlement], speed: int = 25) -> Array:
 	var dist: Dictionary = {}
 	var prev: Dictionary = {}
 	var visited: Dictionary = {}
@@ -143,14 +151,14 @@ static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[S
 
 		if closestSettlement == dest:
 			break
-
+			
 		# Only continue routing onward through our own territory -- the
 		# final hop onto `target` is still allowed even if it isn't ours.
 		if closestSettlement != source and closestSettlement.team != source.getTeam():
 			continue
-
+			
 		for settlement in closestSettlement.getConnections():
-			var stepCost: int = floor(settlement.distance(closestSettlement, settlement) / speed)
+			var stepCost: int = floor(closestSettlement.getConnections()[settlement] / speed)
 			var newDist: int = dist[closestSettlement] + stepCost
 			if newDist < dist.get(settlement, 1000):
 				dist[settlement] = newDist
@@ -167,7 +175,7 @@ static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[S
 		node = prev[node]
 	return route
 
-static func shortestPath(source: Settlement, settlements: Array[Settlement], speed: int = 50) -> Array[Settlement]:
+static func shortestPath(source: Settlement, settlements: Array[Settlement], speed: int = 25, explore: bool = true) -> Array:
 	var dist: Dictionary = {}
 	var prev: Dictionary = {}
 	var visited: Dictionary = {}
@@ -184,9 +192,9 @@ static func shortestPath(source: Settlement, settlements: Array[Settlement], spe
 		if visited.get(closestSettlement, false):
 			continue
 		visited[closestSettlement] = true
-
+		
 		for settlement in closestSettlement.getConnections():
-			var stepCost: int = floor(settlement.distance(closestSettlement, settlement) / speed)
+			var stepCost: int = floor(closestSettlement.getConnections()[settlement] / speed)
 			var newDist: int = dist[closestSettlement] + stepCost
 			if newDist < dist.get(settlement, 1000):
 				dist[settlement] = newDist
@@ -197,10 +205,16 @@ static func shortestPath(source: Settlement, settlements: Array[Settlement], spe
 	var path: Array[Settlement] = []
 	var target: Settlement = source
 	var bestDistance: int = 1000
-	for settlement in settlements:
-		if dist[settlement] < bestDistance and settlement.team == "Unowned":
-			target = settlement
-			bestDistance = dist[settlement]
+	if explore:
+		for settlement in settlements:
+			if dist[settlement] < bestDistance and settlement.team == "Unowned":
+				target = settlement
+				bestDistance = dist[settlement]
+	else:
+		for settlement in settlements:
+			if dist[settlement] < bestDistance and settlement.team != "Unowned" and settlement.team != source.getTeam():
+				target = settlement
+				bestDistance = dist[settlement]
 
 	while target != null:
 		path.push_front(target)

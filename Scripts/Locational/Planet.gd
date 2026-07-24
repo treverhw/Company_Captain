@@ -15,9 +15,11 @@ func _ready() -> void:
 	get_node("PlanetNode/Label").text = title
 
 	_generateSettlements()
+	
 	_spawnStartingForces()
 	createConnections()
 	_connectRemainingSettlements()
+	generateBubbles()
 	update()
 
 func _generateSettlements() -> void:
@@ -92,7 +94,6 @@ func _connectRemainingSettlements() -> void:
 			newLine.add_point(bestLink[0].position)
 			newLine.add_point(bestLink[1].position)
 			get_node("PlanetMenu").add_child(newLine)
-			generateBubbles()
 
 func generateBubbles() -> void:
 	for settlement in settlements:
@@ -113,7 +114,6 @@ func turn(exploreRoutes: Dictionary = {}) -> void:
 	compliance()
 
 	for settlement in settlements:
-		PlanetUtils.checkInner(settlement)
 		settlement.turn(exploreRoutes.get(settlement, [] as Array[Settlement]))
 		await cleanup()
 	var convoys = get_node("PlanetMenu/Convoys").get_children()
@@ -137,6 +137,7 @@ func turn(exploreRoutes: Dictionary = {}) -> void:
 				alreadyFought.append(otherConvoy)
 				await convoyFight(convoy, otherConvoy)
 	await cleanup()
+	print(presentTeams)
 
 
 func convoyFight(val1: Convoy, val2: Convoy) -> void:
@@ -175,6 +176,8 @@ func cleanup() -> bool:
 func update() -> void:
 	#Reset the teams on the planet
 	PlanetUtils.updateSettlementTargets(self)
+	for settlement in settlements:
+		PlanetUtils.checkInner(settlement)
 		
 	var result = setControl()
 	setBalance("Imperium")
@@ -246,6 +249,9 @@ func getBalance(team: String) -> int:
 
 func getSettlements() -> Array[Settlement]:
 	return settlements
+
+func getConvoys() -> Array:
+	return get_node("PlanetMenu/Convoys").get_children()
 
 func _on_sprite_2d_pressed() -> void:
 	get_node("PlanetMenu").visible = !get_node("PlanetMenu").visible

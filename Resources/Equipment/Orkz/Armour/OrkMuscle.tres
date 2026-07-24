@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ArmourStats" format=3 uid="uid://bcexx5u40wmv8"]
+
+[ext_resource type="Script" uid="uid://cftx6oo8we07o" path="res://Scripts/Equipment/ArmourStats.gd" id="1_8etvh"]
+
+[resource]
+script = ExtResource("1_8etvh")
+title = "Ork Muscle"
+speed = 6
+toughness = 5
+save = 5
+weight = 10
+description = "Daddy's hand me downs."
+metadata/_custom_type_script = "uid://cftx6oo8we07o"

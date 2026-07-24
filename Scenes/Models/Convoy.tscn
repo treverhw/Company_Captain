@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dj7pbty7tmqs7"]
+[gd_scene format=3 uid="uid://dj7pbty7tmqs7"]
 
 [ext_resource type="Script" uid="uid://b6thddtrrug62" path="res://Scripts/Models/Convoy.gd" id="1_qw2e6"]
 [ext_resource type="Texture2D" uid="uid://c6kjntg0d4sp7" path="res://Assets/ship.png" id="2_brc3v"]
@@ -9,29 +9,29 @@ radius = 25.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_00kql"]
 radius = 11.0
 
-[node name="Convoy" type="Node2D"]
+[node name="Convoy" type="Node2D" unique_id=1712366789]
 script = ExtResource("1_qw2e6")
 metadata/_custom_type_script = "uid://b6thddtrrug62"
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1976786271]
 z_index = 5
 scale = Vector2(0.7, 0.7)
 texture = ExtResource("2_brc3v")
 
-[node name="VisionRange" type="Area2D" parent="."]
+[node name="VisionRange" type="Area2D" parent="." unique_id=1008739880]
 priority = 1
 
-[node name="CollisionShape" type="CollisionShape2D" parent="VisionRange"]
+[node name="CollisionShape" type="CollisionShape2D" parent="VisionRange" unique_id=968154334]
 shape = SubResource("CircleShape2D_brc3v")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1928800947]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1047723843]
 shape = SubResource("CircleShape2D_00kql")
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="Node2D" type="Node2D" parent="." unique_id=1097976459]
 
-[node name="Label" type="Label" parent="Node2D"]
+[node name="Label" type="Label" parent="Node2D" unique_id=1329738963]
 z_index = 5
 offset_left = -31.0
 offset_top = 2.0
@@ -41,7 +41,7 @@ theme_override_font_sizes/font_size = 12
 text = "99"
 horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="Node2D"]
+[node name="Label2" type="Label" parent="Node2D" unique_id=1206369858]
 z_index = 5
 offset_left = -12.0
 offset_top = 2.0
@@ -51,12 +51,12 @@ theme_override_font_sizes/font_size = 12
 text = "I"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="Node2D"]
+[node name="Label3" type="Label" parent="Node2D" unique_id=1499938630]
 z_index = 5
 offset_left = -20.0
-offset_top = -8.0
+offset_top = -9.0
 offset_right = 20.0
-offset_bottom = 15.0
+offset_bottom = 14.0
 theme_override_font_sizes/font_size = 12
 text = "0"
 horizontal_alignment = 1

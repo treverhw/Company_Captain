@@ -11,8 +11,8 @@ func _ready() -> void:
 	get_parent().get_node("BottomBar/Turn").button_down.connect(turn)
 
 func turn():
-	for ship in getShips():
-		ship.move()
+	#for ship in getShips():
+	#	ship.move()
 	
 	var allPlanets: Array[Planet] = getAllPlanets()
 	var exploreRoutes: Dictionary = SectorUtils.precomputeAllExploreRoutes(allPlanets)

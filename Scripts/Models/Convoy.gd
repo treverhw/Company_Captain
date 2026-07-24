@@ -18,7 +18,6 @@ func move() -> void:
 		kill()
 		return
 
-	team = roster.front().getTeam()
 	var direction: Vector2 = (destination.global_position - self.global_position).normalized()
 	global_position += direction * speed
 
@@ -27,6 +26,7 @@ func move() -> void:
 	get_node("Node2D/Label3").text = str(getRoster().size())
 	get_node("Node2D").global_rotation = 0.0
 
+	#print("distance to " + str(destination) + " = " + str(destination.distance(self, destination)))
 	if destination.distance(self, destination) < speed:
 		resolveArrival()
 
@@ -34,23 +34,24 @@ func move() -> void:
 ## is an intermediate stop on a still-friendly route, otherwise
 ## claims/reinforces/invades depending on ownership, then frees the convoy.
 func resolveArrival() -> void:
-	match destination.team:
-		"Unowned":
-			unload(destination)
-		team:
-			unload(destination)
-		_:
-			if destination.getRoster().size() <= 0:
-				unload(destination)
-			else:
-				destination.invade(getRoster())
-	queue_free()
+	if destination.team == "Unowned" or destination.team == team or destination.getRoster().size() <= 0:
+		#print("Before: " + str(getRoster()))
+		unload(destination)
+		#print("After: " + str(getRoster()))
+	else:
+		destination.invade(self)
+	cleanup()
 	destination.update()
 
 func unload(location: Settlement) -> void:
-	for unit in getRoster():
+	for unit in getRoster().duplicate():
 		unit.setLocation(location)
-		destination.setTeam(team)
+	destination.setTeam(team)
+
+func cleanup():
+	ModelUtils.pruneInvalid(roster)
+	if getRoster().is_empty():
+		kill()
 
 func kill() -> void:
 	if get_parent() != null:
@@ -67,31 +68,24 @@ func retreatConvoy() -> void:
 	path = [home]
 	destination = home
 	look_at(destination.global_position)
-	for unit in getRoster():
+	for unit in getRoster().duplicate():
 		unit.setLocation(self)
 	move()
 
 ## Sets up this convoy to carry `army` along `route` (a sequence of
 ## Settlements from home to final destination, inclusive), traveling
 ## hop-by-hop through any intermediate settlements.
-func setConvoy(army: Array[Unit], route: Array[Settlement]) -> void:
-	if army.is_empty() or route.size() < 2:
+func setConvoy(force: Array[Unit], route: Array[Settlement]) -> void:
+	if force.is_empty() or route.size() < 2:
 		kill()
 		return
 	path = route
 	home = route[0]
-	roster = army
-	team = army.front().getTeam()
-	for unit in army:
+	team = force.front().getTeam()
+	for unit in force.duplicate():
 		unit.setLocation(self)
 	global_position = home.global_position
 	setDestination(route[1])
-
-func cleanup() -> bool:
-	ModelUtils.pruneInvalid(roster)
-	if getRoster().is_empty():
-		kill()
-	return true
 
 func setRoster(arr: Array[Unit]) -> void:
 	roster = arr

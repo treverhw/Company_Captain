@@ -8,5 +8,4 @@ rank = "Boy"
 ballisticSkill = 5
 weaponSkill = 3
 wounds = 1
-maxWounds = 1
 metadata/_custom_type_script = "uid://dl8lns82dilkv"

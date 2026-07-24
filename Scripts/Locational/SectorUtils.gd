@@ -7,7 +7,7 @@ class_name SectorUtils
 ## keyed by settlement. Same read-only safety argument as before, just
 ## applied sector-wide instead of per-planet.
 class RouteResult:
-	var route: Array[Settlement] = []
+	var route: Array = []
 
 static func precomputeAllExploreRoutes(allPlanets: Array[Planet]) -> Dictionary:
 	var candidates: Array[Settlement] = []
@@ -38,12 +38,14 @@ static func precomputeAllExploreRoutes(allPlanets: Array[Planet]) -> Dictionary:
 		boxes.append(RouteResult.new())
 
 	var groupId := WorkerThreadPool.add_group_task(
-		func(i): boxes[i].route = PlanetUtils.shortestPath(candidates[i], searchSpaces[i], 50),
+		func(i): boxes[i].route = PlanetUtils.shortestPath(candidates[i], searchSpaces[i], 25),
 		candidates.size()
 	)
 	WorkerThreadPool.wait_for_group_task_completion(groupId)
 
 	var routes: Dictionary = {}
 	for i in candidates.size():
-		routes[candidates[i]] = boxes[i].route
+		var typedRoute: Array[Settlement] = []
+		typedRoute.assign(boxes[i].route)
+		routes[candidates[i]] = typedRoute
 	return routes

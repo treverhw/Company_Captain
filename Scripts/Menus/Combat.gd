@@ -90,12 +90,12 @@ func realFight() -> Dictionary:
 
 									if endCheck():
 										cleanup()
-										return end
+										return end	
 
 		# Move the attacking army forward once the armies are close enough.
 		# TODO: this always compares Attacker's line 6 against Defender's
 		# line 1, rather than the armies' actual current front lines.
-		print(str(attackerRoster.size()) + " vs " + str(defenderRoster.size()))
+		#print(str(attackerRoster.size()) + " vs " + str(defenderRoster.size()))
 		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
 			get_node("Attacker").global_position.x += 65
 	cleanup()
