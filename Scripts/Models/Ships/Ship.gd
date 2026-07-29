@@ -4,7 +4,7 @@ class_name Ship
 var roster: Array[Unit] = []
 
 func _ready() -> void:
-	var names = Names.new().shipNames
+	var names = Names.shipNames
 	generateTitle(names)
 
 func setLocation(val) -> void:

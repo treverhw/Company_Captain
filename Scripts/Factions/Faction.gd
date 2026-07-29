@@ -25,7 +25,7 @@ func spawnShip(shipClass: String, system: Location):
 	ship.setFaction(self)
 	match shipClass:
 		"Bigun":
-			spawnShuttles(10, ship)
+			pass
 		_:
 			"Error: not a real shipclass"
 
@@ -35,10 +35,6 @@ func removeShip(ship: Ship):
 	ships.erase(ship)
 	ship.location.ships.erase(ship)
 	remove_child(ship)
-	for shuttle in ship.getShuttles():
-		ship.shuttles.erase(shuttle)
-		shuttle.queue_free()
-		remove_child(shuttle)
 	ship.queue_free()
 
 #Move a ship from one faction to another. Deletes the current roster! Optional roster setting.
@@ -49,14 +45,6 @@ func transferShip(ship: Ship, faction: Faction, tempRoster: Array[Unit] = []):
 	ship.reparent(faction)
 	faction.ships.append(ship)
 	ship.roster = tempRoster
-
-func spawnShuttles(n: int, ship: Ship):
-	for i in range(0, n):
-		var shuttle = load("res://Scenes/Models/Ships/Shuttle.tscn").instantiate()
-		ship.shuttles.append(shuttle)
-		shuttle.setFaction(self)
-		shuttle.mothership = ship
-		add_child(shuttle)
 
 #endregion
 

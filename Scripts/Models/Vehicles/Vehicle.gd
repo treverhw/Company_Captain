@@ -14,7 +14,7 @@ func define(arr : Array, arm : Armour, inputSpeed: int, inputToughness: int, inp
 	weapons = arr[5]
 	wounds = maxWounds
 	
-	var names = Names.new().shipNames
+	var names = Names.shipNames
 	generateTitle(names)
 
 #creates an array of all weapons, then erases those weapons that aren't currently valid based on distance.

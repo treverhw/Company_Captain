@@ -4,15 +4,13 @@ class_name Planet
 ## into a connected graph, and runs the per-turn simulation loop.
 
 var settlements: Array[Settlement]
+var system: System
 var balance: int
 var weakest: Dictionary[String, Settlement] = {} # Team -> Weakest Settlement
 var targets: Dictionary[String, Settlement] = {} # Team -> Weakest Enemy Settlement
 
 func _ready() -> void:
 	global_position = Vector2((1920 / 2), (1080 / 2))
-	generateTitle(Names.new().planetNames)
-	get_node("PlanetMenu/Label").text = title
-	get_node("PlanetNode/Label").text = title
 
 	_generateSettlements()
 	
@@ -22,9 +20,20 @@ func _ready() -> void:
 	generateBubbles()
 	update()
 
+func setName(val: String) -> void:
+	title = val
+	get_node("PlanetMenu/Label").text = title
+	get_node("PlanetNode/Label").text = title
+	
+
 func _generateSettlements() -> void:
+	var numStarports = randi_range(2,3)
 	for n in randi_range(16, 25):
-		var newSettlement = load("res://Scenes/Locational/Settlement.tscn").instantiate()
+		var newSettlement: Settlement
+		if n < numStarports:
+			newSettlement = STARPORT_SCENE.instantiate()
+		else:
+			newSettlement = SETTLEMENT_SCENE.instantiate()
 		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250, 250))
 		var counter := 0
 		while !validateDistance(newSettlement, settlements, 125) and counter != 100:
@@ -105,7 +114,10 @@ func compliance() -> bool:
 	for settlement in settlements:
 		if !teams.has(settlement.team):
 			teams.append(settlement.team)
-	compliant = teams.size() <= 1
+			if teams.size() > 1:
+				compliant = false
+				return compliant
+	compliant = true
 	return compliant
 
 func turn(exploreRoutes: Dictionary = {}) -> void:
@@ -137,12 +149,12 @@ func turn(exploreRoutes: Dictionary = {}) -> void:
 				alreadyFought.append(otherConvoy)
 				await convoyFight(convoy, otherConvoy)
 	await cleanup()
-	print(presentTeams)
+	#print(presentTeams)
 
 
 func convoyFight(val1: Convoy, val2: Convoy) -> void:
 	await cleanup()
-	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
+	var combat = COMBAT_SCENE.instantiate()
 	get_node("/root/Main").add_child(combat)
 
 	var newRosters = await combat.populate(val1.getRoster(), val2.getRoster())
@@ -185,13 +197,13 @@ func update() -> void:
 	
 	match result:
 		"Unowned":
-			get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/unowned.png")
+			get_node("PlanetNode/PlanetSprite").texture_normal = UNOWNED_TEX
 			setTeam("Unowned")
 		"Imperium":
-			get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Imperium.png")
+			get_node("PlanetNode/PlanetSprite").texture_normal = IMPERIUM_TEX
 			setTeam("Imperium")
 		"Chaos":
-			get_node("PlanetNode/PlanetSprite").texture_normal = load("res://Assets/locational/Bad.png")
+			get_node("PlanetNode/PlanetSprite").texture_normal = HOSTILE_TEX
 			setTeam("Chaos")
 
 func setControl() -> String:
@@ -237,7 +249,6 @@ func createConnections() -> void:
 
 ## Every unit across all settlements on this planet, except each
 ## settlement's two garrison-holding "Base" units — i.e. what's available
-## for a shuttle to pick up.
 func getExcess(tempTeam: String) -> Array[Unit]:
 	var ret: Array[Unit] = []
 	for settlement in settlements:

@@ -1,6 +1,4 @@
 extends Control
-#const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
-#const armour = preload("res://Scripts/Equipment/ArmourArrays.gd")
 var playerFaction
 var guard
 var chaos
@@ -15,6 +13,9 @@ func _input(event: InputEvent) -> void:
 		get_tree().quit()
 
 func _ready() -> void:
+	Names.marineNames.shuffle()
+	Names.planetNames.shuffle()
+	Names.shipNames.shuffle()
 	var counter = 0
 	for node in get_node("GridContainer").get_children():
 		counter+=1
@@ -35,6 +36,8 @@ func play():
 	add_child(sector)
 	get_node("BottomBarBack").visible = true
 	get_node("BottomBar").visible = true
+	get_node("TopBarBack").visible = true
+	get_node("TopBar").visible = true
 	guard.start()
 	chaos.start()
  	#temp.settlements[1].roster.append(guard.roster[0])
@@ -102,14 +105,16 @@ func _on_planet_test_pressed() -> void:
 		_on_turn_pressed()
 		var system = sector.getSystems().front()
 		sector.turn()
-		if system.getCompliance():
-			#counter += 1
-			resetFactions()
-			remove_child(system)
-			system.queue_free()
-			system = load("res://Scenes/Locational/System.tscn").instantiate()
-			add_child(system)
-	print("It works!")
+		#if system.getCompliance():
+		#	reset(system)
+
+func reset(system):
+	#counter += 1
+	resetFactions()
+	remove_child(system)
+	system.queue_free()
+	system = load("res://Scenes/Locational/System.tscn").instantiate()
+	add_child(system)
 
 func _on_new_system_pressed() -> void:
 	resetFactions()

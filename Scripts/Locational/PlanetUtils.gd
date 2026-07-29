@@ -2,6 +2,8 @@ extends RefCounted
 class_name PlanetUtils
 ## A utility script for Planets and locations within
 
+const CONVOY_SCENE = preload("res://Scenes/Models/Convoy.tscn")
+
 static func checkInner(val: Settlement) -> bool:
 	var check: bool = true
 	for settlement in val.bubble:
@@ -31,7 +33,7 @@ static func generateConvoy(force: Array[Unit] = [], destination: Settlement = nu
 	var exampleUnit: Unit = force[0]
 	
 	if exampleUnit.getLocation() is Convoy:
-		var convoy: Convoy = load("res://Scenes/Models/Convoy.tscn").instantiate()
+		var convoy: Convoy = CONVOY_SCENE.instantiate()
 		destination.planet.get_node("PlanetMenu/Convoys").add_child(convoy)
 		convoy.setConvoy(force, route)
 		return convoy
@@ -43,7 +45,7 @@ static func generateConvoy(force: Array[Unit] = [], destination: Settlement = nu
 		if hasActiveConvoyTo(exampleUnit.getLocation(), route[1]):
 			return null
 
-		var convoy: Convoy = load("res://Scenes/Models/Convoy.tscn").instantiate()
+		var convoy: Convoy = CONVOY_SCENE.instantiate()
 		destination.planet.get_node("PlanetMenu/Convoys").add_child(convoy)
 		convoy.setConvoy(force, route)
 		return convoy
@@ -175,7 +177,7 @@ static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[S
 		node = prev[node]
 	return route
 
-static func shortestPath(source: Settlement, settlements: Array[Settlement], speed: int = 25, explore: bool = true) -> Array:
+static func shortestPath(source: Settlement, settlements: Array[Settlement], speed: int = 25, explore: bool = true, export: bool = false) -> Array:
 	var dist: Dictionary = {}
 	var prev: Dictionary = {}
 	var visited: Dictionary = {}
@@ -208,6 +210,11 @@ static func shortestPath(source: Settlement, settlements: Array[Settlement], spe
 	if explore:
 		for settlement in settlements:
 			if dist[settlement] < bestDistance and settlement.team == "Unowned":
+				target = settlement
+				bestDistance = dist[settlement]
+	elif export:
+		for settlement in settlements:
+			if dist[settlement] < bestDistance and settlement is Starport:
 				target = settlement
 				bestDistance = dist[settlement]
 	else:

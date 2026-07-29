@@ -4,7 +4,6 @@ class_name Settlement
 var connections: Dictionary = {}
 var type: String
 var newUnitCounter: int = 0
-var shuttles: Array[Shuttle] = []
 var threatRatio: float = 1.2
 var overwhelmingRatio: float = 1.5
 var planet: Planet
@@ -25,7 +24,7 @@ func appendRoster(arr: Array[Unit]) -> void:
 	update()
 
 func _ready() -> void:
-	generateTitle(Names.new().planetNames)
+	generateTitle(Names.planetNames)
 	get_node("Name").text = name
 
 ## Picks a reinforcement from the first non-player faction represented in
@@ -51,18 +50,18 @@ func turn(precomputedExploreRoute: Array[Settlement] = []) -> void:
 		var freeze = false
 		for convoy in planet.getConvoys():
 			if convoy.getTeam() != getTeam() and convoy.destination == self:
-				print(str(title)  + " on planet " + str(planet) + " is frozen.")
+				#print(str(title)  + " on planet " + str(planet) + " is frozen.")
 				freeze = true
 		
 		if getRoster().size() > 2 and !freeze:
 			if planet.compliant: 
-				print(str(title)  + " on planet " + str(planet) + " is in Export State.")
+				#print(str(title)  + " on planet " + str(planet) + " is in Export State.")
 				exportState()
 			elif inner: 
-				print(str(title)  + " on planet " + str(planet) + " is in Explore State.")
+				#print(str(title)  + " on planet " + str(planet) + " is in Explore State.")
 				exploreState(precomputedExploreRoute)
 			else: 
-				print(str(title)  + " on planet " + str(planet) + " is in Combat State.")
+				#print(str(title)  + " on planet " + str(planet) + " is in Combat State.")
 				combatState()
 	
 	update()
@@ -140,10 +139,10 @@ func combatState(options: Array[Settlement] = []):
 		PlanetUtils.generateConvoy(excess, options[0], route)
 	else: #Rally instead 
 		var target = planet.targets[getTeam()]
-		print(title + " Is Rallying to " + str(target))
+		#print(title + " Is Rallying to " + str(target))
 		if target:
 			var route = PlanetUtils.shortestPath(self, planet.settlements, 25, false)
-			print(title + " " + str(route))
+			#print(title + " " + str(route))
 			PlanetUtils.generateConvoy(excess, target, route)
 		#enemyOuterSettlements = {}
 	update()
@@ -152,8 +151,10 @@ func combatState(options: Array[Settlement] = []):
 ## In this state, they prioritize spreading their force across the planet and piling into shuttles
 ## for the next battle. 
 func exportState():
-	pass
-	
+	var route = PlanetUtils.shortestPath(self, planet.settlements, 25, false, true)
+	#print(title + " " + str(route))
+	PlanetUtils.generateConvoy(allButTwo(), route.back(), route)
+
 func defenseForce() -> Array[Unit]:
 	var toGo: Array[Unit] = []
 	var threatWeight = getThreatWeight()
@@ -169,12 +170,14 @@ func defenseForce() -> Array[Unit]:
 
 ## Every roster unit except the first two "Base" rank units, which stay
 ## behind to hold the settlement. Shared by spawnConvoy() and
-## Planet.getExcess() (for shuttles picking up units to ferry).
 func allButTwo() -> Array[Unit]:
 	var counter: int = 0
 	var ret: Array[Unit] = []
+	var limit: int = 2
+	if self is Starport:
+		limit = 4
 	for unit in getRoster():
-		if unit.getRoster().front().role == "Battleline" and counter < 2:
+		if unit.getRoster().front().role == "Battleline" and counter < limit:
 			counter += 1
 		else:
 			ret.append(unit)
@@ -185,7 +188,7 @@ func allButTwo() -> Array[Unit]:
 func invade(convoy: Convoy) -> void:
 	var defenders: Array[Unit] = getRoster().duplicate()
 
-	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
+	var combat = COMBAT_SCENE.instantiate()
 	get_node("/root/Main").add_child(combat)
 	
 	#0 is always the winner of the fight, 1 is always the loser.
@@ -236,7 +239,7 @@ func update() -> void:
 
 	if getRoster().is_empty():
 		team = "Unowned"
-		get_node("TextureRect").set_texture(load("res://Assets/locational/unowned.png"))
+		get_node("TextureRect").set_texture(UNOWNED_TEX)
 	else:
 		setTeam(getRoster().front().getTeam())
 		# All non-Imperium teams currently share the same "hostile" icon.
@@ -268,7 +271,7 @@ func getWeight() -> int:
 ## Attack weight excludes the first two roster units (the "Base" garrison
 ## units spawnConvoy()/allButTwo() always leave behind), since those don't leave to attack.
 func getAttackWeight() -> int:
-	var units := getRoster()
+	var units = getRoster()
 	var n: int = 0
 	for i in range(2, units.size()):
 		n += units[i].getWeight()

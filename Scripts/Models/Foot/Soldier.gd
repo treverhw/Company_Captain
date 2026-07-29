@@ -28,7 +28,7 @@ func define(res: ModelStats, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Facti
 	rank = res.rank
 	role = res.role
 
-	var names = Names.new().marineNames
+	var names = Names.marineNames
 	generateTitle(names)
 
 ## Returns the weapons usable at the given distance (melee/pistol up close,

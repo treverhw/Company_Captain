@@ -1,28 +1,16 @@
 extends Ship
 class_name SpaceShip
 
-var shuttles: Array[Shuttle] = []
 var capacity: int = 250
 
 func turn():
-	for shuttle in getShuttles():
-		shuttle.used = false
+	pass
 
 func embark(shuttle: Shuttle):
-	shuttles.append(shuttle)
-	getRoster().append_array(shuttle.getRoster())
+	pass
 
 func disembark(units: Array[Unit], destiantion: Planet, port: Settlement = null):
-	var available = getShuttles()
-	if available.is_empty():
-		pass
-	var shuttle = available.front()
-
-func getShuttles() -> Array[Shuttle]:
-	for shuttle in range(shuttles.size()-1,-1,-1):
-		if !is_instance_valid(shuttles[shuttle]):
-			shuttles.erase(shuttles[shuttle])
-	return shuttles
+	pass
 
 func getCapacity() -> int:
 	return capacity
@@ -34,12 +22,9 @@ func getRemainingCapacity() -> int:
 	return capacity - total
 
 func _ready() -> void:
-	var names = Names.new().shipNames
+	var names = Names.shipNames
 	generateTitle(names)
 
 func _to_string() -> String:
 	var used: int = 0
-	for shuttle in shuttles:
-		if shuttle.used == false:
-			used += 1
-	return title + " (" + str(used) + "/" + str(shuttles.size()) + ")" 
+	return title + " (" + str(capacity-getRemainingCapacity()) + "/" + str(capacity) + ")" 

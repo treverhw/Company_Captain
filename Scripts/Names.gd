@@ -1,7 +1,7 @@
-extends Node
+extends RefCounted
 class_name Names
 
-var marineNames = [
+static var marineNames = [
 	'Ethan',
 	'Maria',
 	'Trever',
@@ -2304,7 +2304,7 @@ var marineNames = [
 	"Mordred",
 	"Ulf"]
 
-var planetNames = [
+static var planetNames = [
 	"Accatran",
 	"Acteron",
 	"Addolorata",
@@ -2867,7 +2867,7 @@ var planetNames = [
 	"Zorastra",
 	"Zuerlais"]
 
-var shipNames = [
+static var shipNames = [
 	"Magnificent of Glorious",
 	"Mortality Venom",
 	"Hero of Blazer",
