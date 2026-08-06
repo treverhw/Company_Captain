@@ -54,7 +54,7 @@ func clean() -> void:
 ## Adds models to a unit, returns the excess if the unit fills up.
 func addModels(models: Array[Model]) -> Array[Model]:
 	while getRoster().size() < getRosterCap() and !models.is_empty():
-		var model = models.pop_back()
+		var model = models.pop_front()
 		roster.append(model)
 		model.unit = self
 	role = getRoster()[0].getRole()

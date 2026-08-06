@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://btqsm5kbalt36"]
+
+[ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_fyib3"]
+
+[resource]
+script = ExtResource("1_fyib3")
+title = "Grenade Launcher"
+attacks = "d3"
+strength = 4
+damage = "1"
+weight = 3
+twoHands = true
+modifiers = Array[String](["Blast"])
+description = "[TBD]"
+metadata/_custom_type_script = "uid://c00dklgveh5ca"

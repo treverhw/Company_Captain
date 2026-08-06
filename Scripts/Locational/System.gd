@@ -6,15 +6,13 @@ var planets: Array[Planet] = []
 var priority: Array[Planet] = []
 var sector: Sector
 
-func turn(exploreRoutes: Dictionary = {}) -> void:
+func turn() -> void:
 	var text: String = "Ships: "
 	for ship in getShips():
 		ship.turn()
 		text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
 	get_node("Visuals/ShipCount").text = text
 	getCompliance()
-	for planet in planets:
-		await planet.turn(exploreRoutes)
 	#if !compliant:
 	#	offloadShips()
 	#onloadShips()
@@ -34,12 +32,13 @@ func onloadShips():
 func transferShips():
 	pass
 
-func createPlanetPriority(team: String):
+#t is team
+func createPlanetPriority(t: String):
 	var test = {}
 	planets = getPlanets()
 	for planet in planets:
 		if !planet.compliance():
-			planet.setBalance(team)
+			planet.setBalance(t)
 			test[planet] = planet.balance
 	planets.sort_custom(func(a,b): return a.balance < b.balance)
 	#print(test)
@@ -52,10 +51,11 @@ func getCompliance() -> bool:
 			return false
 	return true
 
-func getBalanceSum(team: String) -> int:
+#t is team
+func getBalanceSum(t: String) -> int:
 	var balanceSum: int = 0
 	for planet in getPlanets():
-		balanceSum += planet.getBalance(team)
+		balanceSum += planet.getBalance(t)
 	return balanceSum
 
 func getShips() -> Array[Ship]:
@@ -64,7 +64,7 @@ func getShips() -> Array[Ship]:
 func getPlanets() -> Array[Planet]:
 	return planets
 
-func _ready() -> void:
+func generate() -> void:
 	generateTitle(Names.planetNames)
 	get_node("PlanetSprite/SystemName").text = title
 	get_node("Visuals").global_position = Vector2(0,0)
@@ -81,6 +81,7 @@ func _ready() -> void:
 		planets.append(planet)
 		planet.system = self
 		planet.setName(title + " " + GlobalFunctions.numToRoman(x+1))
+		await planet.generate()
 		#print(str(planet.get_node("PlanetNode").global_position))
 	
 	#Create some ships (To be replaced later by Sector map generation)
@@ -100,7 +101,7 @@ func _ready() -> void:
 func _on_button_pressed() -> void:
 	var text: String = ""
 	for ship in getShips():
-		print(str(ship) + "\n" + str(ship.getRoster()))
+		#print(str(ship) + "\n" + str(ship.getRoster()))
 		text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
 	get_node("Visuals/ShipCount").text = text
 

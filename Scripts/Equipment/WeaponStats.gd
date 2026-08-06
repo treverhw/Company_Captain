@@ -11,6 +11,8 @@ class_name WeaponStats
 @export var ap: int
 ##Damage of the Weapon. A string because it can be a dice roll.
 @export var damage: String
+##Weight, a value used to measure the threat of a unit, sort of a tier system.
+@export var weight: int
 ##A check for if the weapon is two handed. If you're using a two handed weapon, it's the only weapon you're using.
 @export var twoHands: bool
 ##Check for if the weapon is a melee weapon.

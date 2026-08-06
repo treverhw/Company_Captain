@@ -5,7 +5,7 @@ class_name Convoy
 ## they arrive at their final destination, get diverted mid-route, or
 ## lose their roster.
 
-var path: Array[Settlement]
+var path: Array
 var home: Settlement
 var destination: Settlement
 var source: String = ""
@@ -28,7 +28,7 @@ func move() -> void:
 
 	#print("distance to " + str(destination) + " = " + str(destination.distance(self, destination)))
 	if destination.distance(self, destination) < speed:
-		resolveArrival()
+		await resolveArrival()
 
 ## Handles arrival at `destination`: continues on to the next hop if this
 ## is an intermediate stop on a still-friendly route, otherwise
@@ -39,7 +39,10 @@ func resolveArrival() -> void:
 		unload(destination)
 		#print("After: " + str(getRoster()))
 	else:
-		destination.invade(self)
+		if !destination.planet.combats.has(destination):
+			destination.planet.combats[destination] = []
+		destination.planet.combats[destination].append_array(getRoster())
+		roster.clear()
 	cleanup()
 	destination.update()
 
@@ -75,7 +78,7 @@ func retreatConvoy() -> void:
 ## Sets up this convoy to carry `army` along `route` (a sequence of
 ## Settlements from home to final destination, inclusive), traveling
 ## hop-by-hop through any intermediate settlements.
-func setConvoy(force: Array[Unit], route: Array[Settlement]) -> void:
+func setConvoy(force: Array[Unit], route: Array) -> void:
 	if force.is_empty() or route.size() < 2:
 		kill()
 		return

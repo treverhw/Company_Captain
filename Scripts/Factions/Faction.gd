@@ -1,24 +1,21 @@
 extends Node
 class_name Faction
 
-#const weapons = preload("res://Scripts/Equipment/WeaponArrays.gd")
-#const armour = preload("res://Scripts/Equipment/ArmourArrays.gd")
-
 var title: String
 var team: String
 var roster: Array[Unit] = []
 var ships: Array[Ship] = []
 var id: int
 
-const soldier = preload("res://Scenes/Models/Soldier.tscn")
-const armour = preload("res://Scenes/Equipment/Armour.tscn")
-const weapon = preload("res://Scenes/Equipment/Weapon.tscn")
+const SOLDIER = preload("res://Scenes/Models/Soldier.tscn")
+const SQUAD = preload("res://Scenes/Models/Squad.tscn")
+const SHIP = preload("res://Scenes/Models/Ships/SpaceShip.tscn")
 
 #region Ships
 
 #add ship classes later
 func spawnShip(shipClass: String, system: Location):
-	var ship = load("res://Scenes/Models/Ships/SpaceShip.tscn").instantiate()
+	var ship = SHIP.instantiate()
 	add_child(ship)
 	ships.append(ship)
 	ship.setLocation(system)
@@ -51,12 +48,12 @@ func transferShip(ship: Ship, faction: Faction, tempRoster: Array[Unit] = []):
 #region Units & Models
 
 func generateSoldier(stats: ModelStats, arm: ArmourStats, wpn1: WeaponStats, wpn2: WeaponStats) -> Model:
-	var model: Soldier = soldier.instantiate()
-	var slot1: Armour = armour.instantiate()
+	var model: Soldier = SOLDIER.instantiate()
+	var slot1: Armour = Armour.new()
 	slot1.define(arm)
-	var slot2: Weapon = weapon.instantiate()
+	var slot2: Weapon = Weapon.new()
 	slot2.define(wpn1)
-	var slot3: Weapon = weapon.instantiate()
+	var slot3: Weapon = Weapon.new()
 	slot3.define(wpn2)
 	add_to_group(title + "_models")
 	model.define(stats, slot1, slot2, slot3, self)
@@ -64,11 +61,11 @@ func generateSoldier(stats: ModelStats, arm: ArmourStats, wpn1: WeaponStats, wpn
 	return model
 
 func refitSoldier(model: Soldier, arm: ArmourStats, wpn1: WeaponStats, wpn2: WeaponStats) -> Model:
-	var slot1: Armour = armour.instantiate()
+	var slot1: Armour = Armour.new()
 	slot1.define(arm)
-	var slot2: Weapon = weapon.instantiate()
+	var slot2: Weapon = Weapon.new()
 	slot2.define(wpn1)
-	var slot3: Weapon = weapon.instantiate()
+	var slot3: Weapon = Weapon.new()
 	slot3.define(wpn2)
 	add_to_group(title + "_models")
 	model.define(model.stats, slot1, slot2, slot3, self)
@@ -76,17 +73,18 @@ func refitSoldier(model: Soldier, arm: ArmourStats, wpn1: WeaponStats, wpn2: Wea
 	return model
 
 func generateSquad(models: Array[Model], STitle: String, size: int) -> Squad:
-	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
+	var newSquad: Squad = SQUAD.instantiate()
 	newSquad.define(STitle, size, self, models)
 	roster.append(newSquad)
 	newSquad.assignModels()
+	newSquad.setTex()
 	add_child(newSquad)
 	return newSquad
 
 ## Spawns a starting unit at the given location. All factions currently spawn
 ## the same base unit regardless of location; override in a subclass if a
 ## faction should vary its spawn based on where it's spawning.
-func spawnLocational(location: Location) -> Unit:
+func spawnLocational(_location: Location) -> Unit:
 	return spawnBase()
 
 ## Returns this faction's default starting unit. Overridden by subclasses.

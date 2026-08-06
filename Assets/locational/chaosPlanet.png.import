@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://r200nccdqxfw"
-path="res://.godot/imported/enemycombatline.png-7c76c23fb91e5c7c920afbd3df166dd7.ctex"
+uid="uid://dla83l8fbvxle"
+path="res://.godot/imported/chaosPlanet.png-b3e32950b4b10bde4208d1e4b8d6df17.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/combat/enemycombatline.png"
-dest_files=["res://.godot/imported/enemycombatline.png-7c76c23fb91e5c7c920afbd3df166dd7.ctex"]
+source_file="res://Assets/locational/chaosPlanet.png"
+dest_files=["res://.godot/imported/chaosPlanet.png-b3e32950b4b10bde4208d1e4b8d6df17.ctex"]
 
 [params]
 

@@ -9,6 +9,9 @@ var overwhelmingRatio: float = 1.5
 var planet: Planet
 var inner: bool
 var bubble: Array[Settlement]
+var spawnVal: int = 30
+var spawnMax: int = 35
+var spawnMin: int = 25
 
 ## Strategic-AI staging commitment (see Planet._runStrategicAIForTerritory()):
 ## once this settlement is chosen as a staging point against `committedTarget`,
@@ -24,6 +27,7 @@ func appendRoster(arr: Array[Unit]) -> void:
 	update()
 
 func _ready() -> void:
+	spawnVal = randi_range(spawnMin, spawnMax)
 	generateTitle(Names.planetNames)
 	get_node("Name").text = name
 
@@ -31,19 +35,20 @@ func _ready() -> void:
 ## this settlement's roster (the player spawns/crews units manually via ships).
 func spawn() -> Unit:
 	for unit in roster:
-		var owner: Faction = unit.getRoster().front().getFaction()
-		if owner is not PlayerFaction:
-			return owner.spawnBase()
+		var ownerFac: Faction = unit.getRoster().front().getFaction()
+		if ownerFac is not PlayerFaction:
+			return ownerFac.spawnBase()
 	return null
 
 ## Per-turn upkeep: reinforcements, threat assessment, and automatic
 ## convoy dispatch when this settlement isn't under threat
-func turn(precomputedExploreRoute: Array[Settlement] = []) -> void:
+func turn(precomputedExploreRoute: Array = []) -> void:
 	if team != "Unowned":
 		newUnitCounter += 1
-		if newUnitCounter >= 10:
+		if newUnitCounter >= spawnVal:
 			spawn().setLocation(self)
 			newUnitCounter = 0
+			spawnVal = randi_range(spawnMin, spawnMax)
 		
 		#ModelUtils.mergeUnits(getRoster())
 		
@@ -75,8 +80,8 @@ func turn(precomputedExploreRoute: Array[Settlement] = []) -> void:
 ## When there are no enemy settlements in the settlements bubble, they're in explore mode.
 ## In this state, they prioritize populating unowned settlements.
 ## When this primary function is fulfilled, they then proceed to the combat state.
-func exploreState(precomputedRoute: Array[Settlement] = []) -> void:
-	var options: Array[Settlement] = []
+func exploreState(precomputedRoute: Array = []) -> void:
+	var options: Array = []
 	var excess: Array[Unit] = PlanetUtils.getSettlementExcess(self)
 	for settlement in getConnections():
 		if settlement.getTeam() == "Unowned":
@@ -92,7 +97,7 @@ func exploreState(precomputedRoute: Array[Settlement] = []) -> void:
 	elif options.size() == 1:
 		PlanetUtils.generateConvoy(excess, options[0], [self, options[0]])
 	else:
-		var route: Array[Settlement] = precomputedRoute if !precomputedRoute.is_empty() else PlanetUtils.shortestPath(self, planet.getSettlements(), 25)
+		var route: Array = precomputedRoute if !precomputedRoute.is_empty() else PlanetUtils.shortestPath(self, planet.getSettlements(), 25)
 		if !route.is_empty():
 			PlanetUtils.generateConvoy(excess, route[route.size() - 1], route)
 	if getRoster().size() > 2:
@@ -100,14 +105,14 @@ func exploreState(precomputedRoute: Array[Settlement] = []) -> void:
 
 ## When there are enemy settlements in the settlements bubble, they're in combat mode.
 ## In this state, they prioritize fortifying the frontline and then rallying to attack.
-func combatState(options: Array[Settlement] = []):
+func combatState(options: Array = []):
 	
 	## Check for neighbor to attack
 	if planet.targets[team] in getConnections() and shouldIAttack(planet.targets[team]):
 		PlanetUtils.generateConvoy(allButTwo(), planet.targets[team], [self, planet.targets[team]])
 	
 	## Find the weakest outer settlement
-	var outer: Array[Settlement] = PlanetUtils.getOuterSettlements(getTeam(), planet.getSettlements())
+	var outer: Array = PlanetUtils.getOuterSettlements(getTeam(), planet.getSettlements())
 	var excess = PlanetUtils.getSettlementExcess(self)
 	var weakest: Settlement = null
 	for settlement in outer:
@@ -185,14 +190,17 @@ func allButTwo() -> Array[Unit]:
 
 ## Resolves a fight for control of this settlement between the incoming
 ## `attackers` and whatever is currently garrisoned here.
-func invade(convoy: Convoy) -> void:
+func invade(force: Array) -> void:
+	var attackers: Array[Unit] = []
+	for unit in force:
+		attackers.append(unit)
 	var defenders: Array[Unit] = getRoster().duplicate()
 
 	var combat = COMBAT_SCENE.instantiate()
 	get_node("/root/Main").add_child(combat)
 	
 	#0 is always the winner of the fight, 1 is always the loser.
-	var newRosters = await combat.populate(convoy.getRoster(), defenders)
+	var newRosters = await combat.populate(attackers, defenders)
 	
 	ModelUtils.pruneEmptyUnits(newRosters[0])
 	ModelUtils.pruneEmptyUnits(newRosters[1])
@@ -202,15 +210,14 @@ func invade(convoy: Convoy) -> void:
 	if !newRosters[1].is_empty():
 		retreat(newRosters[1])
 	
-	if newRosters[0].front() in convoy.getRoster():
-		convoy.unload(self)
-	convoy.cleanup()
+	for unit in newRosters[0]:
+		unit.setLocation(self)
 	
 	combat.queue_free()
 	update()
 
 func retreat(force: Array[Unit]) -> Convoy:
-	var strongest: Settlement
+	var strongest: Settlement = null
 	for settlement in getConnections():
 		if settlement.getTeam() == force.front().getTeam():
 			if strongest:
@@ -235,7 +242,11 @@ func cleanup() -> void:
 ## Refreshes this settlement's owning team and visuals based on its
 ## current roster.
 func update() -> void:
-	get_node("Label").text = str(roster.size())
+	var modelCount = 0
+	for unit in getRoster():
+		for model in unit.getRoster():
+			modelCount +=1
+	get_node("Label").text = str(modelCount)
 
 	if getRoster().is_empty():
 		team = "Unowned"
@@ -300,9 +311,9 @@ func _on_texture_rect_gui_input(event: InputEvent) -> void:
 		for unit in getRoster():
 			units += "\n" + unit.title + "\n---------------------------------------------------------\n"
 			for model: Model in unit.getRoster():
-				units += model.to_string() + "\n	"
+				units += model.to_string() + "\n"
 				var weapons = model.weapons
-				units += weapons[0].title + " | " + weapons[1].title + " | " + str(model.armour) + "\n"
+				units += weapons[0].title + " | " + weapons[1].title + " | " + str(model.armour) + " | Weight: " + str(model.getWeight()) + "\n"
 		print(units)
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		print("---------------------------------------------------------")

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponStats" load_steps=2 format=3 uid="uid://ch4j1yvcu8wwk"]
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://ch4j1yvcu8wwk"]
 
 [ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_xivcv"]
 
@@ -8,6 +8,7 @@ title = "Autopistol"
 attacks = "1"
 strength = 3
 damage = "1"
+weight = 1
 pistol = true
 description = "'Brrrrr'"
 metadata/_custom_type_script = "uid://c00dklgveh5ca"

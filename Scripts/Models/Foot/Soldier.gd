@@ -20,7 +20,7 @@ func define(res: ModelStats, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Facti
 	weapons = [main, off]
 	ballisticSkill = res.ballisticSkill + main.getBSMod()
 	weaponSkill = res.weaponSkill
-	maxWounds = res.wounds + armour.getWounds()
+	maxWounds = res.maxWounds + armour.getWounds()
 	wounds = maxWounds
 	battlescars = 0
 	maxBattlescars = res.maxBattlescars
@@ -28,8 +28,7 @@ func define(res: ModelStats, arm: Armour, wpn1: Weapon, wpn2: Weapon, fac: Facti
 	rank = res.rank
 	role = res.role
 
-	var names = Names.marineNames
-	generateTitle(names)
+	generateTitle(Names.marineNames)
 
 ## Returns the weapons usable at the given distance (melee/pistol up close,
 ## ranged at mid distance, no melee/pistol at long range — two-handers lock
@@ -43,12 +42,12 @@ func getActiveWeapons(distance: int) -> Array[Weapon]:
 	var exclude: Array[Weapon]
 	#print("Available Weapons: " + str(weapons))
 	
-	if range(0, 65).has(distance):
-		print(str(distance) + " in 0 - 65")
+	if range(0, 70).has(distance):
+		#print(str(distance) + " in 0 - 65")
 		for item in weapons:
 			if !item.isMelee() and !item.isPistol():
 				exclude.append(item)
-	elif range(66, 130).has(distance):
+	elif range(71, 140).has(distance):
 		for item in weapons:
 			if item.isMelee():
 				exclude.append(item)
@@ -79,17 +78,14 @@ func refit(r: String, equipment: Array) -> Soldier:
 func setArmour(val: Armour) -> void:
 	if val:
 		#Return armour to armoury
-		armour.queue_free()
 		armour = val
 func setMain(val: Weapon) -> void:
 	if val:
 		#Return weapon to armoury
-		main.queue_free()
 		main = val
 func setOff(val: Weapon) -> void:
 	if val:
 		#Return weapon to armoury
-		off.queue_free()
 		off = val
 
 func setBonuses(a: int = bonusWounds, b: int = bonusSpeed, c: int = bonusToughness, d: int = bonusSave) -> void:
@@ -114,6 +110,6 @@ func getToughness() -> int:
 func getSave() -> int:
 	return getArmour().getSave() + bonusSave
 func getWeight() -> int:
-	return getArmour().getWeight()
+	return getArmour().getWeight() + getMain().getWeight() + getOff().getWeight()
 func getSize() -> int:
 	return getArmour().getSize()

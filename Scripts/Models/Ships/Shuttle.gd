@@ -13,10 +13,10 @@ func embark(source = mothership):
 		army = source.getExcess(getTeam())
 	else:
 		army = source.getRoster()
-	for unit in army:
-		if unit.getSize() <= currentSpace:
-			unit.setLocation(self)
-			currentSpace -= unit.getSize()
+	for guy in army:
+		if guy.getSize() <= currentSpace:
+			guy.setLocation(self)
+			currentSpace -= guy.getSize()
 		if currentSpace <= 0:
 			break
 	#print("[" + getTitle() + " Filled]From: " + source.getTitle() + ": " + str(roster))
@@ -37,12 +37,12 @@ func disembark(destination = mothership):
 			mothership.getRoster().append_array(roster)
 	else:
 		destination.getRoster().append_array(roster)
-	for unit in roster:
+	for guy in roster:
 		if destination as Ship:
-			if destination.getCapacity() < destination.getRemainingCapacity() + unit.getSize():
-				unit.setLocation(destination)
+			if destination.getCapacity() < destination.getRemainingCapacity() + guy.getSize():
+				guy.setLocation(destination)
 			else: break
-		else: unit.setLocation(destination)
+		else: guy.setLocation(destination)
 	currentSpace = capacity
 	#print("[" + getTitle() + " Disembarked]To: " + destination.getTitle() + ": " + str(destination.getRoster()))
 	used = true

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponStats" load_steps=2 format=3 uid="uid://bsv66uyq0680h"]
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://bsv66uyq0680h"]
 
 [ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_25o7r"]
 
@@ -9,6 +9,7 @@ attacks = "2"
 strength = 4
 ap = 1
 damage = "1"
+weight = 4
 twoHands = true
 modifiers = Array[String](["Heavy"])
 description = "Standard weapon South of the rubicon."

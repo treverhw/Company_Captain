@@ -1,26 +1,39 @@
 extends Faction
 class_name Orkz
 
+#StatLoads
+const BASE_STATS = preload("res://Resources/Models/Orkz/Boy.tres")
+const NOB_STATS = preload("res://Resources/Models/Orkz/BossNob.tres")
+
+#WeaponLoads
+const SLUGGA = preload("res://Resources/Equipment/Orkz/Weapon/Slugga.tres")
+const BIGSHOOTA = preload("res://Resources/Equipment/Orkz/Weapon/BigShoota.tres")
+
+const CHOPPA = preload("res://Resources/Equipment/Orkz/Weapon/Choppa.tres")
+const CCW = preload("res://Resources/Equipment/Orkz/Weapon/CCW.tres")
+const POWERKLAW = preload("res://Resources/Equipment/Orkz/Weapon/PowerKlaw.tres")
+
+#ArmourLoads
+const ORK_MUSCLE = preload(
+		"res://Resources/Equipment/Orkz/Armour/OrkMuscle.tres",)
+
 func _init() -> void:
 	title = "Orkz"
 	team = "Orkz"
-	id = 2
+	id = 3
 
 func start() -> Array[Unit]:
-	return [spawnBase()]
+	return [spawnBase(), spawnBase()]
 
 ## Spawns a basic Orkzsman, kitted with a lasgun and close combat weapon.
 func spawnBoy() -> Model:
-	var loadout = loadouts["Base"]
-	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	return generateSoldier(BASE_STATS, ORK_MUSCLE, SLUGGA, CHOPPA)
 	
 func spawnHeavyBoy() -> Model:
-	var loadout = loadouts["Heavy"]
-	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	return generateSoldier(BASE_STATS, ORK_MUSCLE, BIGSHOOTA, CCW)
 	
 func spawnBossNob() -> Model:
-	var loadout = loadouts["Sergeant"]
-	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	return generateSoldier(NOB_STATS, ORK_MUSCLE, SLUGGA, POWERKLAW)
 
 func assignBossNob() -> Model:
 	return Model.new()
@@ -37,25 +50,3 @@ func spawnBoyzSquad() -> Squad:
 
 func spawnBase() -> Unit:
 	return spawnBoyzSquad()
-
-var loadouts: Dictionary = {
-	#stats, arm, wpn1, wpn2
-	"Base" = [
-		"res://Resources/Models/Orkz/Boy.tres",
-		"res://Resources/Equipment/Orkz/Armour/OrkMuscle.tres",
-		"res://Resources/Equipment/Orkz/Weapon/Slugga.tres",
-		"res://Resources/Equipment/Orkz/Weapon/Choppa.tres"
-	],
-	"Heavy" = [
-		"res://Resources/Models/Orkz/Boy.tres",
-		"res://Resources/Equipment/Orkz/Armour/OrkMuscle.tres",
-		"res://Resources/Equipment/Orkz/Weapon/BigShoota.tres",
-		"res://Resources/Equipment/Orkz/Weapon/CCW.tres"
-	],
-	"Boss Nob" = [
-		"res://Resources/Models/Orkz/BossKnob.tres",
-		"res://Resources/Equipment/Orkz/Armour/OrkMuscle.tres",
-		"res://Resources/Equipment/Orkz/Weapon/Slugga.tres",
-		"res://Resources/Equipment/Orkz/Weapon/PowerKlaw.tres"
-	]
-}

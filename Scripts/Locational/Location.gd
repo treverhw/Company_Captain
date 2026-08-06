@@ -25,18 +25,18 @@ func distance(node1: Node, node2: Node) -> float:
 
 ## Picks a random name from `arr` and uses it as both title and node name.
 func generateTitle(arr: Array) -> void:
-	var chosen = arr.pop_back()
+	var chosen = arr[randi_range(0, arr.size()-1)]
 	title = chosen
 	name = chosen
 
 func appendRoster(val: Array[Unit]) -> void:
 	roster.append_array(val)
 
-## True if no other location in `arr` is within `range` of `val`. Used to
+## True if no other location in `arr` is within `dist` of `val`. Used to
 ## keep generated settlements/systems from overlapping.
-func validateDistance(val: Location, arr, range: int) -> bool:
+func validateDistance(val: Location, arr, dist: int) -> bool:
 	for n in arr:
-		if val.position.distance_to(n.position) < range and n != val:
+		if val.position.distance_to(n.position) < dist and n != val:
 			return false
 	return true
 

@@ -8,5 +8,6 @@ rank = "Scout"
 role = "N/A"
 ballisticSkill = 3
 weaponSkill = 3
+maxWounds = 1
 maxBattlescars = 1
 metadata/_custom_type_script = "uid://dl8lns82dilkv"

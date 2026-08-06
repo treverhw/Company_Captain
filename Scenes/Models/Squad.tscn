@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://ck167ags4oqva"]
+[gd_scene format=3 uid="uid://ck167ags4oqva"]
 
+[ext_resource type="Texture2D" uid="uid://dkdexpe8slvng" path="res://Assets/combat/tyranidsCombatLine.png" id="1_h3quk"]
 [ext_resource type="Script" uid="uid://611la8kc1mct" path="res://Scripts/Models/Squad.gd" id="1_ujs8a"]
-[ext_resource type="Texture2D" uid="uid://4o43hg3oijps" path="res://Assets/combat/combatline.png" id="2_rbo6d"]
 
-[node name="Squad" type="TextureRect"]
+[node name="Squad" type="TextureRect" unique_id=425498152]
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -17,10 +17,10 @@ offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 6
-texture = ExtResource("2_rbo6d")
+texture = ExtResource("1_h3quk")
 script = ExtResource("1_ujs8a")
 
-[node name="Roster Size" type="Label" parent="."]
+[node name="Roster Size" type="Label" parent="." unique_id=750724367]
 layout_mode = 0
 offset_left = 27.0
 offset_top = 20.0

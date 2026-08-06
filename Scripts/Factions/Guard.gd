@@ -1,26 +1,51 @@
 extends Faction
 class_name Guard
 
+#StatLoads
+const BASE_STATS = preload("res://Resources/Models/Guard/Guardsman.tres")
+const SGT_STATS = preload("res://Resources/Models/Guard/Sergeant.tres")
+
+#WeaponLoads
+const LASGUN = preload("res://Resources/Equipment/Guard/Weapon/Lasgun.tres")
+const DRUM_FED_AUTOGUN = preload("res://Resources/Equipment/Guard/Weapon/DrumFedAutogun.tres")
+const LASPISTOL = preload("res://Resources/Equipment/Guard/Weapon/Laspistol.tres")
+const BOLTPISTOL = preload("res://Resources/Equipment/Guard/Weapon/BoltPistol.tres")
+const MELTAGUN = preload("res://Resources/Equipment/Guard/Weapon/Meltagun.tres")
+const FLAMER = preload("res://Resources/Equipment/Guard/Weapon/Flamer.tres")
+const PLASMA_GUN = preload("res://Resources/Equipment/Guard/Weapon/PlasmaGun.tres")
+const GRENADE_LAUNCHER = preload("res://Resources/Equipment/Guard/Weapon/GrenadeLauncher.tres")
+
+const CCW = preload("res://Resources/Equipment/Guard/Weapon/CCW.tres")
+const CHAINSWORD = preload("res://Resources/Equipment/Guard/Weapon/Chainsword.tres")
+
+#ArmourLoads
+const FLAK = preload("res://Resources/Equipment/Guard/Armour/Flak.tres")
+
 func _init() -> void:
 	title = "Astra Militarum"
 	team = "Imperium"
 	id = 1
 
 func start() -> Array[Unit]:
-	return [spawnBase(), spawnBase(), spawnBase(), spawnBase()]
+	return [spawnBase(), spawnBase()]
 
 ## Spawns a basic Guardsman, kitted with a lasgun and close combat weapon.
 func spawnGuardsmen() -> Model:
-	var loadout = loadouts["Base"]
-	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	return generateSoldier(BASE_STATS, FLAK, LASGUN, CCW)
 	
 func spawnHeavyGuardsmen() -> Model:
-	var loadout = loadouts["Heavy"]
-	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	var heavyWeapons = [MELTAGUN, FLAMER, GRENADE_LAUNCHER, PLASMA_GUN]
+	return generateSoldier(BASE_STATS, FLAK, heavyWeapons[randi_range(0,2)], CCW)
 	
 func spawnSergeant() -> Model:
-	var loadout = loadouts["Sergeant"]
-	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	var loadout = randi_range(0, 2)
+	match loadout:
+		1:
+			return generateSoldier(SGT_STATS, FLAK, BOLTPISTOL, CHAINSWORD)
+		2:
+			return generateSoldier(SGT_STATS, FLAK, DRUM_FED_AUTOGUN, CCW)
+		_:
+			return generateSoldier(SGT_STATS, FLAK, LASPISTOL, CHAINSWORD)
 
 func assignSergeant() -> Model:
 	return Model.new()
@@ -38,25 +63,3 @@ func spawnGuardsmanSquad() -> Squad:
 
 func spawnBase() -> Unit:
 	return spawnGuardsmanSquad()
-
-var loadouts: Dictionary = {
-	#stats, arm, wpn1, wpn2
-	"Base" = [
-		"res://Resources/Models/Guard/Guardsman.tres",
-		"res://Resources/Equipment/Guard/Armour/Flak.tres",
-		"res://Resources/Equipment/Guard/Weapon/Lasgun.tres",
-		"res://Resources/Equipment/Guard/Weapon/CCW.tres"
-	],
-	"Heavy" = [
-		"res://Resources/Models/Guard/Guardsman.tres",
-		"res://Resources/Equipment/Guard/Armour/Flak.tres",
-		"res://Resources/Equipment/Guard/Weapon/Meltagun.tres",
-		"res://Resources/Equipment/Guard/Weapon/CCW.tres"
-	],
-	"Sergeant" = [
-		"res://Resources/Models/Guard/Sergeant.tres",
-		"res://Resources/Equipment/Guard/Armour/Flak.tres",
-		"res://Resources/Equipment/Guard/Weapon/Laspistol.tres",
-		"res://Resources/Equipment/Guard/Weapon/Chainsword.tres"
-	]
-}

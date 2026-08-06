@@ -27,7 +27,7 @@ static func getSettlementExcess(val: Settlement) -> Array[Unit]:
 			reserve.append(excess.pop_back())
 	return excess
 	
-static func generateConvoy(force: Array[Unit] = [], destination: Settlement = null, route: Array[Settlement] = []) -> Convoy:
+static func generateConvoy(force: Array[Unit] = [], destination: Settlement = null, route: Array = []) -> Convoy:
 	if force.size() <= 0 or route.size() <= 1:
 		return null
 	var exampleUnit: Unit = force[0]
@@ -53,7 +53,6 @@ static func generateConvoy(force: Array[Unit] = [], destination: Settlement = nu
 
 static func hasActiveConvoyTo(home: Settlement, dest: Settlement) -> bool:
 	for convoy in dest.planet.getConvoys():
-		var route: Array[Settlement] = convoy.getPath()
 		if (convoy.destination == home and convoy.home == dest) or (convoy.destination == dest and convoy.home == home):
 			return true
 	return false
@@ -64,7 +63,7 @@ static func hasActiveConvoyTo(home: Settlement, dest: Settlement) -> bool:
 ## Returns A dictionary of [Team: Settlement]
 static func updateSettlementTargets(planet: Planet = null):
 	updateTeams(planet)
-	var weakestSettlements: Dictionary[String, Settlement] = {}
+	#var weakestSettlements: Dictionary[String, Settlement] = {}
 	var weakestEnemies: Dictionary[String, Settlement] = {}
 	if planet:
 		for team in planet.presentTeams:
@@ -133,7 +132,7 @@ static func updateTeams(planet: Planet) -> void:
 ## itself is allowed even when `target` isn't ours, since that's often the
 ## whole point (an attack, or claiming unowned land). Returns an empty
 ## array if `target` isn't reachable that way.
-static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[Settlement], speed: int = 25) -> Array:
+static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array, speed: int = 25) -> Array:
 	var dist: Dictionary = {}
 	var prev: Dictionary = {}
 	var visited: Dictionary = {}
@@ -170,14 +169,14 @@ static func pathTo(source: Settlement, dest: Settlement, allSettlements: Array[S
 	if dist.get(source, 1000) >= 1000:
 		return []
 
-	var route: Array[Settlement] = []
+	var route: Array = []
 	var node: Settlement = dest
 	while node != null:
 		route.push_front(node)
 		node = prev[node]
 	return route
 
-static func shortestPath(source: Settlement, settlements: Array[Settlement], speed: int = 25, explore: bool = true, export: bool = false) -> Array:
+static func shortestPath(source: Settlement, settlements: Array, speed: int = 25, explore: bool = true, export: bool = false) -> Array:
 	var dist: Dictionary = {}
 	var prev: Dictionary = {}
 	var visited: Dictionary = {}
@@ -204,7 +203,7 @@ static func shortestPath(source: Settlement, settlements: Array[Settlement], spe
 				heap.push(newDist, settlement)
 
 	# Find the nearest settlement that isn't already ours.
-	var path: Array[Settlement] = []
+	var path: Array = []
 	var target: Settlement = source
 	var bestDistance: int = 1000
 	if explore:

@@ -8,6 +8,8 @@ var defenderRoster: Array[Unit] = []
 var fullRoster: Array[Model] = []
 var auto: bool
 var end: Dictionary = {0: [], 1: []}
+var test: bool = false
+var log: String = ""
 
 func _ready() -> void:
 	# Center the combat panel in a 1920x1080 viewport.
@@ -26,10 +28,11 @@ func _deployArmy(units: Array[Unit], sideName: String) -> void:
 		fullRoster.append_array(unit.getRoster())
 
 ## Sets up both armies and runs the fight to completion.
-func populate(attack: Array[Unit], defense: Array[Unit]) -> Dictionary:
+func populate(attack: Array[Unit], defense: Array[Unit], testing: bool = false) -> Dictionary:
 	# Faction id 0 is always the player; if neither side is the player,
 	# resolve combat instantly without showing the UI.
-	if attack.front().getFaction().id != 0 and defense.front().getFaction().id != 0:
+	test = testing
+	if (attack.front().getFaction().id != 0 and defense.front().getFaction().id != 0) and !test:
 		visible = false
 		auto = true
 
@@ -41,15 +44,24 @@ func populate(attack: Array[Unit], defense: Array[Unit]) -> Dictionary:
 
 	get_node("Attacker").team = attackerRoster.front().getTeam()
 	get_node("Defender").team = defenderRoster.front().getTeam()
-
+	
 	return await realFight()
+
+
 
 func realFight() -> Dictionary:
 	var weapons: Array[Weapon]
-	visible = true
+	if !auto:
+		visible = true
+	else:
+		visible = false
 
 	var queue: Array[Model] = fullRoster.duplicate()
+	var counter = 0
 	while !endCheck():
+		counter+=1
+		log += "\n--------------------------Round " + str(counter) + "---------------------------------\n"
+			
 		# Drop anyone who's already dead before this round starts.
 		for i in range(queue.size() - 1, -1, -1):
 			if queue[i].getWounds() <= 0:
@@ -57,48 +69,69 @@ func realFight() -> Dictionary:
 		queue.shuffle()
 		# Fastest models act first.
 		queue.sort_custom(func(a, b): return a.getSpeed() < b.getSpeed())
+		for model in queue:
+			log += model.getRank() + " " + model.title + "\n"
+		if defenderRoster.front().location:
+			print("Printing Queue (Location: " + defenderRoster.front().location.planet.title + ", " + str(defenderRoster.front().location) + "):\n" + str(queue))
 
 		# Only pause between rounds when a human is actually watching.
 		if !auto:
 			await get_tree().create_timer(1).timeout
+		else:
+			await get_tree().process_frame
 
 		for model in queue:
 			if model.getWounds() <= 0:
+				log += "\n\n" + model.rank + " " + model.title + " skipped."
 				continue
 
 			var frontLine: VBoxContainer = targetColumn(model)
 			weapons = model.getActiveWeapons(distance(model.getUnit().get_parent(), frontLine))
 
 			for weapon in weapons:
-				for attack in range(1, weapon.getAttacks()):
+				var attacks = weapon.getAttacks()
+				log += "\n\n" + model.rank + " " + model.title + " firing " + weapon.title + " " + str(attacks) + " times"
+				for attack in range(0, attacks):
 					# Pick a random model from the enemy's frontline to shoot at.
-					var target: Model = frontLine.getRoster()[randi_range(0, frontLine.getRoster().size() - 1)]
+					var target = frontLine.getRoster()[randi_range(0, frontLine.getRoster().size() - 1)]
+					log += "\nTarget: " + target.getRank() + " " + target.title
+					
 					#print(model.rank + " " + model.title + " attacking " + target.title + " with a " + weapon.title + "\n")
 					if GlobalFunctions.rolld6() >= model.getBallisticSkill() or "Torrent" in weapon.getModifiers():
+						log += " hit"
 						if wound(weapon, target, GlobalFunctions.rolld6()):
+							log += ", wound"
 							var save: int = GlobalFunctions.rolld6()
 							if save < target.getSave():
+								log += ", not saved"
 								# Roll succeeded and the save failed: target takes damage.
 								# The shooter gains xp on a hit, and again if it's a kill.
 								target.wounds -= weapon.getDmg()
 								model.xp += 1
 
 								if target.getWounds() <= 0:
+									log += ", killed."
 									model.xp += 1
 									frontLine.getRoster().erase(target)
 									target.getUnit().combatUpdate()
 
 									if endCheck():
 										cleanup()
-										return end	
+										print(log)
+										return end
 
 		# Move the attacking army forward once the armies are close enough.
 		# TODO: this always compares Attacker's line 6 against Defender's
 		# line 1, rather than the armies' actual current front lines.
 		#print(str(attackerRoster.size()) + " vs " + str(defenderRoster.size()))
-		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 65:
+		if distance(get_node("Attacker").get_child(5), get_node("Defender").get_child(0)) > 70:
+			print("Before: " + str(get_node("Attacker/1").global_position.x) + " vs. " + str(get_node("Defender/1").global_position.x))
+			print(get_node("Defender/1").global_position.x - get_node("Attacker/1").global_position.x)
 			get_node("Attacker").global_position.x += 65
+			print("After: " + str(get_node("Attacker/1").global_position.x) + " vs. " + str(get_node("Defender/1").global_position.x))
+			print(get_node("Defender/1").global_position.x - get_node("Attacker/1").global_position.x)
 	cleanup()
+	print(log)
 	return end
 
 func endCheck() -> bool:
@@ -107,10 +140,12 @@ func endCheck() -> bool:
 	if att <= 0:
 		end[0] = defenderRoster
 		end[1] = attackerRoster
+		visible = false
 		return true
 	if def <= 0:
 		end[0] = attackerRoster
 		end[1] = defenderRoster
+		visible = false
 		return true
 	return false
 

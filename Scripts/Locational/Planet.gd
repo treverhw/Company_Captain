@@ -8,12 +8,11 @@ var system: System
 var balance: int
 var weakest: Dictionary[String, Settlement] = {} # Team -> Weakest Settlement
 var targets: Dictionary[String, Settlement] = {} # Team -> Weakest Enemy Settlement
+var combats: Dictionary[Settlement, Array] = {}
 
-func _ready() -> void:
+func generate() -> void:
 	global_position = Vector2((1920 / 2), (1080 / 2))
-
 	_generateSettlements()
-	
 	_spawnStartingForces()
 	createConnections()
 	_connectRemainingSettlements()
@@ -78,7 +77,7 @@ func _connectRemainingSettlements() -> void:
 						unconnected.erase(neighbor)
 						connected.append(neighbor)
 
-		if unconnected.size() > 1:
+		if !unconnected.is_empty():
 			# Find the closest (unconnected, connected) settlement pair.
 			var nearestConnected: Dictionary = {}
 			for candidate in unconnected:
@@ -130,49 +129,18 @@ func turn(exploreRoutes: Dictionary = {}) -> void:
 		await cleanup()
 	var convoys = get_node("PlanetMenu/Convoys").get_children()
 	for convoy in convoys:
-		await convoy.move()
-		await cleanup()
-
-	# Convoys fight if they end up near each other.
-	convoys = get_node("PlanetMenu/Convoys").get_children()
-	var alreadyFought: Array[Convoy] = []
-	for convoy in convoys:
-		var bodies: Array[Node2D] = convoy.get_node("VisionRange").get_overlapping_bodies()
-		for body in bodies:
-			var otherConvoy = body.get_parent()
-			if convoy == otherConvoy or (alreadyFought.has(convoy) and alreadyFought.has(otherConvoy)):
-				continue
+		if convoy:
+			await convoy.move()
 			await cleanup()
-			var facingOff: bool = convoy.getTeam() != otherConvoy.getTeam() and convoy.getDestination() == otherConvoy.getHome()
-			if facingOff and !convoy.getRoster().is_empty() and !otherConvoy.getRoster().is_empty():
-				alreadyFought.append(convoy)
-				alreadyFought.append(otherConvoy)
-				await convoyFight(convoy, otherConvoy)
+	
+	await resolveCombats()
 	await cleanup()
 	#print(presentTeams)
 
-
-func convoyFight(val1: Convoy, val2: Convoy) -> void:
-	await cleanup()
-	var combat = COMBAT_SCENE.instantiate()
-	get_node("/root/Main").add_child(combat)
-
-	var newRosters = await combat.populate(val1.getRoster(), val2.getRoster())
-	ModelUtils.pruneEmptyUnits(newRosters[0])
-	ModelUtils.pruneEmptyUnits(newRosters[1])
-
-	val1.source = "Convoy Fight Retreat"
-	val2.source = "Convoy Fight Retreat"
-
-	if val1.getRoster().is_empty():
-		val1.kill()
-	else:
-		val1.retreatConvoy()
-	if val2.getRoster().is_empty():
-		val2.kill()
-	else:
-		val2.retreatConvoy()
-	combat.queue_free()
+func resolveCombats() -> void:
+	for key in combats.keys():
+		await key.invade(combats[key])
+	combats.clear()
 
 func cleanup() -> bool:
 	for settlement in settlements:
@@ -217,12 +185,13 @@ func setControl() -> String:
 			return "Unowned"
 	return teams[0]
 
-func setBalance(team: String) -> int:
+#t is team
+func setBalance(t: String) -> int:
 	var total: int = 0
 	for settlement in settlements:
-		total += settlement.getWeight() if settlement.getTeam() == team else -settlement.getWeight()
+		total += settlement.getWeight() if settlement.getTeam() == t else -settlement.getWeight()
 	for convoy in get_node("PlanetMenu/Convoys").get_children():
-		total += convoy.getWeight() if convoy.getTeam() == team else -convoy.getWeight()
+		total += convoy.getWeight() if convoy.getTeam() == t else -convoy.getWeight()
 	balance = total
 	return total
 
@@ -249,14 +218,15 @@ func createConnections() -> void:
 
 ## Every unit across all settlements on this planet, except each
 ## settlement's two garrison-holding "Base" units — i.e. what's available
-func getExcess(tempTeam: String) -> Array[Unit]:
+func getExcess() -> Array[Unit]:
 	var ret: Array[Unit] = []
 	for settlement in settlements:
 		ret.append_array(settlement.allButTwo())
 	return ret
 
-func getBalance(team: String) -> int:
-	return setBalance(team)
+#t is team
+func getBalance(t: String) -> int:
+	return setBalance(t)
 
 func getSettlements() -> Array[Settlement]:
 	return settlements

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bchba7pyiptc6"
-path="res://.godot/imported/Orkz.png-b060298a4b2f3f7eac640d3ff45bc5c5.ctex"
+uid="uid://dhw6xlfqev5ya"
+path="res://.godot/imported/chaosCombatLine.png-75902a80ae94c3df338384750f088bb6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/locational/Orkz.png"
-dest_files=["res://.godot/imported/Orkz.png-b060298a4b2f3f7eac640d3ff45bc5c5.ctex"]
+source_file="res://Assets/combat/chaosCombatLine.png"
+dest_files=["res://.godot/imported/chaosCombatLine.png-75902a80ae94c3df338384750f088bb6.ctex"]
 
 [params]
 

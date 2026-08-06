@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ArmourStats" load_steps=2 format=3 uid="uid://cw2atvavuwgiu"]
+[gd_resource type="Resource" script_class="ArmourStats" format=3 uid="uid://cw2atvavuwgiu"]
 
 [ext_resource type="Script" uid="uid://cftx6oo8we07o" path="res://Scripts/Equipment/ArmourStats.gd" id="1_7admi"]
 
@@ -8,8 +8,7 @@ title = "Flak Vest"
 speed = 4
 toughness = 3
 save = 5
-weight = 8
-wounds = 1
+weight = 4
 size = 1
 description = "The best the 20th century has to offer."
 metadata/_custom_type_script = "uid://cftx6oo8we07o"

@@ -10,7 +10,7 @@ class RouteResult:
 	var route: Array = []
 
 static func precomputeAllExploreRoutes(allPlanets: Array[Planet]) -> Dictionary:
-	var candidates: Array[Settlement] = []
+	var candidates: Array = []
 	var searchSpaces: Array[Array] = [] # candidate[i]'s own planet's settlement list
 
 	for planet in allPlanets:

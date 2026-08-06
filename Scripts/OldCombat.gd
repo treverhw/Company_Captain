@@ -60,7 +60,7 @@ func startCombat(friendly : Array[Unit], enemy : Array[Unit], attacker : bool):
 	if attacker == true:
 		while fRoster.size() >= fStartingSize/4 and eRoster.size() >= eStartingSize/4:
 			queue = (fRoster + eRoster)
-			print(str(fRoster.size()) + " vs " + str(eRoster.size()))
+			#print(str(fRoster.size()) + " vs " + str(eRoster.size()))
 			queue.sort_custom(func(a,b): return a.getSpeed() > b.getSpeed())
 			for model in queue:
 				queue.pop_front()

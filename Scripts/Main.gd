@@ -1,14 +1,16 @@
 extends Control
-var playerFaction
-var guard
-var chaos
+@onready var playerFaction = get_node("Factions/PlayerFaction")
+@onready var guard = get_node("Factions/Guard")
+@onready var chaos = get_node("Factions/Chaos")
+@onready var orkz = get_node("Factions/Orkz")
 var squad : Squad
 var turn: int = 0
 var temp
-var sector: Sector
+var sector: Sector = null
 var testing: bool = false
+@onready var loadingScreen = $LoadingScreen
 
-func _input(event: InputEvent) -> void:
+func _input(_event: InputEvent) -> void:
 	if Input.is_action_just_pressed("Escape"):
 		get_tree().quit()
 
@@ -34,10 +36,19 @@ func _ready() -> void:
 func play():
 	sector = load("res://Scenes/Locational/Sector.tscn").instantiate()
 	add_child(sector)
+	
 	get_node("BottomBarBack").visible = true
-	get_node("BottomBar").visible = true
 	get_node("TopBarBack").visible = true
+
+	loadingScreen.begin("Generating galaxy...")
+	sector.generation_progress.connect(loadingScreen.step)
+	await sector.generate()
+	sector.generation_progress.disconnect(loadingScreen.step)
+	loadingScreen.finish()
+	
+	get_node("BottomBar").visible = true
 	get_node("TopBar").visible = true
+	
 	guard.start()
 	chaos.start()
  	#temp.settlements[1].roster.append(guard.roster[0])
@@ -56,13 +67,21 @@ func play():
 func _on_button_pressed() -> void:
 	var combat = load("res://Scenes/Menus/Combat.tscn").instantiate()
 	add_child(combat)
-	combat.populate(playerFaction.start(), chaos.start())
+	var arr1 = guard.start()
+	arr1.append_array(playerFaction.start())
+	var arr2 = chaos.start()
+	arr2.append_array(orkz.start())
+	combat.populate(arr1, arr2, true)
 
 func _on_turn_pressed() -> void:
 	turn += 1
 	get_node("TopBar/TurnCounter").text = "Turns: " + str(turn)
 	get_node("BottomBar/Turn").disabled = true
-	await get_tree().create_timer(.1).timeout
+	loadingScreen.begin("Resolving turn " + str(turn) + "...")
+	sector.turn_progress.connect(loadingScreen.step)
+	await sector.turn()
+	sector.turn_progress.disconnect(loadingScreen.step)
+	loadingScreen.finish()
 	get_node("BottomBar/Turn").disabled = false
 
 func getPlayer() -> Faction:
@@ -102,11 +121,7 @@ func _on_planet_test_pressed() -> void:
 	#var counter = 1
 	while(testing):
 		await get_tree().create_timer(.5).timeout
-		_on_turn_pressed()
-		var system = sector.getSystems().front()
-		sector.turn()
-		#if system.getCompliance():
-		#	reset(system)
+		await _on_turn_pressed()
 
 func reset(system):
 	#counter += 1

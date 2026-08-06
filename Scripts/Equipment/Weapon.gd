@@ -1,4 +1,4 @@
-extends Node
+extends RefCounted
 class_name Weapon
 ## Data-holder for a weapon's stats
 
@@ -7,6 +7,7 @@ var attacks: String
 var strength: int
 var ap: int
 var damage: String
+var weight: int
 var twoHands: bool
 var melee: bool
 var pistol: bool
@@ -20,6 +21,7 @@ func define(res: WeaponStats) -> void:
 	strength = res.strength
 	ap = res.ap
 	damage = res.damage
+	weight = res.weight
 	twoHands = res.twoHands
 	melee = res.melee
 	pistol = res.pistol
@@ -46,9 +48,11 @@ func getStrength() -> int:
 func getAP() -> int:
 	return ap
 func getDmg() -> int:
-	if "d" in damage:
+	if damage.contains("d"):
 		return GlobalFunctions.rollStringd6(damage)
 	else: return int(damage)
+func getWeight() -> int:
+	return weight
 func getModifiers() -> Array[String]:
 	return modifiers
 func getBSMod() -> int:

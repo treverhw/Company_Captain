@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://by2utvnv0mq2t"]
+
+[ext_resource type="Script" uid="uid://baxkc6ydjpnrs" path="res://Scripts/Factions/Orkz.gd" id="1_xomwv"]
+
+[node name="Orkz" type="Node" unique_id=902984781]
+script = ExtResource("1_xomwv")

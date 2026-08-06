@@ -1,4 +1,4 @@
-extends Node
+extends RefCounted
 class_name Armour
 ## Data-holder for an armour set's stats
 

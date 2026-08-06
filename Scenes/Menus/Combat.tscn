@@ -1,28 +1,28 @@
-[gd_scene load_steps=5 format=3 uid="uid://b3o7qfbn8pdab"]
+[gd_scene format=3 uid="uid://b3o7qfbn8pdab"]
 
 [ext_resource type="Script" uid="uid://dxpayrejdeuji" path="res://Scripts/Menus/Combat.gd" id="1_ypynm"]
-[ext_resource type="Texture2D" uid="uid://ds4iduhxx8efx" path="res://Assets/ui/CombatBack.png" id="2_cihwv"]
+[ext_resource type="Texture2D" uid="uid://dqjt7xxrj8avk" path="res://Assets/ui/CombatBack.png" id="2_cihwv"]
 [ext_resource type="Script" uid="uid://bn5b7go8wh54s" path="res://Scripts/Menus/CombatArmy.gd" id="3_370nc"]
 [ext_resource type="PackedScene" uid="uid://camopmcfhyyr3" path="res://Scenes/CombatLine.tscn" id="3_dbyqq"]
 
-[node name="Combat" type="Node2D"]
+[node name="Combat" type="Node2D" unique_id=458117199]
 z_index = 10
 script = ExtResource("1_ypynm")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1887633364]
 z_index = -5
 position = Vector2(960, 540)
 texture = ExtResource("2_cihwv")
 
-[node name="Attacker" type="HBoxContainer" parent="."]
+[node name="Attacker" type="HBoxContainer" parent="." unique_id=26682814]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = 375.0
+offset_left = 368.0
 offset_top = 150.0
-offset_right = 770.0005
+offset_right = 763.0005
 offset_bottom = 930.0
 grow_horizontal = 0
 grow_vertical = 2
@@ -30,62 +30,62 @@ theme_override_constants/separation = 1
 alignment = 2
 script = ExtResource("3_370nc")
 
-[node name="6" parent="Attacker" instance=ExtResource("3_dbyqq")]
+[node name="6" parent="Attacker" unique_id=667219894 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="5" parent="Attacker" instance=ExtResource("3_dbyqq")]
+[node name="5" parent="Attacker" unique_id=48492465 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="4" parent="Attacker" instance=ExtResource("3_dbyqq")]
+[node name="4" parent="Attacker" unique_id=2028104212 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="3" parent="Attacker" instance=ExtResource("3_dbyqq")]
+[node name="3" parent="Attacker" unique_id=1323689177 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="2" parent="Attacker" instance=ExtResource("3_dbyqq")]
+[node name="2" parent="Attacker" unique_id=992766357 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="1" parent="Attacker" instance=ExtResource("3_dbyqq")]
+[node name="1" parent="Attacker" unique_id=8872033 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="Defender" type="HBoxContainer" parent="."]
+[node name="Defender" type="HBoxContainer" parent="." unique_id=1798605658]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 1150.0
+offset_left = 1157.0
 offset_top = 150.0
-offset_right = 1545.0
+offset_right = 1552.0
 offset_bottom = 930.0
 grow_vertical = 2
 theme_override_constants/separation = 1
 script = ExtResource("3_370nc")
 
-[node name="1" parent="Defender" instance=ExtResource("3_dbyqq")]
+[node name="1" parent="Defender" unique_id=523555141 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="2" parent="Defender" instance=ExtResource("3_dbyqq")]
+[node name="2" parent="Defender" unique_id=1168086992 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="3" parent="Defender" instance=ExtResource("3_dbyqq")]
+[node name="3" parent="Defender" unique_id=1684856043 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="4" parent="Defender" instance=ExtResource("3_dbyqq")]
+[node name="4" parent="Defender" unique_id=1355999679 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="5" parent="Defender" instance=ExtResource("3_dbyqq")]
+[node name="5" parent="Defender" unique_id=783694803 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
 
-[node name="6" parent="Defender" instance=ExtResource("3_dbyqq")]
+[node name="6" parent="Defender" unique_id=371199153 instance=ExtResource("3_dbyqq")]
 custom_minimum_size = Vector2(65, 0)
 layout_mode = 2

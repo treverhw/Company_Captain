@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponStats" load_steps=2 format=3 uid="uid://lcf01oe1kh3e"]
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://lcf01oe1kh3e"]
 
 [ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_vc751"]
 
@@ -8,6 +8,7 @@ title = "Boltgun"
 attacks = "2"
 strength = 4
 damage = "1"
+weight = 3
 twoHands = true
 modifiers = Array[String](["Heavy"])
 description = "Standard weapon North of the rubicon."

@@ -4,8 +4,7 @@ class_name Ship
 var roster: Array[Unit] = []
 
 func _ready() -> void:
-	var names = Names.shipNames
-	generateTitle(names)
+	generateTitle(Names.shipNames)
 
 func setLocation(val) -> void:
 	if location:
@@ -14,9 +13,9 @@ func setLocation(val) -> void:
 	location = val
 
 func getRoster() -> Array[Unit]:
-	for unit in range(roster.size() -1,-1,-1):
-		if !is_instance_valid(roster[unit]):
-			roster.erase(roster[unit])
+	for guy in range(roster.size() -1,-1,-1):
+		if !is_instance_valid(roster[guy]):
+			roster.erase(roster[guy])
 	return roster
 
 func _to_string() -> String:

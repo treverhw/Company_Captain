@@ -100,7 +100,7 @@ func getMaxBattlescars() -> int:
 	return maxBattlescars
 ## Weapons usable at the given distance. Base Model has no weapon logic
 ## of its own — overridden by Soldier/Vehicle.
-func getActiveWeapons(distance: int) -> Array[Weapon]:
+func getActiveWeapons(_distance: int) -> Array[Weapon]:
 	return [null]
 ## Carry weight. 0 by default; overridden by subclasses.
 func getWeight() -> int:
@@ -108,4 +108,4 @@ func getWeight() -> int:
 
 func _to_string() -> String:
 	
-	return "%s %s		%d/%d | %d/%d" % [getRank(), getTitle(), getWounds(), getMaxWounds(), getBattlescars(), getMaxBattlescars()]
+	return "%-10s %-10s %10d/%d | %d/%d" % [getRank(), getTitle(), getWounds(), getMaxWounds(), getBattlescars(), getMaxBattlescars()]

@@ -1,22 +1,31 @@
 extends Faction
 class_name AstartesFaction
-## Shared base for factions that field Space Marine-pattern Astartes troops
-## (loadout data comes from ArmourArrays.astartesArmour / WeaponArrays.astartesWeapons).
-## Chaos and PlayerFaction both extend this to avoid duplicating spawn logic.
 
-## Spawns a basic Astartes scout, kitted with a boltgun and bolt pistol.
+#StatLoads
+const BASE_STATS = preload("res://Resources/Models/Astartes/Scout.tres")
+
+#WeaponLoads
+const BOLT_RIFLE = preload("res://Resources/Equipment/Astartes/Weapon/BoltRifle.tres")
+const BOLTGUN = preload("res://Resources/Equipment/Astartes/Weapon/Boltgun.tres")
+const BOLT_PISTOL = preload("res://Resources/Equipment/Astartes/Weapon/BoltPistol.tres")
+
+const CCW = preload("res://Resources/Equipment/Astartes/Weapon/CCW.tres")
+const SCOUT_CCW = preload("res://Resources/Equipment/Astartes/Weapon/ScoutCCW.tres")
+
+#ArmourLoads
+const SCOUT = preload("res://Resources/Equipment/Astartes/Armour/Scout.tres")
+
+
 func spawnScout() -> Model:
-	var loadout = loadouts["Scout"]
-	return generateSoldier(load(loadout[0]), load(loadout[1]), load(loadout[2]), load(loadout[3]))
+	return generateSoldier(BASE_STATS, SCOUT, BOLT_RIFLE, SCOUT_CCW)
 
 ## Spawns a 5-model scout squad and adds it to this faction's roster.
 ## Subclasses can override `_scoutSquadTitle()` to customize naming.
 func spawnScoutSquad() -> Squad:
-	var newSquad: Squad = load("res://Scenes/Models/Squad.tscn").instantiate()
 	var models: Array[Model] = []
 	for i in 5:
 		models.append(spawnScout())
-	generateSquad(models, _scoutSquadTitle(), 5)
+	var newSquad = generateSquad(models, _scoutSquadTitle(), 5)
 	return newSquad
 
 func spawnBase() -> Unit:
@@ -25,25 +34,3 @@ func spawnBase() -> Unit:
 ## Default scout-squad title. Override in a subclass for a different format.
 func _scoutSquadTitle() -> String:
 	return str(roster.size())
-
-
-var loadouts: Dictionary = {
-	"Scout" = [
-		"res://Resources/Models/Astartes/Scout.tres",
-		"res://Resources/Equipment/Astartes/Armour/Scout.tres",
-		"res://Resources/Equipment/Astartes/Weapon/Boltgun.tres",
-		"res://Resources/Equipment/Astartes/Weapon/ScoutCCW.tres"
-	],
-	"Base" = [
-		"res://Resources/Models/Chaos/Cultist.tres",
-		"res://Resources/Equipment/Chaos/Armour/Rags.tres",
-		"res://Resources/Equipment/Chaos/Weapon/Autopistol.tres",
-		"res://Resources/Equipment/Chaos/Weapon/BCW.tres"
-	],
-	"Demagogue" = [
-		"res://Resources/Models/Chaos/CultDemagogue.tres",
-		"res://Resources/Equipment/Chaos/Armour/Rags.tres",
-		"res://Resources/Equipment/Chaos/Weapon/BoltPistol.tres",
-		"res://Resources/Equipment/Chaos/Weapon/BCW.tres"
-	],
-}

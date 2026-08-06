@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4o43hg3oijps"
-path="res://.godot/imported/combatline.png-40e14fc6ddffbae75fe1eef3efc5f2a9.ctex"
+uid="uid://c20ahgswgth50"
+path="res://.godot/imported/marineCombatLine.png-bb2d0d876c91509954f59250d3464b1d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/combat/combatline.png"
-dest_files=["res://.godot/imported/combatline.png-40e14fc6ddffbae75fe1eef3efc5f2a9.ctex"]
+source_file="res://Assets/combat/marineCombatLine.png"
+dest_files=["res://.godot/imported/marineCombatLine.png-bb2d0d876c91509954f59250d3464b1d.ctex"]
 
 [params]
 

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponStats" load_steps=2 format=3 uid="uid://bx6sakopmbjr5"]
+[gd_resource type="Resource" script_class="WeaponStats" format=3 uid="uid://bx6sakopmbjr5"]
 
 [ext_resource type="Script" uid="uid://c00dklgveh5ca" path="res://Scripts/Equipment/WeaponStats.gd" id="1_brpon"]
 
@@ -8,6 +8,7 @@ title = "Flamer"
 attacks = "d6"
 strength = 4
 damage = "1"
+weight = 3
 twoHands = true
 modifiers = Array[String](["Torrent"])
 description = "[TBD]"

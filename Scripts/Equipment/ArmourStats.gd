@@ -13,7 +13,7 @@ class_name ArmourStats
 @export var weight: int
 ##Wounds are a form of health, used to check if you're still with us.
 @export var wounds: int
-##Size, don't remember why, [TBD].
+##Size, determines the actual space a unit takes up. Important for transportation.
 @export var size: int
 ##Fluff description
 @export var description: String
