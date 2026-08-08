@@ -33,8 +33,6 @@ func turn():
 	if inProg:
 		return
 	inProg = true
-	#for ship in getShips():
-	#	ship.move()
 	
 	var allPlanets: Array[Planet] = getAllPlanets()
 	var exploreRoutes: Dictionary = SectorUtils.precomputeAllExploreRoutes(allPlanets)
@@ -49,7 +47,28 @@ func turn():
 	for planet in allPlanets:
 		planetTurn(planet, exploreRoutes, remaining)
 	while remaining[0] > 0:
-		await get_tree().process_frame
+		await get_tree().process_frame 
+	
+	for system: System in systemList:
+		var comp = true
+		for planet in system.getPlanets():
+			if !planet.compliant:
+				comp = false
+		system.compliant = comp
+		if !system.compliant:
+			for ship in system.ships:
+				await ship.disembark()
+				await ship.embark()
+			for t in system.presentTeams:
+				if GlobalFunctions.compareAttackWeight(system.assaultUnits[t], system.assaultTarget[t].getRoster()):
+					system.assaultTarget[t].invade(system.assaultUnits[t])
+		else: 
+			for ship: Ship in system.ships:
+				await ship.embark()
+				if ship.getRemainingCapacity() / ship.getCapacity() >= .9:
+					pass
+					#seek new system.
+	
 	inProg = false
 
 func planetTurn(planet: Planet, exploreRoutes: Dictionary, remaining: Array) -> void:

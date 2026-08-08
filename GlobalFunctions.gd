@@ -25,6 +25,17 @@ static func rollStringd6(roll: String) -> int:
 		result += int(val[1].split("+")[1])
 	return result
 
+static func compareAttackWeight(arr1: Array[Unit], arr2: Array[Unit]) -> bool:
+	var val1: int = 0
+	var val2: int = 0
+	
+	for unit in arr1:
+		val1 += unit.getWeight()
+	for unit in arr2:
+		val2 += unit.getWeight()
+	
+	return val1 >= val2*1.5
+
 static func numToRoman(num: int) -> String:
 	var nums = [1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000]
 	var sym = ["I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"]

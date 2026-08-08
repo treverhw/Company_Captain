@@ -10,16 +10,7 @@ func _ready() -> void:
 func exportState():
 	var ships = planet.system.getShips()
 	var force = getExport()
-	for ship: SpaceShip in ships:
-		if ship.getTeam() == getTeam():
-			#print(planet.title + " " + self.title)
-			#print(ship.getRemainingCapacity())
-			#print(!force.is_empty())
-			while ship.getRemainingCapacity() > 0 and !force.is_empty():
-				#print("Should move")
-				var unit = force.pop_back()
-				if unit.getSize() <= ship.getRemainingCapacity():
-					unit.setLocation(ship)
+	planet.system.availableUnits[getTeam()].append_array(force)
 
 func getExport() -> Array[Unit]:
 	if planet.compliant:

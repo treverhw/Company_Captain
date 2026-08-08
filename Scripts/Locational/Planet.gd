@@ -4,6 +4,7 @@ class_name Planet
 ## into a connected graph, and runs the per-turn simulation loop.
 
 var settlements: Array[Settlement]
+var starports: Array[Starport]
 var system: System
 var balance: int
 var weakest: Dictionary[String, Settlement] = {} # Team -> Weakest Settlement
@@ -31,6 +32,7 @@ func _generateSettlements() -> void:
 		var newSettlement: Settlement
 		if n < numStarports:
 			newSettlement = STARPORT_SCENE.instantiate()
+			starports.append(newSettlement)
 		else:
 			newSettlement = SETTLEMENT_SCENE.instantiate()
 		newSettlement.global_position = Vector2(randi_range(-450, 450), randi_range(-250, 250))

@@ -4,6 +4,9 @@ class_name System
 var ships: Array[Ship] = []
 var planets: Array[Planet] = []
 var priority: Array[Planet] = []
+var availableUnits: Dictionary[String, Array] = {} #team -> Unit Array
+var assaultUnits: Dictionary[String, Array] = {} #team -> Unit Array
+var assaultTarget: Dictionary[String, Settlement] = {} #team -> Unit Array
 var sector: Sector
 
 func turn() -> void:
@@ -12,24 +15,17 @@ func turn() -> void:
 		ship.turn()
 		text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
 	get_node("Visuals/ShipCount").text = text
-	getCompliance()
-	#if !compliant:
-	#	offloadShips()
-	#onloadShips()
-	#if compliant:
-	#	transferShips()
-	#var text = "Ships: " + str(ships.size())
-	#for ship in ships:
-	#	text += " | " + str(ship) + " - " + ship.getFaction().getTitle()
-	#get_node("ShipCount").text = text
+	availableUnits.clear()
+	for team in presentTeams:
+		availableUnits[team] = []
+	assaultUnits.clear()
+	for team in presentTeams:
+		assaultUnits[team] = []
 
-func offloadShips():
+func shipsDisembark():
 	pass
 
-func onloadShips():
-	pass
-
-func transferShips():
+func shipsEmbark():
 	pass
 
 #t is team
